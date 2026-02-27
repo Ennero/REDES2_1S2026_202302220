@@ -10,25 +10,24 @@
     - [2.1 Inclusiones](#21-inclusiones)
     - [2.2 Exclusiones](#22-exclusiones)
   - [3. Topología de Red](#3-topología-de-red)
-    - [3.1 Red General (MAN)](#31-red-general-man)
-    - [3.2 Edificio Izquierdo](#32-edificio-izquierdo)
-    - [3.3 Edificio Derecho](#33-edificio-derecho)
-    - [3.4 Edificio Administración](#34-edificio-administración)
 - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
-  - [4. Tabla de Direccionamiento IP](#4-tabla-de-direccionamiento-ip)
-    - [4.1 Direcciones de Dispositivos](#41-direcciones-de-dispositivos)
-      - [4.1.1 Edificio Izquierdo](#411-edificio-izquierdo)
-      - [4.1.2 Edificio Derecho](#412-edificio-derecho)
-      - [4.1.3 Edificio Administración](#413-edificio-administración)
-    - [4.2 Direcciones de Puertas de Enlace](#42-direcciones-de-puertas-de-enlace)
-      - [4.2.1 Edificio Izquierdo](#421-edificio-izquierdo)
-      - [4.2.2 Edificio Derecho](#422-edificio-derecho)
-      - [4.2.3 Edificio Administración](#423-edificio-administración)
-      - [4.2.4 Enlaces de Enrutamiento (MAN)](#424-enlaces-de-enrutamiento-man)
-  - [5. Subnetting](#5-subnetting)
-    - [5.1 VLANs (192.188.20.0/24 - VLSM)](#51-vlans-19218820024---vlsm)
-    - [5.2 Enlaces de Enrutamiento (10.4.20.0/24 - FLSM /30)](#52-enlaces-de-enrutamiento-10420024---flsm-30)
-  - [6. Configuraciones de Dispositivos](#6-configuraciones-de-dispositivos)
+  - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
+    - [5.1 Direcciones de Dispositivos En Enrutamiento](#51-direcciones-de-dispositivos-en-enrutamiento)
+  - [6. Subnetting](#6-subnetting)
+    - [6.1 VLANs (192.188.20.0/24 - VLSM)](#61-vlans-19218820024---vlsm)
+- [Tabla de Subredes por VLAN](#tabla-de-subredes-por-vlan)
+    - [6.2 Enlaces de Enrutamiento (10.4.20.0/24 - FLSM /30)](#62-enlaces-de-enrutamiento-10420024---flsm-30)
+  - [7 Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
+    - [7.1 Configuraciones de Dispositivos de Enrutamiento](#71-configuraciones-de-dispositivos-de-enrutamiento)
+      - [7.1.1 Configuración para MS1](#711-configuración-para-ms1)
+      - [7.1.2 Configuración MS2](#712-configuración-ms2)
+      - [7.1.6 Configuración MS6](#716-configuración-ms6)
+      - [7.1.7 Configuración MS7](#717-configuración-ms7)
+      - [7.1.8 Configuración MS8](#718-configuración-ms8)
+      - [7.1.9 Configuración MS9](#719-configuración-ms9)
+    - [7.2 Configuraciones de Dispositivos entre Edificios](#72-configuraciones-de-dispositivos-entre-edificios)
+    - [7.3 Configuraciones de Dispositivos de Edificio Izquierdo](#73-configuraciones-de-dispositivos-de-edificio-izquierdo)
+    - [7.4 Configuraciones de Dispositivos de Edificio Derecho](#74-configuraciones-de-dispositivos-de-edificio-derecho)
 
 ---
 
@@ -75,26 +74,7 @@ Diseñar, configurar y simular una infraestructura de red empresarial multi-edif
 ## 3. Topología de Red
 A continuación se presenta el diagrama de la topología de red implementada en Cisco Packet Tracer para el proyecto Chapin Red. La red interconecta cuatro edificios mediante una red MAN con fibra óptica (módulos Gigabit), con un switch multicapa Cisco 3650 como punto de interconexión central. El enrutamiento inter-edificios se realiza mediante el protocolo OSPF (carné par: 202302220).
 
-### 3.1 Red General (MAN)
-
 ![Topología General](./imgs/topologia_general.png)
-
-### 3.2 Edificio Izquierdo
-
-![Edificio Izquierdo](./imgs/edificio_izquierdo.png)
-
-El edificio izquierdo implementa una arquitectura jerárquica completa de tres capas:
-- **Capa Core:** MSW Cisco 3650 (Switch5 y Switch0) – switches multicapa de alto rendimiento.
-- **Capa Distribución:** MSW Cisco 3650 (Switch6) – switch multicapa para enrutamiento inter-VLAN.
-- **Capa Acceso:** Cisco 2960 (Switch0 y Switch1) – conexión de dispositivos finales.
-
-### 3.3 Edificio Derecho
-
-![Edificio Derecho](./imgs/edificio_derecho.png)
-
-### 3.4 Edificio Administración
-
-![Edificio Administración](./imgs/edificio_admin.png)
 
 ---
 
@@ -106,107 +86,363 @@ El edificio izquierdo implementa una arquitectura jerárquica completa de tres c
 | MS1          | Gi1/0/2 | DHCP2         | fa0     |
 | MS1          | Gi1/1/1 | MS7           | Gi1/1/1 |
 | MS1          | Gi1/1/4 | MS2           | Gi1/1/4 |
+| MS2          | Gi1/1/2 | MS7           | Gi1/1/4 |
 | MS6          | Gi1/1/2 | MS7           | Gi1/1/2 |
 | MS6          | Gi1/1/3 | MS2           | Gi1/1/3 |
 | MS6          | Gi1/0/1 | PC0           | fa0     |
+| MS9          | fa0/1   | MS7           | Gi1/0/1 |
+| MS9          | fa0/2   | MS7           | Gi1/0/2 |
+| MS9          | fa0/3   | MS7           | Gi1/0/3 |
+| MS8          | fa0/4   | MS7           | Gi1/0/4 |
+| MS8          | fa0/5   | MS7           | Gi1/0/5 |
+| MS8          | fa0/6   | MS7           | Gi1/0/6 |
+| MS9          | fa0/7   | MS8           | fa0/7   |
+| MS9          | fa0/8   | MS8           | fa0/8   |
+| MS9          | fa0/9   | MS8           | fa0/9   |
+| MS9          | fa0/23  | Switch2       | fa0/23  |
+| MS9          | fa0/24  | Switch2       | fa0/24  |
+| MS8          | fa0/23  | Switch1       | fa0/23  |
+| MS8          | fa0/24  | Switch1       | fa0/24  |
+| SW1          | fa0/1   | PC1           | fa0     | 
+| SW1          | fa0/2   | PC2           | fa0     |
+| SW2          | fa0/1   | Laptop0       | fa0     | 
+| SW2          | fa0/2   | Laptop1       | fa0     |
+| MS3          | fa0/22  | MS2           | gi1/0/22|
+| MS3          | fa0/23  | MS2           | gi1/0/23|
+| MS3          | fa0/24  | MS2           | gi1/0/24|
+| MS3          | fa0/1   | MS4           | fa0/1   |
+| MS3          | fa0/2   | MS4           | fa0/2   |
+| MS3          | fa0/3   | MS4           | fa0/3   |
+| MS4          | fa0/23  | MS5           | fa0/23  |
+| MS4          | fa0/24  | MS5           | fa0/24  |
+| MS5          | fa0/3   | SW3           | fa0/3   |
+| MS5          | fa0/4   | SW4           | fa0/4   |
+| SW3          | fa0/1   | Laptop2       | fa0     |
+| SW3          | fa0/2   | PC3           | fa0     |
+| SW4          | fa0/1   | Laptop3       | fa0     |
+| SW4          | fa0/2   | PC4           | fa0     |
 
 
-Aqui es donde yo deberia de ir conectando más cositas
+## 5. Tabla de Direccionamiento IP
 
-## 4. Tabla de Direccionamiento IP
+### 5.1 Direcciones de Dispositivos En Enrutamiento
 
-### 4.1 Direcciones de Dispositivos
+| Dispositivo | Enlace | Dirección IP | Máscara de Red |
+|-------------|--------|--------------|----------------|
+| MS1 (MAN Arriba) | MS1 ↔ MS7 | 10.4.20.1 | 255.255.255.252 |
+| MS7 (MAN Izq) | MS1 ↔ MS7 | 10.4.20.2 | 255.255.255.252 |
+| MS1 (MAN Arriba) | MS1 ↔ MS2 | 10.4.20.5 | 255.255.255.252 |
+| MS2 (MAN Der) | MS1 ↔ MS2 | 10.4.20.6 | 255.255.255.252 |
+| MS7 (MAN Izq) | MS7 ↔ MS2 | 10.4.20.9 | 255.255.255.252 |
+| MS2 (MAN Der) | MS7 ↔ MS2 | 10.4.20.10 | 255.255.255.252 |
+| MS7 (MAN Izq) | MS7 ↔ MS6 | 10.4.20.13 | 255.255.255.252 |
+| MS6 (MAN Abajo) | MS7 ↔ MS6 | 10.4.20.14 | 255.255.255.252 |
+| MS2 (MAN Der) | MS2 ↔ MS6 | 10.4.20.17 | 255.255.255.252 |
+| MS6 (MAN Abajo) | MS2 ↔ MS6 | 10.4.20.18 | 255.255.255.252 |
+| MS7 (MAN Izq) | MS7 ↔ MS9 | 10.4.20.21 | 255.255.255.252 |
+| MS9 (Core Izq) | MS7 ↔ MS9 | 10.4.20.22 | 255.255.255.252 |
+| MS2 (MAN Der) | MS2 ↔ MS3 | 10.4.20.25 | 255.255.255.252 |
+| MS3 (Core Der) | MS2 ↔ MS3 | 10.4.20.26 | 255.255.255.252 |
+| MS1 (MAN Arriba)| MS1 ↔ DHCP1 | 10.4.20.29| 255.255.255.252 |
+| DHCP1 | MS1 ↔ DHCP1 | 10.4.20.30 | 255.255.255.252 |
+| MS1 (MAN Arriba)| MS1 ↔ DHCP1 | 10.4.20.33 | 255.255.255.252 |
+| DHCP2 | MS1 ↔ DHCP2 | 10.4.20.34 | 255.255.255.252 |
 
-#### 4.1.1 Edificio Izquierdo
-| Nombre                          | VLAN | Dirección IP  | Máscara de Red | Puerta de Enlace |
-|---------------------------------|------|---------------|----------------|------------------|
-| PC0                             | 10   |               |                |                  |
-| PC1                             | 10   |               |                |                  |
-| Laptop0                         | 20   |               |                |                  |
-| Laptop1                         | 20   |               |                |                  |
-| SVI Multilayer Switch6 (Dist.)  | 10   |               |                |                  |
-| SVI Multilayer Switch6 (Dist.)  | 20   |               |                |                  |
-| SVI Multilayer Switch5 (Core)   | 10   |               |                |                  |
-| SVI Multilayer Switch5 (Core)   | 20   |               |                |                  |
-| SVI Multilayer Switch0 (Core)   | 10   |               |                |                  |
-| SVI Multilayer Switch0 (Core)   | 20   |               |                |                  |
 
-#### 4.1.2 Edificio Derecho
-| Nombre                          | VLAN | Dirección IP  | Máscara de Red | Puerta de Enlace |
-|---------------------------------|------|---------------|----------------|------------------|
-| Laptop2                         | 30   |               |                |                  |
-| PC3                             | 30   |               |                |                  |
-| Laptop3                         | 40   |               |                |                  |
-| PC4                             | 40   |               |                |                  |
-| SVI Multilayer Switch3          | 30   |               |                |                  |
-| SVI Multilayer Switch3          | 40   |               |                |                  |
+## 6. Subnetting
 
-#### 4.1.3 Edificio Administración
-| Nombre                          | VLAN | Dirección IP  | Máscara de Red | Puerta de Enlace |
-|---------------------------------|------|---------------|----------------|------------------|
-| PC-P1                           | 99   |               |                |                  |
-| PC4 (Admin)                     | 99   |               |                |                  |
-| SVI Multilayer Switch2          | 99   |               |                |                  |
-
-### 4.2 Direcciones de Puertas de Enlace
-
-#### 4.2.1 Edificio Izquierdo
-| Nombre          | VLAN | Dirección IP | Máscara de Red |
-|-----------------|------|--------------|----------------|
-| VLAN Naranja    | 10   |              |                |
-| VLAN Verde      | 20   |              |                |
-
-#### 4.2.2 Edificio Derecho
-| Nombre          | VLAN | Dirección IP | Máscara de Red |
-|-----------------|------|--------------|----------------|
-| VLAN Naranja    | 30   |              |                |
-| VLAN Verde      | 40   |              |                |
-
-#### 4.2.3 Edificio Administración
-| Nombre          | VLAN | Dirección IP | Máscara de Red |
-|-----------------|------|--------------|----------------|
-| VLAN ADMIN      | 99   |              |                |
-
-#### 4.2.4 Enlaces de Enrutamiento (MAN)
-| Dispositivo A          | Dispositivo B          | Interfaz A | Interfaz B | IP Dispositivo A | IP Dispositivo B | Máscara         |
-|------------------------|------------------------|------------|------------|------------------|------------------|-----------------|
-| Multilayer Switch4     | Multilayer Switch1     |            |            |                  |                  | 255.255.255.252 |
-| Multilayer Switch4     | Multilayer Switch3     |            |            |                  |                  | 255.255.255.252 |
-| Multilayer Switch1     | Multilayer Switch3     |            |            |                  |                  | 255.255.255.252 |
-| Multilayer Switch1     | Multilayer Switch2     |            |            |                  |                  | 255.255.255.252 |
-| Multilayer Switch3     | Multilayer Switch2     |            |            |                  |                  | 255.255.255.252 |
-
----
-
-## 5. Subnetting
-
-### 5.1 VLANs (192.188.20.0/24 - VLSM)
+### 6.1 VLANs (192.188.20.0/24 - VLSM)
 
 La red **192.188.20.0/24** se divide en cinco subredes mediante VLSM, una por cada VLAN:
 
-| HOSTS NECESARIOS | VLAN | DEPARTAMENTO               | ID RED | MÁSCARA | WILDCARD | PRIMER HOST | ÚLTIMO HOST | BROADCAST | HOSTS UTILIZABLES |
-|-----------------|------|----------------------------|--------|---------|----------|-------------|-------------|-----------|------------------|
-|                 | 10   | Naranja – Edificio Izq.    |        |         |          |             |             |           |                  |
-|                 | 20   | Verde – Edificio Izq.      |        |         |          |             |             |           |                  |
-|                 | 30   | Naranja – Edificio Der.    |        |         |          |             |             |           |                  |
-|                 | 40   | Verde – Edificio Der.      |        |         |          |             |             |           |                  |
-|                 | 99   | ADMIN – Edificio Admin.    |        |         |          |             |             |           |                  |
+# Tabla de Subredes por VLAN
 
-### 5.2 Enlaces de Enrutamiento (10.4.20.0/24 - FLSM /30)
+| Hosts Necesarios | VLAN | Departamento | ID Red | Máscara | Wildcard | Primer Host | Último Host | Broadcast | Hosts Utilizables |
+|:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 3 (/29) | 10 | Naranja – Edificio Izq. | 192.188.20.0 | 255.255.255.248 | 0.0.0.7 | 192.188.20.1 | 192.188.20.6 | 192.188.20.7 | 6 |
+| 3 (/29) | 20 | Verde – Edificio Izq. | 192.188.20.8 | 255.255.255.248 | 0.0.0.7 | 192.188.20.9 | 192.188.20.14 | 192.188.20.15 | 6 |
+| 3 (/29) | 30 | Naranja – Edificio Der. | 192.188.20.16 | 255.255.255.248 | 0.0.0.7 | 192.188.20.17 | 192.188.20.22 | 192.188.20.23 | 6 |
+| 3 (/29) | 40 | Verde – Edificio Der. | 192.188.20.24 | 255.255.255.248 | 0.0.0.7 | 192.188.20.25 | 192.188.20.30 | 192.188.20.31 | 6 |
+| 2 (/30) | 99 | ADMIN – Edificio Admin. | 192.188.20.32 | 255.255.255.252 | 0.0.0.3 | 192.188.20.33 | 192.188.20.34 | 192.188.20.35 | 2 |
+
+### 6.2 Enlaces de Enrutamiento (10.4.20.0/24 - FLSM /30)
 
 La red **10.4.20.0/24** se divide en subredes /30 (4 IPs por enlace) para los enlaces punto a punto entre switches multicapa:
 
-| HOSTS NECESARIOS | Dispositivo A      | Dispositivo B      | ID RED | MÁSCARA         | WILDCARD  | PRIMER HOST | ÚLTIMO HOST | BROADCAST | HOSTS UTILIZABLES | HOSTS UTILIZADOS | DESPERDICIO |
-|-----------------|--------------------|--------------------|--------|-----------------|-----------|-------------|-------------|-----------|------------------|-----------------|-------------|
-| 2               | Multilayer Switch4 | Multilayer Switch1 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
-| 2               | Multilayer Switch4 | Multilayer Switch3 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
-| 2               | Multilayer Switch1 | Multilayer Switch3 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
-| 2               | Multilayer Switch1 | Multilayer Switch2 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
-| 2               | Multilayer Switch3 | Multilayer Switch2 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
-| 2               | Multilayer Switch1 | Multilayer Switch5 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
-| 2               | Multilayer Switch1 | Multilayer Switch0 |        | 255.255.255.252 | 0.0.0.3   |             |             |           | 2                | 2               | 0           |
+| HOSTS NECESARIOS | Dispositivo A | Dispositivo B | ID RED | MÁSCARA | WILDCARD | PRIMER HOST | ÚLTIMO HOST | BROADCAST | HOSTS UTILIZABLES | HOSTS UTILIZADOS | DESPERDICIO |
+|-----------------|---------------|---------------|--------|---------|----------|-------------|-------------|-----------|-------------------|------------------|-------------|
+| 2 | MS1 (MAN Arriba) | MS7 (MAN Izq) | 10.4.20.0 | 255.255.255.252 | 0.0.0.3 | 10.4.20.1 | 10.4.20.2 | 10.4.20.3 | 2 | 2 | 0 |
+| 2 | MS1 (MAN Arriba) | MS2 (MAN Der) | 10.4.20.4 | 255.255.255.252 | 0.0.0.3 | 10.4.20.5 | 10.4.20.6 | 10.4.20.7 | 2 | 2 | 0 |
+| 2 | MS7 (MAN Izq) | MS2 (MAN Der) | 10.4.20.8 | 255.255.255.252 | 0.0.0.3 | 10.4.20.9 | 10.4.20.10 | 10.4.20.11 | 2 | 2 | 0 |
+| 2 | MS7 (MAN Izq) | MS6 (MAN Abajo) | 10.4.20.12 | 255.255.255.252 | 0.0.0.3 | 10.4.20.13 | 10.4.20.14 | 10.4.20.15 | 2 | 2 | 0 |
+| 2 | MS2 (MAN Der) | MS6 (MAN Abajo) | 10.4.20.16 | 255.255.255.252 | 0.0.0.3 | 10.4.20.17 | 10.4.20.18 | 10.4.20.19 | 2 | 2 | 0 |
+| 2 | MS7 (MAN Izq) | MS9 (Core Izq) | 10.4.20.20 | 255.255.255.252 | 0.0.0.3 | 10.4.20.21 | 10.4.20.22 | 10.4.20.23 | 2 | 2 | 0 |
+| 2 | MS2 (MAN Der) | MS3 (Core Der) | 10.4.20.24 | 255.255.255.252 | 0.0.0.3 | 10.4.20.25 | 10.4.20.26 | 10.4.20.27 | 2 | 2 | 0 |
+| 2 | MS1 (MAN Arriba) | DHCP1 | 10.4.20.28 | 255.255.255.252 | 0.0.0.3 | 10.4.20.29 | 10.4.20.30 | 10.4.20.31 | 2 | 2 | 0 |
+| 2 | MS1 (MAN Arriba) | DHCP2 | 10.4.20.32 | 255.255.255.252 | 0.0.0.3 | 10.4.20.33 | 10.4.20.34 | 10.4.20.35 | 2 | 2 | 0 |
 
+
+> **Nota:** Se optó por utilizar enlaces enrutados (/30) de la red 10.4.20.0/24 para los servidores DHCP ya que garantiza una separación lógica a nivel de Capa 3 directamente desde el anillo MAN, facilitando la inyección de rutas en OSPF y el uso del DHCP Relay.
 ---
 
-## 6. Configuraciones de Dispositivos
+## 7 Configuraciones de Dispositivos
+
+### 7.1 Configuraciones de Dispositivos de Enrutamiento
+
+#### 7.1.1 Configuración para MS1
+
+```bash
+enable
+configure terminal
+hostname MS1
+
+! 1. Encender el enrutamiento IPv4 en el switch multicapa
+ip routing
+
+! 2. Configurar la interfaz hacia MS7
+interface GigabitEthernet1/1/1
+ no switchport
+ ip address 10.4.20.1 255.255.255.252
+ no shutdown
+ exit
+
+! 3. Configurar la interfaz hacia MS2
+interface GigabitEthernet1/1/4
+ no switchport
+ ip address 10.4.20.5 255.255.255.252
+ no shutdown
+ exit
+
+! 4. Levantar el protocolo OSPF
+router ospf 1
+ network 10.4.20.0 0.0.0.3 area 0
+ network 10.4.20.4 0.0.0.3 area 0
+ exit
+
+
+! 5. Hacia Server DHCP 1
+interface GigabitEthernet1/0/1
+ no switchport
+ ip address 10.4.20.29 255.255.255.252
+ no shutdown
+ exit
+
+! 6. Hacia Server DHCP 2
+interface GigabitEthernet1/0/2
+ no switchport
+ ip address 10.4.20.33 255.255.255.252
+ no shutdown
+ exit
+
+! 7. Agregar estas redes a OSPF para que toda la red conozca el camino a los servidores
+router ospf 1
+ network 10.4.20.28 0.0.0.3 area 0
+ network 10.4.20.32 0.0.0.3 area 0
+ exit
+```
+
+
+#### 7.1.2 Configuración MS2
+
+```bash
+enable
+configure terminal
+hostname MS2
+
+! Encender enrutamiento
+ip routing
+
+! Hacia MS1
+interface GigabitEthernet1/1/4
+ no switchport
+ ip address 10.4.20.6 255.255.255.252
+ no shutdown
+ exit
+
+! Hacia MS7
+interface GigabitEthernet1/1/2
+ no switchport
+ ip address 10.4.20.10 255.255.255.252
+ no shutdown
+ exit
+
+! Hacia MS6
+interface GigabitEthernet1/1/3
+ no switchport
+ ip address 10.4.20.17 255.255.255.252
+ no shutdown
+ exit
+
+! OSPF
+router ospf 1
+ network 10.4.20.4 0.0.0.3 area 0
+ network 10.4.20.8 0.0.0.3 area 0
+ network 10.4.20.16 0.0.0.3 area 0
+ exit
+
+```
+
+
+#### 7.1.6 Configuración MS6
+
+```bash
+enable
+configure terminal
+hostname MS6
+
+ip routing
+
+! Hacia MS7
+interface GigabitEthernet1/1/2
+ no switchport
+ ip address 10.4.20.14 255.255.255.252
+ no shutdown
+ exit
+
+! Hacia MS2
+interface GigabitEthernet1/1/3
+ no switchport
+ ip address 10.4.20.18 255.255.255.252
+ no shutdown
+ exit
+
+! OSPF
+router ospf 1
+ network 10.4.20.12 0.0.0.3 area 0
+ network 10.4.20.16 0.0.0.3 area 0
+ exit
+
+! --- PREPARACIÓN VLAN ADMIN ---
+vlan 99
+ name VLAN_ADMIN_EdificioADMIN_202302220
+ exit
+
+! Asignar el puerto de la PC a la VLAN
+interface GigabitEthernet1/0/1
+ switchport mode access
+ switchport access vlan 99
+ exit
+ 
+```
+
+
+
+#### 7.1.7 Configuración MS7
+
+```bash
+enable
+configure terminal
+hostname MS7
+
+! 1. Encender el enrutamiento
+ip routing
+
+! 2. Configurar la interfaz hacia MS1
+interface GigabitEthernet1/1/1
+ no switchport
+ ip address 10.4.20.2 255.255.255.252
+ no shutdown
+ exit
+
+! 3. Configurar la interfaz hacia MS2
+interface GigabitEthernet1/1/4
+ no switchport
+ ip address 10.4.20.9 255.255.255.252
+ no shutdown
+ exit
+
+! 4. Configurar la interfaz hacia MS6
+interface GigabitEthernet1/1/2
+ no switchport
+ ip address 10.4.20.13 255.255.255.252
+ no shutdown
+ exit
+
+! 5. Levantar el protocolo OSPF
+router ospf 1
+ network 10.4.20.0 0.0.0.3 area 0
+ network 10.4.20.8 0.0.0.3 area 0
+ network 10.4.20.12 0.0.0.3 area 0
+ exit
+
+
+! 6. LACP Hacia MS9 (Port-Channel 1)
+interface range GigabitEthernet1/0/1 - 3
+ channel-protocol lacp
+ channel-group 1 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 7. LACP Hacia MS8 (Port-Channel 2) 
+interface range GigabitEthernet1/0/4 - 6
+ channel-protocol lacp
+ channel-group 2 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+```
+
+
+#### 7.1.8 Configuración MS8
+
+```bash
+enable
+configure terminal
+hostname MS8
+
+! 1. LACP Hacia MS7 (Port-Channel 2)
+interface range FastEthernet0/4 - 6
+ channel-protocol lacp
+ channel-group 2 mode passive
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 2. LACP Hacia MS9 (Port-Channel 3)
+interface range FastEthernet0/7 - 9
+ channel-protocol lacp
+ channel-group 3 mode passive
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+```
+
+
+#### 7.1.9 Configuración MS9
+
+```bash
+enable
+configure terminal
+hostname MS9
+
+! 1. LACP Hacia MS7 (Port-Channel 1)
+interface range FastEthernet0/1 - 3
+ channel-protocol lacp
+ channel-group 1 mode passive
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 2. LACP Hacia MS8 (Port-Channel 3) 
+interface range FastEthernet0/7 - 9
+ channel-protocol lacp
+ channel-group 3 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+```
+
+
+
+
+
+### 7.2 Configuraciones de Dispositivos entre Edificios
+
+
+### 7.3 Configuraciones de Dispositivos de Edificio Izquierdo
+
+
+### 7.4 Configuraciones de Dispositivos de Edificio Derecho
+
 
