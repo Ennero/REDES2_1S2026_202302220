@@ -10,24 +10,25 @@
     - [2.1 Inclusiones](#21-inclusiones)
     - [2.2 Exclusiones](#22-exclusiones)
   - [3. Topología de Red](#3-topología-de-red)
-- [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
+  - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
-    - [5.1 Direcciones de Dispositivos En Enrutamiento](#51-direcciones-de-dispositivos-en-enrutamiento)
+    - [5.1 Direcciones de Dispositivos en Enrutamiento](#51-direcciones-de-dispositivos-en-enrutamiento)
   - [6. Subnetting](#6-subnetting)
     - [6.1 VLANs (192.188.20.0/24 - VLSM)](#61-vlans-19218820024---vlsm)
-- [Tabla de Subredes por VLAN](#tabla-de-subredes-por-vlan)
+      - [Tabla de Subredes por VLAN](#tabla-de-subredes-por-vlan)
     - [6.2 Enlaces de Enrutamiento (10.4.20.0/24 - FLSM /30)](#62-enlaces-de-enrutamiento-10420024---flsm-30)
-  - [7 Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
-    - [7.1 Configuraciones de Dispositivos de Enrutamiento](#71-configuraciones-de-dispositivos-de-enrutamiento)
-      - [7.1.1 Configuración para MS1](#711-configuración-para-ms1)
+  - [7. Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
+    - [7.1 Configuraciones de Dispositivos de Red MAN](#71-configuraciones-de-dispositivos-de-red-man)
+      - [7.1.1 Configuración MS1](#711-configuración-ms1)
       - [7.1.2 Configuración MS2](#712-configuración-ms2)
-      - [7.1.6 Configuración MS6](#716-configuración-ms6)
-      - [7.1.7 Configuración MS7](#717-configuración-ms7)
-      - [7.1.8 Configuración MS8](#718-configuración-ms8)
-      - [7.1.9 Configuración MS9](#719-configuración-ms9)
-    - [7.2 Configuraciones de Dispositivos entre Edificios](#72-configuraciones-de-dispositivos-entre-edificios)
-    - [7.3 Configuraciones de Dispositivos de Edificio Izquierdo](#73-configuraciones-de-dispositivos-de-edificio-izquierdo)
-    - [7.4 Configuraciones de Dispositivos de Edificio Derecho](#74-configuraciones-de-dispositivos-de-edificio-derecho)
+      - [7.1.3 Configuración MS6](#713-configuración-ms6)
+      - [7.1.4 Configuración MS7](#714-configuración-ms7)
+    - [7.2 Configuración de Dispositivos de Edificio Izquierdo](#72-configuración-de-dispositivos-de-edificio-izquierdo)
+      - [7.2.1 Configuración MS8](#721-configuración-ms8)
+      - [7.2.2 Configuración MS9](#722-configuración-ms9)
+      - [7.2.3 Configuración SW1](#723-configuración-sw1)
+      - [7.2.4 Configuración SW2](#724-configuración-sw2)
+    - [7.3 Configuraciones de Dispositivos de Edificio Derecho](#73-configuraciones-de-dispositivos-de-edificio-derecho)
 
 ---
 
@@ -78,7 +79,7 @@ A continuación se presenta el diagrama de la topología de red implementada en 
 
 ---
 
-# 4. Tabla de Conexiones de la Red
+## 4. Tabla de Conexiones de la Red
 
 |  Switch      |Interfaz1|  Switch/PC 1  |Interfaz2|
 |--------------|---------|---------------|---------|
@@ -125,7 +126,7 @@ A continuación se presenta el diagrama de la topología de red implementada en 
 
 ## 5. Tabla de Direccionamiento IP
 
-### 5.1 Direcciones de Dispositivos En Enrutamiento
+### 5.1 Direcciones de Dispositivos en Enrutamiento
 
 | Dispositivo | Enlace | Dirección IP | Máscara de Red |
 |-------------|--------|--------------|----------------|
@@ -145,7 +146,7 @@ A continuación se presenta el diagrama de la topología de red implementada en 
 | MS3 (Core Der) | MS2 ↔ MS3 | 10.4.20.26 | 255.255.255.252 |
 | MS1 (MAN Arriba)| MS1 ↔ DHCP1 | 10.4.20.29| 255.255.255.252 |
 | DHCP1 | MS1 ↔ DHCP1 | 10.4.20.30 | 255.255.255.252 |
-| MS1 (MAN Arriba)| MS1 ↔ DHCP1 | 10.4.20.33 | 255.255.255.252 |
+| MS1 (MAN Arriba)| MS1 ↔ DHCP2 | 10.4.20.33 | 255.255.255.252 |
 | DHCP2 | MS1 ↔ DHCP2 | 10.4.20.34 | 255.255.255.252 |
 
 
@@ -155,7 +156,7 @@ A continuación se presenta el diagrama de la topología de red implementada en 
 
 La red **192.188.20.0/24** se divide en cinco subredes mediante VLSM, una por cada VLAN:
 
-# Tabla de Subredes por VLAN
+#### Tabla de Subredes por VLAN
 
 | Hosts Necesarios | VLAN | Departamento | ID Red | Máscara | Wildcard | Primer Host | Último Host | Broadcast | Hosts Utilizables |
 |:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -185,11 +186,11 @@ La red **10.4.20.0/24** se divide en subredes /30 (4 IPs por enlace) para los en
 > **Nota:** Se optó por utilizar enlaces enrutados (/30) de la red 10.4.20.0/24 para los servidores DHCP ya que garantiza una separación lógica a nivel de Capa 3 directamente desde el anillo MAN, facilitando la inyección de rutas en OSPF y el uso del DHCP Relay.
 ---
 
-## 7 Configuraciones de Dispositivos
+## 7. Configuraciones de Dispositivos
 
-### 7.1 Configuraciones de Dispositivos de Enrutamiento
+### 7.1 Configuraciones de Dispositivos de Red MAN
 
-#### 7.1.1 Configuración para MS1
+#### 7.1.1 Configuración MS1
 
 ```bash
 enable
@@ -249,31 +250,31 @@ enable
 configure terminal
 hostname MS2
 
-! Encender enrutamiento
+! 1. Encender enrutamiento
 ip routing
 
-! Hacia MS1
+! 2. Hacia MS1
 interface GigabitEthernet1/1/4
  no switchport
  ip address 10.4.20.6 255.255.255.252
  no shutdown
  exit
 
-! Hacia MS7
+! 3. Hacia MS7
 interface GigabitEthernet1/1/2
  no switchport
  ip address 10.4.20.10 255.255.255.252
  no shutdown
  exit
 
-! Hacia MS6
+! 4. Hacia MS6
 interface GigabitEthernet1/1/3
  no switchport
  ip address 10.4.20.17 255.255.255.252
  no shutdown
  exit
 
-! OSPF
+! 5. OSPF
 router ospf 1
  network 10.4.20.4 0.0.0.3 area 0
  network 10.4.20.8 0.0.0.3 area 0
@@ -283,41 +284,42 @@ router ospf 1
 ```
 
 
-#### 7.1.6 Configuración MS6
+#### 7.1.3 Configuración MS6
 
 ```bash
 enable
 configure terminal
 hostname MS6
 
+! 1. Encender el IP routing
 ip routing
 
-! Hacia MS7
+! 2. Hacia MS7
 interface GigabitEthernet1/1/2
  no switchport
  ip address 10.4.20.14 255.255.255.252
  no shutdown
  exit
 
-! Hacia MS2
+! 3. Hacia MS2
 interface GigabitEthernet1/1/3
  no switchport
  ip address 10.4.20.18 255.255.255.252
  no shutdown
  exit
 
-! OSPF
+! 4. OSPF
 router ospf 1
  network 10.4.20.12 0.0.0.3 area 0
  network 10.4.20.16 0.0.0.3 area 0
  exit
 
-! --- PREPARACIÓN VLAN ADMIN ---
+! 5. PREPARACIÓN VLAN ADMIN 
 vlan 99
  name VLAN_ADMIN_EdificioADMIN_202302220
  exit
 
-! Asignar el puerto de la PC a la VLAN
+! 6. Asignar el puerto de la PC a la VLAN
 interface GigabitEthernet1/0/1
  switchport mode access
  switchport access vlan 99
@@ -327,7 +329,7 @@ interface GigabitEthernet1/0/1
 
 
 
-#### 7.1.7 Configuración MS7
+#### 7.1.4 Configuración MS7
 
 ```bash
 enable
@@ -381,10 +383,24 @@ interface range GigabitEthernet1/0/4 - 6
  switchport trunk encapsulation dot1q
  switchport mode trunk
  exit
+
+
+! 8. Habilitar modo Rapid PVST
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20 root primary
+exit
 ```
 
 
-#### 7.1.8 Configuración MS8
+
+
+
+
+
+### 7.2 Configuración de Dispositivos de Edificio Izquierdo
+
+
+#### 7.2.1 Configuración MS8
 
 ```bash
 enable
@@ -406,10 +422,25 @@ interface range FastEthernet0/7 - 9
  switchport trunk encapsulation dot1q
  switchport mode trunk
  exit
+
+
+! 3. LACP Hacia SW1 (Port-Channel 5)
+interface range FastEthernet0/23 - 24
+ channel-protocol lacp
+ channel-group 5 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 4. Configuración de rapid-pvst
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20 root secondary
+exit
+
 ```
 
 
-#### 7.1.9 Configuración MS9
+#### 7.2.2 Configuración MS9
 
 ```bash
 enable
@@ -431,18 +462,73 @@ interface range FastEthernet0/7 - 9
  switchport trunk encapsulation dot1q
  switchport mode trunk
  exit
+
+! 3. LACP Hacia SW2 (Port-Channel 4)
+interface range FastEthernet0/23 - 24
+ channel-protocol lacp
+ channel-group 4 mode active
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 4. Configuración de rapid-pvst
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,20 root secondary
+exit
+
+```
+
+#### 7.2.3 Configuración SW1
+
+```bash
+enable
+configure terminal
+hostname SW1
+
+! 1. LACP Hacia MS8 (Port-Channel 5)
+interface range FastEthernet0/23 - 24
+ channel-protocol lacp
+ channel-group 5 mode passive
+ switchport mode trunk
+ exit
+
+! 2. Configuración de rapid-pvst
+spanning-tree mode rapid-pvst
+exit
 ```
 
 
+#### 7.2.4 Configuración SW2
+
+```bash
+enable
+configure terminal
+hostname SW2
+
+! 1. LACP Hacia MS9 (Port-Channel 4)
+interface range FastEthernet0/23 - 24
+ channel-protocol lacp
+ channel-group 4 mode passive
+ switchport mode trunk
+ exit
+
+! 2. Configuración de rapid-pvst
+spanning-tree mode rapid-pvst
+exit
+```
+
+
+### 7.3 Configuraciones de Dispositivos de Edificio Derecho
 
 
 
-### 7.2 Configuraciones de Dispositivos entre Edificios
 
 
-### 7.3 Configuraciones de Dispositivos de Edificio Izquierdo
 
 
-### 7.4 Configuraciones de Dispositivos de Edificio Derecho
+
+
+
+
 
 
