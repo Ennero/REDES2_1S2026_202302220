@@ -29,6 +29,11 @@
       - [7.2.3 Configuración SW1](#723-configuración-sw1)
       - [7.2.4 Configuración SW2](#724-configuración-sw2)
     - [7.3 Configuraciones de Dispositivos de Edificio Derecho](#73-configuraciones-de-dispositivos-de-edificio-derecho)
+      - [7.3.1 Configuración MS3](#731-configuración-ms3)
+      - [7.3.2 Configuración MS4](#732-configuración-ms4)
+      - [7.3.2 Configuración MS5](#732-configuración-ms5)
+      - [7.3.3 Configuración SW3](#733-configuración-sw3)
+      - [7.3.4 Configuración SW4](#734-configuración-sw4)
 
 ---
 
@@ -281,6 +286,21 @@ router ospf 1
  network 10.4.20.16 0.0.0.3 area 0
  exit
 
+! 6. PAgP Hacia MS3 (Port-Channel 6)
+interface range GigabitEthernet1/0/22 - 24
+ channel-protocol pagp
+ channel-group 6 mode desirable
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 7. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
 ```
 
 
@@ -389,6 +409,21 @@ interface range GigabitEthernet1/0/4 - 6
 spanning-tree mode rapid-pvst
 spanning-tree vlan 10,20 root primary
 exit
+
+
+! 9. Configuración VTP (Modo Servidor)
+vtp version 2
+vtp mode server
+vtp domain chapinred
+vtp password redes2
+
+
+! 10. Creación de VLANs del Edificio Izquierdo
+vlan 10
+ name VLAN_Naranja_EdificioIZQ_202302220
+vlan 20
+ name VLAN_Verde_EdificioIZQ_202302220
+exit
 ```
 
 
@@ -437,6 +472,13 @@ spanning-tree mode rapid-pvst
 spanning-tree vlan 10,20 root secondary
 exit
 
+! 5. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
 ```
 
 
@@ -476,6 +518,13 @@ spanning-tree mode rapid-pvst
 spanning-tree vlan 10,20 root secondary
 exit
 
+! 5. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
 ```
 
 #### 7.2.3 Configuración SW1
@@ -484,6 +533,7 @@ exit
 enable
 configure terminal
 hostname SW1
+
 
 ! 1. LACP Hacia MS8 (Port-Channel 5)
 interface range FastEthernet0/23 - 24
@@ -495,6 +545,29 @@ interface range FastEthernet0/23 - 24
 ! 2. Configuración de rapid-pvst
 spanning-tree mode rapid-pvst
 exit
+
+
+! 3. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
+
+! 4. Asignación de puerto para PC1 (VLAN Naranja)
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 10
+ exit
+
+
+! 5. Asignación de puerto para PC2 (VLAN Verde)
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 20
+ exit
+
 ```
 
 
@@ -515,20 +588,216 @@ interface range FastEthernet0/23 - 24
 ! 2. Configuración de rapid-pvst
 spanning-tree mode rapid-pvst
 exit
+
+! 3. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
+
+! 4. Asignación de puerto para Laptop0 (VLAN Naranja)
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 10
+ exit
+
+! 5. Asignación de puerto para Laptop1 (VLAN Verde)
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 20
+ exit
+
 ```
 
 
 ### 7.3 Configuraciones de Dispositivos de Edificio Derecho
 
+#### 7.3.1 Configuración MS3  
+
+```bash
+enable
+configure terminal
+hostname MS3
+
+! 1. PAgP Hacia MS2 (Port-Channel 6)
+interface range FastEthernet0/22 - 24
+ channel-protocol pagp
+ channel-group 6 mode auto
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 2. PAgP Hacia MS4 (Port-Channel 7)
+interface range FastEthernet0/1 - 3
+ channel-protocol pagp
+ channel-group 7 mode desirable
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 3. Configuración de rapid-pvst (Root Primary)
+spanning-tree mode rapid-pvst
+spanning-tree vlan 30,40 root primary
+exit
+
+! 4. Configuración VTP (Modo Servidor)
+vtp version 2
+vtp mode server
+vtp domain chapinred
+vtp password redes2
+
+! 5. Creación de VLANs del Edificio Derecho
+vlan 30
+ name VLAN_Naranja_EdificioDER_202302220
+vlan 40
+ name VLAN_Verde_EdificioDER_202302220
+exit
+```
 
 
 
 
+#### 7.3.2 Configuración MS4
+
+```bash
+enable
+configure terminal
+hostname MS4
+
+! 1. PAgP Hacia MS3 (Port-Channel 7)
+interface range FastEthernet0/1 - 3
+ channel-protocol pagp
+ channel-group 7 mode auto
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 2. PAgP Hacia MS5 (Port-Channel 8)
+interface range FastEthernet0/23 - 24
+ channel-protocol pagp
+ channel-group 8 mode desirable
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 3. Configuración de rapid-pvst (Root Secondary)
+spanning-tree mode rapid-pvst
+spanning-tree vlan 30,40 root secondary
+exit
+
+! 4. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+```
 
 
+#### 7.3.2 Configuración MS5
+
+```bash
+enable
+configure terminal
+hostname MS5
+
+! 1. PAgP Hacia MS4 (Port-Channel 8)
+interface range FastEthernet0/23 - 24
+ channel-protocol pagp
+ channel-group 8 mode auto
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 2. Troncales hacia SW3 y SW4 (Cables individuales)
+interface range FastEthernet0/3 - 4
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ exit
+
+! 3. Configuración de rapid-pvst
+spanning-tree mode rapid-pvst
+exit
+
+! 4. Configuración VTP (Modo Cliente)
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
+```
 
 
+#### 7.3.3 Configuración SW3
+
+```bash
+enable
+configure terminal
+hostname SW3
+
+! 1. Troncal hacia MS5
+interface FastEthernet0/3
+ switchport mode trunk
+ exit
+
+! 2. Configuración de rapid-pvst y VTP
+spanning-tree mode rapid-pvst
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
+! 3. Asignación de puerto para Laptop2 (VLAN Verde)
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 40
+ exit
+
+! 4. Asignación de puerto para PC3 (VLAN Naranja)
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 30
+ exit
+
+```
+
+#### 7.3.4 Configuración SW4
 
 
+```bash
+enable
+configure terminal
+hostname SW4
 
+! 1. Troncal hacia MS5
+interface FastEthernet0/4
+ switchport mode trunk
+ exit
+
+! 2. Configuración de rapid-pvst y VTP
+spanning-tree mode rapid-pvst
+vtp version 2
+vtp mode client
+vtp domain chapinred
+vtp password redes2
+exit
+
+! 3. Asignación de puerto para Laptop3 (VLAN Verde)
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 40
+ exit
+
+! 4. Asignación de puerto para PC4 (VLAN Naranja)
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 30
+ exit
+
+
+```
 
