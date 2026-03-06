@@ -32,12 +32,17 @@
     - [7.3 Configuraciones de Dispositivos de Edificio Derecho](#73-configuraciones-de-dispositivos-de-edificio-derecho)
       - [7.3.1 Configuración MS3](#731-configuración-ms3)
       - [7.3.2 Configuración MS4](#732-configuración-ms4)
-      - [7.3.3 Configuración MS5](#733-configuración-ms5)
-      - [7.3.4 Configuración SW3](#734-configuración-sw3)
-      - [7.3.5 Configuración SW4](#735-configuración-sw4)
-  - [7.4 Configuración de Servidores DHCP](#74-configuración-de-servidores-dhcp)
-    - [7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)](#741-configuración-de-servidor-dhcp-1-edificio-izquierdo-y-admin)
-      - [Configuración de Pools DHCP](#configuración-de-pools-dhcp)
+      - [7.3.2 Configuración MS5](#732-configuración-ms5)
+      - [7.3.3 Configuración SW3](#733-configuración-sw3)
+      - [7.3.4 Configuración SW4](#734-configuración-sw4)
+    - [7.4 Configuración de Servidores DHCP](#74-configuración-de-servidores-dhcp)
+      - [7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)](#741-configuración-de-servidor-dhcp-1-edificio-izquierdo-y-admin)
+        - [Configuración de Pools DHCP](#configuración-de-pools-dhcp)
+      - [7.4.2 Configuración de Servidor DHCP 2 (Edificio Derecho)](#742-configuración-de-servidor-dhcp-2-edificio-derecho)
+        - [Configuración de Pools DHCP](#configuración-de-pools-dhcp-1)
+  - [8. Listas de Control de Acceso (ACLs)](#8-listas-de-control-de-acceso-acls)
+    - [8.1 ACLs en el Edificio Izquierdo (Configurado en MS7)](#81-acls-en-el-edificio-izquierdo-configurado-en-ms7)
+    - [8.2 ACLs en el Edificio Derecho (Configurado en MS3)](#82-acls-en-el-edificio-derecho-configurado-en-ms3)
 
 ---
 
@@ -800,7 +805,7 @@ exit
 ```
 
 
-#### 7.3.3 Configuración MS5
+#### 7.3.2 Configuración MS5
 
 ```bash
 enable
@@ -835,7 +840,7 @@ exit
 ```
 
 
-#### 7.3.4 Configuración SW3
+#### 7.3.3 Configuración SW3
 
 ```bash
 enable
@@ -869,7 +874,7 @@ interface FastEthernet0/2
 
 ```
 
-#### 7.3.5 Configuración SW4
+#### 7.3.4 Configuración SW4
 
 
 ```bash
@@ -906,9 +911,9 @@ interface FastEthernet0/2
 ```
 
 
-## 7.4 Configuración de Servidores DHCP
+### 7.4 Configuración de Servidores DHCP
 
-### 7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)
+#### 7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)
 
 Configuración IP del Servidor (Pestaña Desktop -> IP Configuration):
 
@@ -918,11 +923,137 @@ Subnet Mask: 255.255.255.252
 
 Default Gateway: 10.4.20.29
 
-#### Configuración de Pools DHCP
+##### Configuración de Pools DHCP
 
 | Pool Name | Default Gateway | Start IP Address | Subnet Mask | Maximum Number of Users |
 |---|---|---|---|---|
 | VLAN10_Naranja | 192.188.20.1 | 192.188.20.2 | 255.255.255.248 | 5 |
 | VLAN20_Verde | 192.188.20.9 | 192.188.20.10 | 255.255.255.248 | 5 |
 | VLAN99_Admin | 192.188.20.33 | 192.188.20.34 | 255.255.255.252 | 1 |
+
+
+#### 7.4.2 Configuración de Servidor DHCP 2 (Edificio Derecho)
+
+Configuración IP del Servidor (Pestaña Desktop -> IP Configuration):
+
+IP Address: 10.4.20.34
+
+Subnet Mask: 255.255.255.252
+
+Default Gateway: 10.4.20.33
+
+
+##### Configuración de Pools DHCP
+
+| Pool Name | Default Gateway | Start IP Address | Subnet Mask | Maximum Number of Users |
+|---|---|---|---|---|
+| VLAN30_Naranja | 192.188.20.17 | 192.188.20.18 | 255.255.255.248 | 5 |
+| VLAN40_Verde | 192.188.20.25 | 192.188.20.26 | 255.255.255.248 | 5 |
+
+
+
+
+
+## 8. Listas de Control de Acceso (ACLs)
+
+### 8.1 ACLs en el Edificio Izquierdo (Configurado en MS7)
+
+El switch MS7 actúa como Gateway para las VLANs 10 (Naranja) y 20 (Verde), por lo que las políticas de bloqueo en el origen se aplican aquí.
+
+```bash
+enable
+configure terminal
+
+! --- ACL PARA VLAN 10 (Naranja Izquierda) ---
+ip access-list extended ACL_NARANJA_IZQ
+ remark Permite responder pings iniciados por VLAN ADMIN
+ permit icmp 192.188.20.0 0.0.0.7 192.188.20.32 0.0.0.3 echo-reply
+ remark Permite responder conexiones TCP iniciadas por VLAN ADMIN
+ permit tcp 192.188.20.0 0.0.0.7 192.188.20.32 0.0.0.3 established
+ remark Bloquea cualquier intento de iniciar comunicacion hacia VLAN ADMIN
+ deny ip 192.188.20.0 0.0.0.7 192.188.20.32 0.0.0.3
+ remark Bloquea trafico hacia VLAN Verde Izquierda
+ deny ip 192.188.20.0 0.0.0.7 192.188.20.8 0.0.0.7
+ remark Bloquea trafico hacia VLAN Verde Derecha
+ deny ip 192.188.20.0 0.0.0.7 192.188.20.24 0.0.0.7
+ remark Permite el resto del trafico (hacia Naranja Derecha y DHCP)
+ permit ip any any
+ exit
+
+! --- ACL PARA VLAN 20 (Verde Izquierda) ---
+ip access-list extended ACL_VERDE_IZQ
+ remark Permite responder pings iniciados por VLAN ADMIN
+ permit icmp 192.188.20.8 0.0.0.7 192.188.20.32 0.0.0.3 echo-reply
+ remark Permite responder conexiones TCP iniciadas por VLAN ADMIN
+ permit tcp 192.188.20.8 0.0.0.7 192.188.20.32 0.0.0.3 established
+ remark Bloquea cualquier intento de iniciar comunicacion hacia VLAN ADMIN
+ deny ip 192.188.20.8 0.0.0.7 192.188.20.32 0.0.0.3
+ remark Bloquea trafico hacia VLAN Naranja Izquierda
+ deny ip 192.188.20.8 0.0.0.7 192.188.20.0 0.0.0.7
+ remark Bloquea trafico hacia VLAN Naranja Derecha
+ deny ip 192.188.20.8 0.0.0.7 192.188.20.16 0.0.0.7
+ remark Permite el resto del trafico (hacia Verde Derecha y DHCP)
+ permit ip any any
+ exit
+
+! --- APLICACIÓN DE LAS ACLs EN LAS INTERFACES SVI ---
+interface Vlan10
+ ip access-group ACL_NARANJA_IZQ in
+ exit
+
+interface Vlan20
+ ip access-group ACL_VERDE_IZQ in
+ exit
+```
+
+
+
+### 8.2 ACLs en el Edificio Derecho (Configurado en MS3)
+
+```bash
+enable
+configure terminal
+
+! --- ACL PARA VLAN 30 (Naranja Derecha) ---
+ip access-list extended ACL_NARANJA_DER
+ remark Permite responder pings iniciados por VLAN ADMIN
+ permit icmp 192.188.20.16 0.0.0.7 192.188.20.32 0.0.0.3 echo-reply
+ remark Permite responder conexiones TCP iniciadas por VLAN ADMIN
+ permit tcp 192.188.20.16 0.0.0.7 192.188.20.32 0.0.0.3 established
+ remark Bloquea cualquier intento de iniciar comunicacion hacia VLAN ADMIN
+ deny ip 192.188.20.16 0.0.0.7 192.188.20.32 0.0.0.3
+ remark Bloquea trafico hacia VLAN Verde Izquierda
+ deny ip 192.188.20.16 0.0.0.7 192.188.20.8 0.0.0.7
+ remark Bloquea trafico hacia VLAN Verde Derecha
+ deny ip 192.188.20.16 0.0.0.7 192.188.20.24 0.0.0.7
+ remark Permite el resto del trafico (hacia Naranja Izquierda y DHCP)
+ permit ip any any
+ exit
+
+! --- ACL PARA VLAN 40 (Verde Derecha) ---
+ip access-list extended ACL_VERDE_DER
+ remark Permite responder pings iniciados por VLAN ADMIN
+ permit icmp 192.188.20.24 0.0.0.7 192.188.20.32 0.0.0.3 echo-reply
+ remark Permite responder conexiones TCP iniciadas por VLAN ADMIN
+ permit tcp 192.188.20.24 0.0.0.7 192.188.20.32 0.0.0.3 established
+ remark Bloquea cualquier intento de iniciar comunicacion hacia VLAN ADMIN
+ deny ip 192.188.20.24 0.0.0.7 192.188.20.32 0.0.0.3
+ remark Bloquea trafico hacia VLAN Naranja Izquierda
+ deny ip 192.188.20.24 0.0.0.7 192.188.20.0 0.0.0.7
+ remark Bloquea trafico hacia VLAN Naranja Derecha
+ deny ip 192.188.20.24 0.0.0.7 192.188.20.16 0.0.0.7
+ remark Permite el resto del trafico (hacia Verde Izquierda y DHCP)
+ permit ip any any
+ exit
+
+! --- APLICACIÓN DE LAS ACLs EN LAS INTERFACES SVI ---
+interface Vlan30
+ ip access-group ACL_NARANJA_DER in
+ exit
+
+interface Vlan40
+ ip access-group ACL_VERDE_DER in
+ exit
+```
+
 
