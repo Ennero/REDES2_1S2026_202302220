@@ -13,6 +13,7 @@
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
     - [5.1 Direcciones de Dispositivos en Enrutamiento](#51-direcciones-de-dispositivos-en-enrutamiento)
+    - [5.2 Direcciones de Dispositivos Finales](#52-direcciones-de-dispositivos-finales)
   - [6. Subnetting](#6-subnetting)
     - [6.1 VLANs (192.188.20.0/24 - VLSM)](#61-vlans-19218820024---vlsm)
       - [Tabla de Subredes por VLAN](#tabla-de-subredes-por-vlan)
@@ -31,9 +32,12 @@
     - [7.3 Configuraciones de Dispositivos de Edificio Derecho](#73-configuraciones-de-dispositivos-de-edificio-derecho)
       - [7.3.1 Configuración MS3](#731-configuración-ms3)
       - [7.3.2 Configuración MS4](#732-configuración-ms4)
-      - [7.3.2 Configuración MS5](#732-configuración-ms5)
-      - [7.3.3 Configuración SW3](#733-configuración-sw3)
-      - [7.3.4 Configuración SW4](#734-configuración-sw4)
+      - [7.3.3 Configuración MS5](#733-configuración-ms5)
+      - [7.3.4 Configuración SW3](#734-configuración-sw3)
+      - [7.3.5 Configuración SW4](#735-configuración-sw4)
+  - [7.4 Configuración de Servidores DHCP](#74-configuración-de-servidores-dhcp)
+    - [7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)](#741-configuración-de-servidor-dhcp-1-edificio-izquierdo-y-admin)
+      - [Configuración de Pools DHCP](#configuración-de-pools-dhcp)
 
 ---
 
@@ -154,6 +158,21 @@ A continuación se presenta el diagrama de la topología de red implementada en 
 | MS1 (MAN Arriba)| MS1 ↔ DHCP2 | 10.4.20.33 | 255.255.255.252 |
 | DHCP2 | MS1 ↔ DHCP2 | 10.4.20.34 | 255.255.255.252 |
 
+
+### 5.2 Direcciones de Dispositivos Finales
+
+
+| Dispositivo | VLAN | ID Red | Default Gateway (IP SVI) | IP Asignada por DHCP (Ejemplo) |
+|---|---|---|---|---|
+| PC1 | 10 (Naranja Izq) | 192.188.20.0/29 | 192.188.20.1 | 192.188.20.2 |
+| Laptop0 | 10 (Naranja Izq) | 192.188.20.0/29 | 192.188.20.1 | 192.188.20.3 |
+| PC2 | 20 (Verde Izq) | 192.188.20.8/29 | 192.188.20.9 | 192.188.20.10 |
+| Laptop1 | 20 (Verde Izq) | 192.188.20.8/29 | 192.188.20.9 | 192.188.20.11 |
+| PC3 | 30 (Naranja Der) | 192.188.20.16/29 | 192.188.20.17 | 192.188.20.18 |
+| PC4 | 30 (Naranja Der) | 192.188.20.16/29 | 192.188.20.17 | 192.188.20.19 |
+| Laptop2 | 40 (Verde Der) | 192.188.20.24/29 | 192.188.20.25 | 192.188.20.26 |
+| Laptop3 | 40 (Verde Der) | 192.188.20.24/29 | 192.188.20.25 | 192.188.20.27 |
+| PC ADMIN (PC0) | 99 (ADMIN) | 192.188.20.32/30 | 192.188.20.33 | 192.188.20.34 |
 
 ## 6. Subnetting
 
@@ -301,6 +320,19 @@ vtp domain chapinred
 vtp password redes2
 exit
 
+! 8. Interfaz enrutada hacia MS3 (Port-Channel 6 Capa 3)
+interface Port-channel 6
+ no switchport
+ ip address 10.4.20.25 255.255.255.252
+ no shutdown
+ exit
+
+! 9. Agregar red a OSPF
+router ospf 1
+ network 10.4.20.24 0.0.0.3 area 0
+ exit
+
+
 ```
 
 
@@ -345,8 +377,20 @@ interface GigabitEthernet1/0/1
  switchport access vlan 99
  exit
  
-```
 
+! 7. SVI para Gateway ADMIN (NO lleva DHCP Relay porque debe ser estática o configurarse un pool local, el proyecto prohíbe IPs estáticas en finales, así que lo configuraremos desde los servidores principales).
+interface Vlan99
+ ip address 192.188.20.33 255.255.255.252
+ ip helper-address 10.4.20.30 ! Apunta a DHCP1 por cercanía
+ no shutdown
+ exit
+
+! 8. Inyectar red a OSPF
+router ospf 1
+ network 192.188.20.32 0.0.0.3 area 0
+ exit
+
+```
 
 
 #### 7.1.4 Configuración MS7
@@ -424,6 +468,29 @@ vlan 10
 vlan 20
  name VLAN_Verde_EdificioIZQ_202302220
 exit
+
+
+! 11. Creación de SVI para Gateways y DHCP Relay
+interface Vlan10
+ ip address 192.188.20.1 255.255.255.248
+ ip helper-address 10.4.20.30  ! Apunta al DHCP1
+ no shutdown
+ exit
+
+interface Vlan20
+ ip address 192.188.20.9 255.255.255.248
+ ip helper-address 10.4.20.30
+ no shutdown
+ exit
+
+! 12. Inyectar redes a OSPF
+router ospf 1
+ network 192.188.20.0 0.0.0.7 area 0
+ network 192.188.20.8 0.0.0.7 area 0
+ exit
+
+
+
 ```
 
 
@@ -654,6 +721,43 @@ vlan 30
 vlan 40
  name VLAN_Verde_EdificioDER_202302220
 exit
+
+
+! 6. Interfaz enrutada hacia MS2 (Port-Channel 6 Capa 3)
+ip routing
+interface Port-channel 6
+ no switchport
+ ip address 10.4.20.26 255.255.255.252
+ no shutdown
+ exit
+
+! 7. Creación de SVI para Gateways y DHCP Relay
+interface Vlan30
+ ip address 192.188.20.17 255.255.255.248
+ ip helper-address 10.4.20.34 ! Apunta al DHCP2
+ no shutdown
+ exit
+
+interface Vlan40
+ ip address 192.188.20.25 255.255.255.248
+ ip helper-address 10.4.20.34
+ no shutdown
+ exit
+
+! 8. Configurar OSPF en MS3
+router ospf 1
+ network 10.4.20.24 0.0.0.3 area 0
+ network 192.188.20.16 0.0.0.7 area 0
+ network 192.188.20.24 0.0.0.7 area 0
+ exit
+
+
+
+
+
+
+
+
 ```
 
 
@@ -696,7 +800,7 @@ exit
 ```
 
 
-#### 7.3.2 Configuración MS5
+#### 7.3.3 Configuración MS5
 
 ```bash
 enable
@@ -731,7 +835,7 @@ exit
 ```
 
 
-#### 7.3.3 Configuración SW3
+#### 7.3.4 Configuración SW3
 
 ```bash
 enable
@@ -765,7 +869,7 @@ interface FastEthernet0/2
 
 ```
 
-#### 7.3.4 Configuración SW4
+#### 7.3.5 Configuración SW4
 
 
 ```bash
@@ -800,4 +904,25 @@ interface FastEthernet0/2
 
 
 ```
+
+
+## 7.4 Configuración de Servidores DHCP
+
+### 7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)
+
+Configuración IP del Servidor (Pestaña Desktop -> IP Configuration):
+
+IP Address: 10.4.20.30
+
+Subnet Mask: 255.255.255.252
+
+Default Gateway: 10.4.20.29
+
+#### Configuración de Pools DHCP
+
+| Pool Name | Default Gateway | Start IP Address | Subnet Mask | Maximum Number of Users |
+|---|---|---|---|---|
+| VLAN10_Naranja | 192.188.20.1 | 192.188.20.2 | 255.255.255.248 | 5 |
+| VLAN20_Verde | 192.188.20.9 | 192.188.20.10 | 255.255.255.248 | 5 |
+| VLAN99_Admin | 192.188.20.33 | 192.188.20.34 | 255.255.255.252 | 1 |
 
