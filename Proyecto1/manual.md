@@ -270,6 +270,7 @@ router ospf 1
  network 10.4.20.32 0.0.0.3 area 0
  exit
 
+end
 write memory
 ```
 
@@ -333,7 +334,7 @@ vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
-exit
+end
 
 write memory
 
@@ -395,6 +396,7 @@ router ospf 1
  network 192.188.20.32 0.0.0.3 area 0
  exit
 
+end
 write memory
 
 ```
@@ -496,6 +498,7 @@ router ospf 1
  network 192.188.20.8 0.0.0.7 area 0
  exit
 
+end
 write memory
 
 ```
@@ -552,7 +555,7 @@ vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
-exit
+end
 
 write memory
 
@@ -601,7 +604,7 @@ vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
-exit
+end
 
 write memory
 
@@ -650,6 +653,7 @@ interface FastEthernet0/2
  switchport access vlan 20
  exit
 
+end
 write memory
 
 ```
@@ -693,6 +697,7 @@ interface FastEthernet0/2
  switchport access vlan 20
  exit
 
+end
 write memory
 
 ```
@@ -770,6 +775,7 @@ router ospf 1
  network 192.188.20.24 0.0.0.7 area 0
  exit
 
+end
 write memory
 ```
 
@@ -810,7 +816,7 @@ vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
-exit
+end
 
 write memory
 ```
@@ -847,7 +853,7 @@ vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
-exit
+end
 
 write memory
 
@@ -887,6 +893,7 @@ interface FastEthernet0/2
  switchport access vlan 30
  exit
 
+end
 write memory
 
 ```
@@ -919,14 +926,14 @@ interface FastEthernet0/1
  switchport access vlan 40
  exit
 
-
-write memory
 ! 4. Asignación de puerto para PC4 (VLAN Naranja)
 interface FastEthernet0/2
  switchport mode access
  switchport access vlan 30
  exit
 
+end
+write memory
 
 ```
 
@@ -1022,6 +1029,7 @@ interface Vlan20
  ip access-group ACL_VERDE_IZQ in
  exit
 
+end
 write memory
 ```
 
@@ -1074,6 +1082,7 @@ interface Vlan40
  ip access-group ACL_VERDE_DER in
  exit
 
+end
 write memory
 ```
 
