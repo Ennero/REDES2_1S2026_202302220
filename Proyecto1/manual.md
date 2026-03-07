@@ -269,6 +269,8 @@ router ospf 1
  network 10.4.20.28 0.0.0.3 area 0
  network 10.4.20.32 0.0.0.3 area 0
  exit
+
+write memory
 ```
 
 
@@ -303,40 +305,37 @@ interface GigabitEthernet1/1/3
  no shutdown
  exit
 
-! 5. OSPF
+! 5. PAgP Hacia MS3 (Port-Channel 6 Capa 3) - Velocidad a 100Mbps
+interface range GigabitEthernet1/0/22 - 24
+ no switchport
+ speed 100
+ channel-protocol pagp
+ channel-group 6 mode desirable
+ no shutdown
+ exit
+
+! 6. Asignar IP al Port-Channel 6
+interface Port-channel 6
+ ip address 10.4.20.25 255.255.255.252
+ no shutdown
+ exit
+
+! 7. OSPF
 router ospf 1
  network 10.4.20.4 0.0.0.3 area 0
  network 10.4.20.8 0.0.0.3 area 0
  network 10.4.20.16 0.0.0.3 area 0
+ network 10.4.20.24 0.0.0.3 area 0
  exit
 
-! 6. PAgP Hacia MS3 (Port-Channel 6)
-interface range GigabitEthernet1/0/22 - 24
- channel-protocol pagp
- channel-group 6 mode desirable
- switchport trunk encapsulation dot1q
- switchport mode trunk
- exit
-
-! 7. Configuración VTP (Modo Cliente)
+! 8. Configuración VTP (Modo Cliente)
 vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
 exit
 
-! 8. Interfaz enrutada hacia MS3 (Port-Channel 6 Capa 3)
-interface Port-channel 6
- no switchport
- ip address 10.4.20.25 255.255.255.252
- no shutdown
- exit
-
-! 9. Agregar red a OSPF
-router ospf 1
- network 10.4.20.24 0.0.0.3 area 0
- exit
-
+write memory
 
 ```
 
@@ -386,7 +385,8 @@ interface GigabitEthernet1/0/1
 ! 7. SVI para Gateway ADMIN (NO lleva DHCP Relay porque debe ser estática o configurarse un pool local, el proyecto prohíbe IPs estáticas en finales, así que lo configuraremos desde los servidores principales).
 interface Vlan99
  ip address 192.188.20.33 255.255.255.252
- ip helper-address 10.4.20.30 ! Apunta a DHCP1 por cercanía
+ ! Apunta a DHCP1 por cercanía
+ ip helper-address 10.4.20.30 
  no shutdown
  exit
 
@@ -394,6 +394,8 @@ interface Vlan99
 router ospf 1
  network 192.188.20.32 0.0.0.3 area 0
  exit
+
+write memory
 
 ```
 
@@ -441,7 +443,6 @@ router ospf 1
 interface range GigabitEthernet1/0/1 - 3
  channel-protocol lacp
  channel-group 1 mode active
- switchport trunk encapsulation dot1q
  switchport mode trunk
  exit
 
@@ -449,7 +450,6 @@ interface range GigabitEthernet1/0/1 - 3
 interface range GigabitEthernet1/0/4 - 6
  channel-protocol lacp
  channel-group 2 mode active
- switchport trunk encapsulation dot1q
  switchport mode trunk
  exit
 
@@ -461,6 +461,7 @@ exit
 
 
 ! 9. Configuración VTP (Modo Servidor)
+configure terminal
 vtp version 2
 vtp mode server
 vtp domain chapinred
@@ -478,7 +479,8 @@ exit
 ! 11. Creación de SVI para Gateways y DHCP Relay
 interface Vlan10
  ip address 192.188.20.1 255.255.255.248
- ip helper-address 10.4.20.30  ! Apunta al DHCP1
+ ! Apunta al DHCP1
+ ip helper-address 10.4.20.30  
  no shutdown
  exit
 
@@ -494,7 +496,7 @@ router ospf 1
  network 192.188.20.8 0.0.0.7 area 0
  exit
 
-
+write memory
 
 ```
 
@@ -545,11 +547,14 @@ spanning-tree vlan 10,20 root secondary
 exit
 
 ! 5. Configuración VTP (Modo Cliente)
+configure terminal
 vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
 exit
+
+write memory
 
 ```
 
@@ -591,11 +596,14 @@ spanning-tree vlan 10,20 root secondary
 exit
 
 ! 5. Configuración VTP (Modo Cliente)
+configure terminal
 vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
 exit
+
+write memory
 
 ```
 
@@ -620,6 +628,7 @@ exit
 
 
 ! 3. Configuración VTP (Modo Cliente)
+configure terminal
 vtp version 2
 vtp mode client
 vtp domain chapinred
@@ -628,6 +637,7 @@ exit
 
 
 ! 4. Asignación de puerto para PC1 (VLAN Naranja)
+configure terminal
 interface FastEthernet0/1
  switchport mode access
  switchport access vlan 10
@@ -639,6 +649,8 @@ interface FastEthernet0/2
  switchport mode access
  switchport access vlan 20
  exit
+
+write memory
 
 ```
 
@@ -662,11 +674,11 @@ spanning-tree mode rapid-pvst
 exit
 
 ! 3. Configuración VTP (Modo Cliente)
+configure terminal
 vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
-exit
 
 
 ! 4. Asignación de puerto para Laptop0 (VLAN Naranja)
@@ -681,6 +693,8 @@ interface FastEthernet0/2
  switchport access vlan 20
  exit
 
+write memory
+
 ```
 
 
@@ -693,53 +707,53 @@ enable
 configure terminal
 hostname MS3
 
-! 1. PAgP Hacia MS2 (Port-Channel 6)
+! 1. Encender enrutamiento
+ip routing
+
+! 2. PAgP Hacia MS2 (Port-Channel 6 Capa 3)
 interface range FastEthernet0/22 - 24
+ no switchport
  channel-protocol pagp
  channel-group 6 mode auto
- switchport trunk encapsulation dot1q
- switchport mode trunk
+ no shutdown
  exit
 
-! 2. PAgP Hacia MS4 (Port-Channel 7)
+! 3. Asignar IP al Port-Channel 6
+interface Port-channel 6
+ ip address 10.4.20.26 255.255.255.252
+ no shutdown
+ exit
+
+! 4. PAgP Hacia MS4 (Port-Channel 7 Capa 2)
 interface range FastEthernet0/1 - 3
  channel-protocol pagp
  channel-group 7 mode desirable
  switchport trunk encapsulation dot1q
  switchport mode trunk
+ no shutdown
  exit
 
-! 3. Configuración de rapid-pvst (Root Primary)
+! 5. Configuración de rapid-pvst (Root Primary)
 spanning-tree mode rapid-pvst
 spanning-tree vlan 30,40 root primary
-exit
 
-! 4. Configuración VTP (Modo Servidor)
+! 6. Configuración VTP (Modo Servidor)
 vtp version 2
 vtp mode server
 vtp domain chapinred
 vtp password redes2
 
-! 5. Creación de VLANs del Edificio Derecho
+! 7. Creación de VLANs del Edificio Derecho
 vlan 30
  name VLAN_Naranja_EdificioDER_202302220
 vlan 40
  name VLAN_Verde_EdificioDER_202302220
 exit
 
-
-! 6. Interfaz enrutada hacia MS2 (Port-Channel 6 Capa 3)
-ip routing
-interface Port-channel 6
- no switchport
- ip address 10.4.20.26 255.255.255.252
- no shutdown
- exit
-
-! 7. Creación de SVI para Gateways y DHCP Relay
+! 8. Creación de SVI para Gateways y DHCP Relay
 interface Vlan30
  ip address 192.188.20.17 255.255.255.248
- ip helper-address 10.4.20.34 ! Apunta al DHCP2
+ ip helper-address 10.4.20.34
  no shutdown
  exit
 
@@ -749,20 +763,14 @@ interface Vlan40
  no shutdown
  exit
 
-! 8. Configurar OSPF en MS3
+! 9. Configurar OSPF en MS3
 router ospf 1
  network 10.4.20.24 0.0.0.3 area 0
  network 192.188.20.16 0.0.0.7 area 0
  network 192.188.20.24 0.0.0.7 area 0
  exit
 
-
-
-
-
-
-
-
+write memory
 ```
 
 
@@ -797,11 +805,14 @@ spanning-tree vlan 30,40 root secondary
 exit
 
 ! 4. Configuración VTP (Modo Cliente)
+configure terminal
 vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
 exit
+
+write memory
 ```
 
 
@@ -831,11 +842,14 @@ spanning-tree mode rapid-pvst
 exit
 
 ! 4. Configuración VTP (Modo Cliente)
+configure terminal
 vtp version 2
 vtp mode client
 vtp domain chapinred
 vtp password redes2
 exit
+
+write memory
 
 ```
 
@@ -861,6 +875,7 @@ vtp password redes2
 exit
 
 ! 3. Asignación de puerto para Laptop2 (VLAN Verde)
+configure terminal
 interface FastEthernet0/1
  switchport mode access
  switchport access vlan 40
@@ -871,6 +886,8 @@ interface FastEthernet0/2
  switchport mode access
  switchport access vlan 30
  exit
+
+write memory
 
 ```
 
@@ -896,11 +913,14 @@ vtp password redes2
 exit
 
 ! 3. Asignación de puerto para Laptop3 (VLAN Verde)
+configure terminal
 interface FastEthernet0/1
  switchport mode access
  switchport access vlan 40
  exit
 
+
+write memory
 ! 4. Asignación de puerto para PC4 (VLAN Naranja)
 interface FastEthernet0/2
  switchport mode access
@@ -949,9 +969,6 @@ Default Gateway: 10.4.20.33
 |---|---|---|---|---|
 | VLAN30_Naranja | 192.188.20.17 | 192.188.20.18 | 255.255.255.248 | 5 |
 | VLAN40_Verde | 192.188.20.25 | 192.188.20.26 | 255.255.255.248 | 5 |
-
-
-
 
 
 ## 8. Listas de Control de Acceso (ACLs)
@@ -1004,6 +1021,8 @@ interface Vlan10
 interface Vlan20
  ip access-group ACL_VERDE_IZQ in
  exit
+
+write memory
 ```
 
 
@@ -1054,6 +1073,8 @@ interface Vlan30
 interface Vlan40
  ip access-group ACL_VERDE_DER in
  exit
+
+write memory
 ```
 
 
