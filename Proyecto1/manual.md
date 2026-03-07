@@ -24,7 +24,7 @@
       - [7.1.2 Configuración MS2](#712-configuración-ms2)
       - [7.1.3 Configuración MS6](#713-configuración-ms6)
       - [7.1.4 Configuración MS7](#714-configuración-ms7)
-    - [7.2 Configuración de Dispositivos de Edificio Izquierdo](#72-configuración-de-dispositivos-de-edificio-izquierdo)
+    - [7.2 Configuraciones de Dispositivos de Edificio Izquierdo](#72-configuraciones-de-dispositivos-de-edificio-izquierdo)
       - [7.2.1 Configuración MS8](#721-configuración-ms8)
       - [7.2.2 Configuración MS9](#722-configuración-ms9)
       - [7.2.3 Configuración SW1](#723-configuración-sw1)
@@ -32,9 +32,9 @@
     - [7.3 Configuraciones de Dispositivos de Edificio Derecho](#73-configuraciones-de-dispositivos-de-edificio-derecho)
       - [7.3.1 Configuración MS3](#731-configuración-ms3)
       - [7.3.2 Configuración MS4](#732-configuración-ms4)
-      - [7.3.2 Configuración MS5](#732-configuración-ms5)
-      - [7.3.3 Configuración SW3](#733-configuración-sw3)
-      - [7.3.4 Configuración SW4](#734-configuración-sw4)
+      - [7.3.3 Configuración MS5](#733-configuración-ms5)
+      - [7.3.4 Configuración SW3](#734-configuración-sw3)
+      - [7.3.5 Configuración SW4](#735-configuración-sw4)
     - [7.4 Configuración de Servidores DHCP](#74-configuración-de-servidores-dhcp)
       - [7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)](#741-configuración-de-servidor-dhcp-1-edificio-izquierdo-y-admin)
         - [Configuración de Pools DHCP](#configuración-de-pools-dhcp)
@@ -114,10 +114,10 @@ A continuación se presenta el diagrama de la topología de red implementada en 
 | MS9          | fa0/7   | MS8           | fa0/7   |
 | MS9          | fa0/8   | MS8           | fa0/8   |
 | MS9          | fa0/9   | MS8           | fa0/9   |
-| MS9          | fa0/23  | Switch2       | fa0/23  |
-| MS9          | fa0/24  | Switch2       | fa0/24  |
-| MS8          | fa0/23  | Switch1       | fa0/23  |
-| MS8          | fa0/24  | Switch1       | fa0/24  |
+| MS9          | fa0/23  | SW2           | fa0/23  |
+| MS9          | fa0/24  | SW2           | fa0/24  |
+| MS8          | fa0/23  | SW1           | fa0/23  |
+| MS8          | fa0/24  | SW1           | fa0/24  |
 | SW1          | fa0/1   | PC1           | fa0     | 
 | SW1          | fa0/2   | PC2           | fa0     |
 | SW2          | fa0/1   | Laptop0       | fa0     | 
@@ -216,6 +216,8 @@ La red **10.4.20.0/24** se divide en subredes /30 (4 IPs por enlace) para los en
 ---
 
 ## 7. Configuraciones de Dispositivos
+
+> **Nota operativa:** Cada bloque CLI está preparado para ejecutarse completo en consola. Por eso todos finalizan con `end` y `write memory` para salir de configuración y guardar cambios en NVRAM.
 
 ### 7.1 Configuraciones de Dispositivos de Red MAN
 
@@ -383,7 +385,7 @@ interface GigabitEthernet1/0/1
  exit
  
 
-! 7. SVI para Gateway ADMIN (NO lleva DHCP Relay porque debe ser estática o configurarse un pool local, el proyecto prohíbe IPs estáticas en finales, así que lo configuraremos desde los servidores principales).
+! 7. SVI para Gateway ADMIN (usa DHCP Relay hacia DHCP1 para que PC0 obtenga IP por DHCP).
 interface Vlan99
  ip address 192.188.20.33 255.255.255.252
  ! Apunta a DHCP1 por cercanía
@@ -509,7 +511,7 @@ write memory
 
 
 
-### 7.2 Configuración de Dispositivos de Edificio Izquierdo
+### 7.2 Configuraciones de Dispositivos de Edificio Izquierdo
 
 
 #### 7.2.1 Configuración MS8
@@ -822,7 +824,7 @@ write memory
 ```
 
 
-#### 7.3.2 Configuración MS5
+#### 7.3.3 Configuración MS5
 
 ```bash
 enable
@@ -860,7 +862,7 @@ write memory
 ```
 
 
-#### 7.3.3 Configuración SW3
+#### 7.3.4 Configuración SW3
 
 ```bash
 enable
@@ -898,7 +900,7 @@ write memory
 
 ```
 
-#### 7.3.4 Configuración SW4
+#### 7.3.5 Configuración SW4
 
 
 ```bash
@@ -939,6 +941,8 @@ write memory
 
 
 ### 7.4 Configuración de Servidores DHCP
+
+> **Nota:** Esta sección se configura desde la GUI del servidor en Packet Tracer (Desktop -> IP Configuration y Services -> DHCP), por lo que no aplica el comando `write memory`.
 
 #### 7.4.1 Configuración de Servidor DHCP 1 (Edificio Izquierdo y ADMIN)
 
