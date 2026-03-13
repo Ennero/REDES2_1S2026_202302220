@@ -10,6 +10,7 @@
     - [2.1 Inclusiones](#21-inclusiones)
     - [2.2 Exclusiones](#22-exclusiones)
   - [3. Topología de Red](#3-topología-de-red)
+    - [3.1 Roles y Funciones de los Dispositivos Principales (Guía de Revisión)](#31-roles-y-funciones-de-los-dispositivos-principales-guía-de-revisión)
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
     - [5.1 Direcciones de Dispositivos en Enrutamiento](#51-direcciones-de-dispositivos-en-enrutamiento)
@@ -90,6 +91,42 @@ Diseñar, configurar y simular una infraestructura de red empresarial multi-edif
 A continuación se presenta el diagrama de la topología de red implementada en Cisco Packet Tracer para el proyecto Chapin Red. La red interconecta cuatro edificios mediante una red MAN con fibra óptica (módulos Gigabit), con un switch multicapa Cisco 3650 como punto de interconexión central. El enrutamiento inter-edificios se realiza mediante el protocolo OSPF (carné par: 202302220).
 
 ![Topología General](./imgs/topologia_general.png)
+
+## 3.1 Roles y Funciones de los Dispositivos Principales (Guía de Revisión)
+
+Para efectos de revisión técnica, el diseño adopta un modelo de **Core Colapsado** en los bordes de los edificios, concentrando las funciones de Capa 3 en **MS7** para el edificio izquierdo y en **MS3** para el edificio derecho. Esta decisión centraliza el enrutamiento Inter-VLAN, la administración de VLANs mediante VTP y la aplicación de ACLs lo más cerca posible del anillo MAN de fibra óptica. Con ello se reducen saltos de enrutamiento innecesarios, se simplifica la administración operativa y se optimiza el rendimiento general de la solución, manteniéndose dentro de la flexibilidad permitida por el equipo de calificación.
+
+### Guía de revisión por edificio
+
+#### Anillo MAN (Backbone)
+
+Los equipos **MS1**, **MS2** y **MS6** deben revisarse como dispositivos de tránsito de **Capa 3**. Su función principal es sostener la conectividad entre edificios mediante **OSPF** y enlaces punto a punto **/30** sobre la red 10.4.20.0/24. En este segmento no se administran VLANs de usuarios ni se implementan gateways de acceso final; su responsabilidad es transportar rutas entre sedes y mantener la convergencia del backbone metropolitano.
+
+#### Edificio Izquierdo
+
+**MS7 (Core Colapsado / Gateway)** es el punto principal de revisión de este edificio. En este switch se concentran las funciones críticas de control y encaminamiento local:
+
+* Opera como **VTP Server** del edificio izquierdo.
+* Aloja las **SVIs** que actúan como gateway de las VLAN **10 (Naranja)** y **20 (Verde)**.
+* Ejecuta el **DHCP Relay** hacia el servidor correspondiente.
+* Aplica las ACLs de entrada **ACL_NARANJA_IZQ** y **ACL_VERDE_IZQ**, implementando las políticas de segmentación y restricción entre VLANs.
+
+**MS8** y **MS9** cumplen el rol de **Distribución/Agregación** en **Capa 2**. Su revisión debe enfocarse en la consolidación de enlaces mediante **LACP**, la propagación de VLANs y la continuidad de la conectividad troncal hacia la capa de acceso. No toman decisiones de enrutamiento Inter-VLAN; su propósito es extender la infraestructura de switching de forma redundante y estable.
+
+#### Edificio Derecho
+
+**MS3 (Core Colapsado / Gateway)** es el punto principal de revisión del lado derecho. Este equipo concentra el control de Capa 3 y las políticas locales del edificio:
+
+* Opera como **VTP Server** del edificio derecho.
+* Contiene las **SVIs** de las VLAN **30 (Naranja)** y **40 (Verde)**.
+* Ejecuta el **DHCP Relay** hacia el servidor DHCP asignado.
+* Aplica las ACLs **ACL_NARANJA_DER** y **ACL_VERDE_DER** para hacer cumplir la política de seguridad entre segmentos.
+
+**MS4** y **MS5** funcionan como capa de **Distribución/Agregación** en **Capa 2**. Su revisión debe centrarse en la extensión de conectividad hacia los switches de acceso y en la operación de los enlaces agregados mediante **EtherChannel con PAgP**. Al igual que en el edificio izquierdo, estos equipos no centralizan gateways ni políticas de enrutamiento local.
+
+#### Servidores DHCP
+
+La asignación dinámica de direcciones IP está separada por dominio operativo. **DHCP1** atiende el **Edificio Izquierdo** y la red **ADMIN**, mientras que **DHCP2** atiende el **Edificio Derecho**. Ambos servidores están conectados directamente al anillo MAN a través de **MS1**, lo que proporciona una separación lógica a nivel de Capa 3, facilita la publicidad de rutas mediante OSPF y permite que los switches gateway utilicen **DHCP Relay** sin depender de VLANs de acceso locales.
 
 ---
 
