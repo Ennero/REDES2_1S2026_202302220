@@ -10,7 +10,19 @@
     - [2.1 Inclusiones](#21-inclusiones)
     - [2.2 Exclusiones](#22-exclusiones)
   - [3. Topología de Red](#3-topología-de-red)
-    - [3.1 Roles y Funciones de los Dispositivos Principales (Guía de Revisión)](#31-roles-y-funciones-de-los-dispositivos-principales-guía-de-revisión)
+  - [3.1 Roles y Funciones de los Dispositivos Principales (Guía de Revisión)](#31-roles-y-funciones-de-los-dispositivos-principales-guía-de-revisión)
+    - [Guía de revisión por edificio](#guía-de-revisión-por-edificio)
+      - [Anillo MAN (Backbone)](#anillo-man-backbone)
+      - [Edificio Izquierdo](#edificio-izquierdo)
+      - [Edificio Derecho](#edificio-derecho)
+      - [Servidores DHCP](#servidores-dhcp)
+    - [Comandos de verificación de dispositivos principales](#comandos-de-verificación-de-dispositivos-principales)
+      - [Backbone MAN (MS1, MS2, MS6)](#backbone-man-ms1-ms2-ms6)
+      - [Core Colapsado Edificio Izquierdo (MS7)](#core-colapsado-edificio-izquierdo-ms7)
+      - [Distribución/Agregación Edificio Izquierdo (MS8, MS9)](#distribuciónagregación-edificio-izquierdo-ms8-ms9)
+      - [Core Colapsado Edificio Derecho (MS3)](#core-colapsado-edificio-derecho-ms3)
+      - [Distribución/Agregación Edificio Derecho (MS4, MS5)](#distribuciónagregación-edificio-derecho-ms4-ms5)
+      - [Verificación de alcance hacia servidores DHCP](#verificación-de-alcance-hacia-servidores-dhcp)
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
     - [5.1 Direcciones de Dispositivos en Enrutamiento](#51-direcciones-de-dispositivos-en-enrutamiento)
@@ -127,6 +139,104 @@ Los equipos **MS1**, **MS2** y **MS6** deben revisarse como dispositivos de trá
 #### Servidores DHCP
 
 La asignación dinámica de direcciones IP está separada por dominio operativo. **DHCP1** atiende el **Edificio Izquierdo** y la red **ADMIN**, mientras que **DHCP2** atiende el **Edificio Derecho**. Ambos servidores están conectados directamente al anillo MAN a través de **MS1**, lo que proporciona una separación lógica a nivel de Capa 3, facilita la publicidad de rutas mediante OSPF y permite que los switches gateway utilicen **DHCP Relay** sin depender de VLANs de acceso locales.
+
+### Comandos de verificación de dispositivos principales
+
+> **Nota para revisión:** Si algún comando no está disponible en la versión de Cisco Packet Tracer utilizada, validar el mismo criterio revisando `show running-config` y el estado de interfaces/vecinos.
+
+#### Backbone MAN (MS1, MS2, MS6)
+
+Comandos base de tránsito Capa 3 y OSPF:
+
+```bash
+show ip interface brief
+show ip ospf neighbor
+show ip route ospf
+show running-config | section router ospf
+```
+
+Comandos adicionales para el enlace agregado hacia MS3 (en MS2):
+
+```bash
+show etherchannel summary
+show pagp neighbor
+show interfaces port-channel 6
+```
+
+#### Core Colapsado Edificio Izquierdo (MS7)
+
+Verificación de funciones gateway, VTP, relay y seguridad:
+
+```bash
+show vtp status
+show vlan brief
+show interfaces trunk
+show ip interface brief
+show running-config interface vlan 10
+show running-config interface vlan 20
+show running-config | include helper-address
+show access-lists ACL_NARANJA_IZQ
+show access-lists ACL_VERDE_IZQ
+show ip ospf neighbor
+show ip route
+```
+
+#### Distribución/Agregación Edificio Izquierdo (MS8, MS9)
+
+Validación de Capa 2 y redundancia LACP:
+
+```bash
+show etherchannel summary
+show lacp neighbor
+show interfaces trunk
+show spanning-tree vlan 10
+show spanning-tree vlan 20
+show vtp status
+```
+
+#### Core Colapsado Edificio Derecho (MS3)
+
+Verificación de funciones gateway, VTP, relay, ACL y uplink al MAN:
+
+```bash
+show vtp status
+show vlan brief
+show interfaces trunk
+show ip interface brief
+show running-config interface vlan 30
+show running-config interface vlan 40
+show running-config | include helper-address
+show access-lists ACL_NARANJA_DER
+show access-lists ACL_VERDE_DER
+show etherchannel summary
+show pagp neighbor
+show ip ospf neighbor
+show ip route
+```
+
+#### Distribución/Agregación Edificio Derecho (MS4, MS5)
+
+Validación de Capa 2 y EtherChannel con PAgP:
+
+```bash
+show etherchannel summary
+show pagp neighbor
+show interfaces trunk
+show spanning-tree vlan 30
+show spanning-tree vlan 40
+show vtp status
+```
+
+#### Verificación de alcance hacia servidores DHCP
+
+Desde MS7, MS3 y MS6 (según corresponda), validar conectividad hacia DHCP1 y DHCP2:
+
+```bash
+ping 10.4.20.30
+ping 10.4.20.34
+show ip route 10.4.20.30
+show ip route 10.4.20.34
+```
 
 ---
 
