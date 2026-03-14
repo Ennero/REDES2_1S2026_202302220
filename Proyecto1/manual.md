@@ -314,7 +314,7 @@ show ip route 10.4.20.34
 ### 5.2 Direcciones de Dispositivos Finales
 
 
-| Dispositivo | VLAN | ID Red | Default Gateway (IP SVI) | IP Asignada por DHCP (Ejemplo) |
+| Dispositivo | VLAN | ID Red | Default Gateway (IP SVI) | IP Asignada por DHCP (Esperado, pero puede variar ya que es DHCP) |
 |---|---|---|---|---|
 | PC1 | 10 (Naranja Izq) | 192.188.20.0/29 | 192.188.20.1 | 192.188.20.2 |
 | Laptop0 | 10 (Naranja Izq) | 192.188.20.0/29 | 192.188.20.1 | 192.188.20.3 |
@@ -1005,7 +1005,6 @@ vtp password redes2
 end
 
 write memory
-
 ```
 
 
