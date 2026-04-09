@@ -63,6 +63,37 @@ Centraliza el tráfico en un nodo principal (Hub) que se comunica con nodos remo
 
 ---
 
+## 4. Tabla de Conexiones
+
+| Dispositivo Origen | Interfaz | Dispositivo Destino | Interfaz | Tipo de Cable |
+|-------------------|----------|---------------------|----------|---------------|
+| **R1_ISP1 (Borde)** | Gi0/1 | R2_ISP2 (Borde) | Gi0/1 | Fibra Óptica |
+| **R2_ISP2 (Borde)** | Gi0/2 | R3_ISP3 (Borde) | Gi0/1 | Fibra Óptica |
+| **R3_ISP3 (Borde)** | Gi0/2 | R1_ISP1 (Borde) | Gi0/2 | Fibra Óptica |
+| **DSW1_ISP1 (Core)** | Po1 (Fa0/1-2) | DSW2_ISP1 (Dist) | Po1 (Fa0/1-2) | LACP |
+| **DSW1_ISP2 (Core)** | Po1 (Fa0/1-2) | DSW2_ISP2 (Dist) | Po1 (Fa0/1-2) | LACP |
+| **R_WIFI_ISP3** | Internet | Hub_ISP3 | Gi0/0 | Ethernet |
+| **Srv_DNS/HTTP** | Fa0 | Switch Acceso | Fa0/10 | Ethernet |
+| **Srv_DHCP** | Fa0 | Switch Acceso | Fa0/11 | Ethernet |
+
+---
+
+## 5. Tabla de Direccionamiento IP
+
+| Dispositivo | Interfaz | Dirección IP | Máscara | Gateway |
+|-------------|----------|--------------|---------|---------|
+| **R1_ISP1** | Gi0/1 (BGP) | 192.168.20.1 | 255.255.255.252 | - |
+| **R2_ISP2** | Gi0/1 (BGP) | 192.168.20.2 | 255.255.255.252 | - |
+| **R2_ISP2** | Gi0/2 (BGP) | 192.168.20.5 | 255.255.255.252 | - |
+| **R3_ISP3** | Gi0/1 (BGP) | 192.168.20.6 | 255.255.255.252 | - |
+| **Srv_DNS/HTTP** | Fa0 | 172.16.10.10 | 255.255.255.192 | 172.16.10.1 |
+| **Srv_DHCP** | Fa0 | 172.16.20.254 | 255.255.255.192 | 172.16.20.1 |
+| **PC_Admin** | Fa0 | DHCP | 255.255.255.192 | 172.16.10.1 |
+| **PC_Ventas** | Fa0 | DHCP | 255.255.255.192 | 172.16.20.1 |
+| **PC_Seguridad** | Fa0 | DHCP | 255.255.255.192 | 172.16.32.65 |
+
+---
+
 ## 6. Subnetting (VLSM)
 
 Basado en el carné **202302220**, se definen los siguientes segmentos base:
