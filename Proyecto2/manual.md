@@ -11,6 +11,7 @@
   - [3. Topología de Red](#3-topología-de-red)
     - [3.1 Selección de Hardware (Simulado)](#31-selección-de-hardware-simulado)
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
+  - [4.1. Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
   - [6. Subnetting](#6-subnetting)
     - [6.1 ISP 1: Telecom Uno (`172.16.10.0/24`)](#61-isp-1-telecom-uno-1721610024)
@@ -21,6 +22,16 @@
       - [7.1.1 Configuración MSW\_Telecom (AS 100)](#711-configuración-msw_telecom-as-100)
       - [7.1.2 Configuración MSW\_Nacionales (AS 200)](#712-configuración-msw_nacionales-as-200)
       - [7.1.3 Configuración MSW\_Link (AS 300)](#713-configuración-msw_link-as-300)
+    - [7.2 Configuraciones de Dispositivos de Telecom Uno (ISP 1)](#72-configuraciones-de-dispositivos-de-telecom-uno-isp-1)
+      - [7.2.1 Configuración de Integración OSPF-BGP en MSW\_Telecom](#721-configuración-de-integración-ospf-bgp-en-msw_telecom)
+      - [7.2.2 Configuración R\_Raiz\_T1](#722-configuración-r_raiz_t1)
+      - [7.2.3 Configuración MSW\_Dist\_T1 (Distribución y Gateway)](#723-configuración-msw_dist_t1-distribución-y-gateway)
+      - [7.2.4 Configuración MSW\_Admin (Capa 2 y Servidores)](#724-configuración-msw_admin-capa-2-y-servidores)
+      - [7.2.5 Configuración MSW\_Atencion (Capa 2)](#725-configuración-msw_atencion-capa-2)
+    - [7.3 Configuración de Servicios en Telecom Uno (DNS y HTTP)](#73-configuración-de-servicios-en-telecom-uno-dns-y-http)
+      - [7.3.1 Configuración de IP Estática (Ambos Servidores)](#731-configuración-de-ip-estática-ambos-servidores)
+      - [7.3.2 Configuración del Servicio HTTP](#732-configuración-del-servicio-http)
+      - [7.3.3 Configuración del Servicio DNS](#733-configuración-del-servicio-dns)
 
 ---
 
@@ -79,18 +90,36 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | MSW_Nacionales     | Gi1/0/24  | MSW_Core_RN         | Gi1/0/1   | Cobre Cruzado  | N/A         |
 | MSW_Link           | Gi1/0/24  | R_Hub_LG            | Gi0/0/0   | Cobre Directo  | N/A         |
 
+
+
+## 4.1. Tabla de conexiones de la Red de Telecom
+
+| Origen       | Puerto Origen          | Destino       | Puerto Destino         | Cable          |
+|--------------|------------------------|---------------|------------------------|----------------|
+| MSW_Telecom  | Gi1/0/24               | R_Raiz_T1     | Gi0/0/0                | Cobre Directo  |
+| R_Raiz_T1    | Gi0/0/1                | MSW_Dist_T1   | Gi1/0/1                | Cobre Directo  |
+| MSW_Dist_T1  | Gi1/0/2 y Gi1/0/3      | MSW_Admin     | Gi1/0/2 y Gi1/0/3      | Cobre Cruzado  |
+| MSW_Dist_T1  | Gi1/0/4 y Gi1/0/5      | MSW_Atencion  | Gi1/0/4 y Gi1/0/5      | Cobre Cruzado  |
+| MSW_Admin    | Gi1/0/10               | Servidor DNS  | Fa0                    | Cobre Directo  |
+| MSW_Admin    | Gi1/0/11               | Servidor HTTP | Fa0                    | Cobre Directo  |
+
 ---
 
 ## 5. Tabla de Direccionamiento IP
 
-| Dispositivo / Red    | Interfaz   | Dirección IP    | Máscara           | Gateway        |
-|----------------------|------------|-----------------|-------------------|----------------|
-| Core: T1 ↔ RN        | Enlace BGP | 192.168.20.1    | 255.255.255.252   | N/A            |
-| Core: RN ↔ LG        | Enlace BGP | 192.168.20.5    | 255.255.255.252   | N/A            |
-| Core: LG ↔ T1        | Enlace BGP | 192.168.20.9    | 255.255.255.252   | N/A            |
-| SVI: Admin (T1)      | VLAN 10    | 172.16.10.1     | 255.255.255.192   | N/A            |
-| SVI: Ventas (RN)     | VLAN 30    | 172.16.20.1     | 255.255.255.192   | 172.16.20.1 (VIP) |
-| SVI: Seguridad (LG)  | VLAN 60    | 172.16.32.65    | 255.255.255.192   | N/A            |
+| Dispositivo / Red | Interfaz | Dirección IP | Máscara | Gateway |
+| :--- | :--- | :--- | :--- | :--- |
+| **Core: T1 ↔ RN** | Enlace BGP (Gi1/1/1) | 192.168.20.1 | 255.255.255.252 | N/A |
+| **Core: RN ↔ LG** | Enlace BGP (Gi1/1/2) | 192.168.20.5 | 255.255.255.252 | N/A |
+| **Core: LG ↔ T1** | Enlace BGP (Gi1/1/2) | 192.168.20.9 | 255.255.255.252 | N/A |
+| **MSW_Telecom ↔ R_Raiz_T1** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.10.129 ↔ .130| 255.255.255.252 | N/A |
+| **R_Raiz_T1 ↔ MSW_Dist_T1** | Gi0/0/1 ↔ Gi1/0/1 | 172.16.10.133 ↔ .134| 255.255.255.252 | N/A |
+| **SVI: Admin (T1)** | VLAN 10 (MSW_Dist) | 172.16.10.1 | 255.255.255.192 | N/A |
+| **SVI: Atencion (T1)**| VLAN 20 (MSW_Dist) | 172.16.10.65 | 255.255.255.192 | N/A |
+| **Servidor DNS** | Fa0 | 172.16.10.2 | 255.255.255.192 | 172.16.10.1 |
+| **Servidor HTTP** | Fa0 | 172.16.10.3 | 255.255.255.192 | 172.16.10.1 |
+| **SVI: Ventas (RN)** | VLAN 30 | 172.16.20.1 | 255.255.255.192 | 172.16.20.1 (VIP) |
+| **SVI: Seguridad (LG)**| VLAN 60 | 172.16.32.65 | 255.255.255.192 | N/A |
 
 ---
 
@@ -227,9 +256,242 @@ end
 write memory
 ```
 
+### 7.2 Configuraciones de Dispositivos de Telecom Uno (ISP 1)
+
+#### 7.2.1 Configuración de Integración OSPF-BGP en MSW_Telecom
+*Nota: Siguiendo el orden de este manual, este equipo ya tiene configurado BGP, ahora le agregaremos OSPF para que conozca su red interna.*
+
+```bash
+enable
+configure terminal
+
+! 1. Configurar la interfaz que baja hacia el árbol
+interface GigabitEthernet1/0/24
+ no switchport
+ ip address 172.16.10.129 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Levantar OSPF
+router ospf 1
+ network 172.16.10.128 0.0.0.3 area 0
+ exit
+
+! 3. Redistribuir las rutas de OSPF hacia BGP para que el país conozca a Telecom Uno
+router bgp 100
+ redistribute ospf 1
+ exit
+
+end
+write memory
+```
+
+#### 7.2.2 Configuración R_Raiz_T1
+
+```bash
+enable
+configure terminal
+hostname R_Raiz_T1
+
+! 1. Interfaz hacia MSW_Telecom (Arriba)
+interface GigabitEthernet0/0/0
+ ip address 172.16.10.130 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Interfaz hacia MSW_Dist_T1 (Abajo)
+interface GigabitEthernet0/0/1
+ ip address 172.16.10.133 255.255.255.252
+ no shutdown
+ exit
+
+! 3. Configuración OSPF
+router ospf 1
+ network 172.16.10.128 0.0.0.3 area 0
+ network 172.16.10.132 0.0.0.3 area 0
+ exit
+
+end
+write memory
+```
+
+#### 7.2.3 Configuración MSW_Dist_T1 (Distribución y Gateway)
+
+```bash
+enable
+configure terminal
+hostname MSW_Dist_T1
+
+! 1. Activar enrutamiento
+ip routing
+
+! 2. Interfaz enrutada hacia R_Raiz_T1 (Arriba)
+interface GigabitEthernet1/0/1
+ no switchport
+ ip address 172.16.10.134 255.255.255.252
+ no shutdown
+ exit
+
+! 3. Crear las VLANs de los departamentos
+vlan 10
+ name Administracion
+vlan 20
+ name Atencion_Cliente
+ exit
+
+! 4. Crear los Gateways (SVIs) para cada departamento
+interface Vlan10
+ ip address 172.16.10.1 255.255.255.192
+ no shutdown
+ exit
+
+interface Vlan20
+ ip address 172.16.10.65 255.255.255.192
+ no shutdown
+ exit
+
+! 5. LACP Hacia MSW_Admin (Port-Channel 1)
+interface range GigabitEthernet1/0/2 - 3
+ channel-protocol lacp
+ channel-group 1 mode active
+ switchport mode trunk
+ exit
+
+! 6. LACP Hacia MSW_Atencion (Port-Channel 2)
+interface range GigabitEthernet1/0/4 - 5
+ channel-protocol lacp
+ channel-group 2 mode active
+ switchport mode trunk
+ exit
+
+! 7. Configuración OSPF (Anunciamos toda la red de Telecom Uno)
+router ospf 1
+ network 172.16.10.0 0.0.0.255 area 0
+ exit
+
+end
+write memory
+```
+
+#### 7.2.4 Configuración MSW_Admin (Capa 2 y Servidores)
+
+```bash
+enable
+configure terminal
+hostname MSW_Admin
+
+! 1. Crear la VLAN localmente
+vlan 10
+ name Administracion
+ exit
+
+! 2. LACP Hacia MSW_Dist_T1 (Port-Channel 1)
+interface range GigabitEthernet1/0/2 - 3
+ channel-protocol lacp
+ channel-group 1 mode passive
+ switchport mode trunk
+ exit
+
+! 3. Puertos de acceso para Servidores DNS y HTTP
+interface range GigabitEthernet1/0/10 - 11
+ switchport mode access
+ switchport access vlan 10
+ exit
+
+! 4. Puertos de acceso para PCs (Ej. Puertos 15 al 20)
+interface range GigabitEthernet1/0/15 - 20
+ switchport mode access
+ switchport access vlan 10
+ exit
+
+end
+write memory
+```
+
+#### 7.2.5 Configuración MSW_Atencion (Capa 2)
+
+```bash
+enable
+configure terminal
+hostname MSW_Atencion
+
+! 1. Crear la VLAN localmente
+vlan 20
+ name Atencion_Cliente
+ exit
+
+! 2. LACP Hacia MSW_Dist_T1 (Port-Channel 2)
+interface range GigabitEthernet1/0/4 - 5
+ channel-protocol lacp
+ channel-group 2 mode passive
+ switchport mode trunk
+ exit
+
+! 3. Puertos de acceso para PCs (Ej. Puertos 15 al 20)
+interface range GigabitEthernet1/0/15 - 20
+ switchport mode access
+ switchport access vlan 20
+ exit
+
+end
+write memory
+```
+
+---
 
 
+### 7.3 Configuración de Servicios en Telecom Uno (DNS y HTTP)
 
+> *Nota: Estas configuraciones se realizan a través de la Interfaz Gráfica (GUI) de los dispositivos genéricos "Server-PT" en Cisco Packet Tracer.*
 
+#### 7.3.1 Configuración de IP Estática (Ambos Servidores)
+Debido a que estos servidores proveerán servicios críticos a toda la topología, requieren direccionamiento IP estático dentro de la VLAN 10 (Administración).
 
+**Ruta:** Pestaña `Desktop` -> `IP Configuration`.
 
+**Servidor DNS:**
+- **IPv4 Address:** `172.16.10.2`
+- **Subnet Mask:** `255.255.255.192`
+- **Default Gateway:** `172.16.10.1` (IP de la SVI Vlan 10 en MSW_Dist_T1)
+
+**Servidor HTTP:**
+- **IPv4 Address:** `172.16.10.3`
+- **Subnet Mask:** `255.255.255.192`
+- **Default Gateway:** `172.16.10.1`
+
+---
+
+#### 7.3.2 Configuración del Servicio HTTP
+El servidor HTTP alojará la página web solicitada en los requerimientos del proyecto.
+
+1. Ir a la pestaña `Services` -> `HTTP`.
+2. Asegurarse de que tanto **HTTP** como **HTTPS** estén en estado **ON**.
+3. En el archivo `index.html`, hacer clic en **(edit)** e insertar el siguiente código:
+
+```html
+<html>
+<center>
+  <h1>Proyecto 2: Redes de Computadoras 2</h1>
+  <h2>Estudiante: Enner Esaí Mendizabal Castro</h2>
+  <h3>Carné: 202302220</h3>
+  <p>Bienvenidos a la intranet de Telecom Uno, Redes Nacionales y Link Global.</p>
+</center>
+</html>
+```
+
+4. Clic en **Save** y confirmar la sobreescritura.
+
+---
+
+#### 7.3.3 Configuración del Servicio DNS
+El servidor DNS resolverá el dominio solicitado para toda la red hacia la IP del servidor web.
+
+1. Ir a la pestaña `Services` -> `DNS`.
+2. Encender el servicio (**DNS Service: ON**).
+3. Configurar el registro **A Record**:
+   - **Name:** `www.proyecto2_202302220.com`
+   - **Type:** A Record
+   - **Address:** `172.16.10.3` (Dirección del Servidor HTTP)
+4. Clic en **Add** para guardar el registro.
+
+---
