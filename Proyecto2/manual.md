@@ -125,7 +125,9 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | MSW_Dist_T1  | Gi1/0/4 y Gi1/0/5      | MSW_Atencion  | Gi1/0/4 y Gi1/0/5      | Cobre Cruzado  |
 | MSW_Admin    | Gi1/0/10               | Servidor DNS  | Fa0                    | Cobre Directo  |
 | MSW_Admin    | Gi1/0/11               | Servidor HTTP | Fa0                    | Cobre Directo  |
-
+| **MSW_Admin** | Gi1/0/15 | **PC_Admin_1** | Fa0 | Cobre Directo |
+| **MSW_Atencion** | Gi1/0/15 | **PC_Atencion_1** | Fa0 | Cobre Directo |
+| **MSW_Atencion** | Gi1/0/16 | **PC_Atencion_2** | Fa0 | Cobre Directo |
 
 
 
@@ -421,11 +423,13 @@ vlan 20
 ! 4. Crear los Gateways (SVIs) para cada departamento
 interface Vlan10
  ip address 172.16.10.1 255.255.255.192
+ ip helper-address 172.16.20.134
  no shutdown
  exit
 
 interface Vlan20
  ip address 172.16.10.65 255.255.255.192
+ ip helper-address 172.16.20.134
  no shutdown
  exit
 
