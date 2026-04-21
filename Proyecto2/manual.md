@@ -12,12 +12,15 @@
     - [3.1 Selección de Hardware (Simulado)](#31-selección-de-hardware-simulado)
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
   - [4.1. Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
+  - [4.2. Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
+  - [4.3. Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
   - [6. Subnetting](#6-subnetting)
     - [6.1 ISP 1: Telecom Uno (`172.16.10.0/24`)](#61-isp-1-telecom-uno-1721610024)
     - [6.2 ISP 2: Redes Nacionales (`172.16.20.0/24`)](#62-isp-2-redes-nacionales-1721620024)
     - [6.3 ISP 3: Link Global (`172.16.32.0/24`)](#63-isp-3-link-global-1721632024)
     - [6.4 Core BGP (`192.168.20.0/16`)](#64-core-bgp-19216820016)
+  - [7. Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
     - [7.1 Configuración de Enrutamiento BGP en el Núcleo (Core)](#71-configuración-de-enrutamiento-bgp-en-el-núcleo-core)
       - [7.1.1 Configuración MSW\_Telecom (AS 100)](#711-configuración-msw_telecom-as-100)
       - [7.1.2 Configuración MSW\_Nacionales (AS 200)](#712-configuración-msw_nacionales-as-200)
@@ -32,6 +35,26 @@
       - [7.3.1 Configuración de IP Estática (Ambos Servidores)](#731-configuración-de-ip-estática-ambos-servidores)
       - [7.3.2 Configuración del Servicio HTTP](#732-configuración-del-servicio-http)
       - [7.3.3 Configuración del Servicio DNS](#733-configuración-del-servicio-dns)
+    - [7.4 Configuraciones de Dispositivos de Redes Nacionales (ISP 2)](#74-configuraciones-de-dispositivos-de-redes-nacionales-isp-2)
+      - [7.4.1 Configuración de Integración OSPF-BGP en MSW\_Nacionales](#741-configuración-de-integración-ospf-bgp-en-msw_nacionales)
+      - [7.4.2 Configuración MSW\_Core\_RN (Core y DHCP Gateway)](#742-configuración-msw_core_rn-core-y-dhcp-gateway)
+      - [7.4.3 Configuración MSW\_Dist\_1 (Distribución Primario)](#743-configuración-msw_dist_1-distribución-primario)
+      - [7.4.4 Configuración MSW\_Dist\_2 (Distribución Secundario)](#744-configuración-msw_dist_2-distribución-secundario)
+      - [7.4.5 Configuración de Switches de Acceso (SW\_Ventas y SW\_Facturacion)](#745-configuración-de-switches-de-acceso-sw_ventas-y-sw_facturacion)
+        - [SW\_Ventas](#sw_ventas)
+        - [SW\_Facturacion](#sw_facturacion)
+      - [7.4.6 Configuración del Servidor DHCP (GUI)](#746-configuración-del-servidor-dhcp-gui)
+    - [7.5 Configuraciones de Dispositivos de Link Global (ISP 3)](#75-configuraciones-de-dispositivos-de-link-global-isp-3)
+      - [7.5.1 Configuración de Integración EIGRP-BGP en MSW\_Link](#751-configuración-de-integración-eigrp-bgp-en-msw_link)
+      - [7.5.2 Configuración R\_Hub\_LG (Centro de la Estrella)](#752-configuración-r_hub_lg-centro-de-la-estrella)
+      - [7.5.3 Configuración MSW\_Soporte\_1 (Spoke 1 - Inicio)](#753-configuración-msw_soporte_1-spoke-1---inicio)
+      - [7.5.4 Configuración MSW\_Soporte\_2 (Spoke 1 - Final y Gateway)](#754-configuración-msw_soporte_2-spoke-1---final-y-gateway)
+      - [7.5.5 Configuración R\_Seguridad (Spoke 2)](#755-configuración-r_seguridad-spoke-2)
+      - [7.5.6 Configuración Router Inalámbrico y Actualización DHCP](#756-configuración-router-inalámbrico-y-actualización-dhcp)
+  - [8. Listas de Control de Acceso (ACLs)](#8-listas-de-control-de-acceso-acls)
+    - [8.1 ACL en Telecom Uno (Se aplica en MSW\_Dist\_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
+    - [8.2 ACLs en Redes Nacionales (Se aplica en MSW\_Dist\_1 y MSW\_Dist\_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
+    - [8.3 ACL en Link Global (Se aplica en R\_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
 
 ---
 
@@ -103,6 +126,44 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | MSW_Admin    | Gi1/0/10               | Servidor DNS  | Fa0                    | Cobre Directo  |
 | MSW_Admin    | Gi1/0/11               | Servidor HTTP | Fa0                    | Cobre Directo  |
 
+
+
+
+
+
+
+## 4.2. Tabla de conexiones de Redes Nacionales (Jerárquico)
+
+
+| Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **MSW_Nacionales** | Gi1/0/24 | **MSW_Core_RN** | Gi1/0/1 | Cobre Cruzado | Conexión hacia ISP 2 |
+| **MSW_Core_RN** | **Gi1/0/2 y Gi1/0/3** | **MSW_Dist_1** | **Gi1/0/2 y Gi1/0/3** | Cobre Cruzado | **Enlace LACP 1** |
+| **MSW_Core_RN** | **Gi1/0/4 y Gi1/0/5** | **MSW_Dist_2** | **Gi1/0/4 y Gi1/0/5** | Cobre Cruzado | **Enlace LACP 2** |
+| **MSW_Dist_1** | Gi1/0/10 | **SW_Ventas** | Gi0/1 | Cobre Directo | Enlace redundante 1 |
+| **MSW_Dist_2** | Gi1/0/10 | **SW_Ventas** | Gi0/2 | Cobre Directo | Enlace redundante 2 |
+| **MSW_Dist_1** | Gi1/0/11 | **SW_Facturacion** | Gi0/1 | Cobre Directo | Enlace redundante 1 |
+| **MSW_Dist_2** | Gi1/0/11 | **SW_Facturacion** | Gi0/2 | Cobre Directo | Enlace redundante 2 |
+| **MSW_Core_RN** | Gi1/0/20 | **Servidor DHCP** | Fa0 | Cobre Directo | Host de servicio DHCP |
+| **SW_Ventas** | Fa0/1 | **PC0** | Fa0 | Cobre Directo | Host Ventas |
+| **SW_Ventas** | Fa0/2 | **PC1** | Fa0 | Cobre Directo | Host Ventas |
+| **SW_Ventas** | Fa0/3 | **Laptop1** | Fa0 | Cobre Directo | Host Ventas |
+| **SW_Facturacion** | Fa0/1 | **PC2** | Fa0 | Cobre Directo | Host Facturación |
+| **SW_Facturacion** | Fa0/2 | **Laptop0** | Fa0 | Cobre Directo | Host Facturación |
+
+## 4.3. Tabla de conexiones de Link Global (Hub and Spoke)
+
+| Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **MSW_Link** | Gi1/0/24 | **R_Hub_LG** | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
+| **R_Hub_LG** | Gi0/0/1 | **MSW_Soporte_1** | Gi1/0/1 | Cobre Directo | Enlace enrutado (Spoke 1) |
+| **MSW_Soporte_1** | **Gi1/0/2 y Gi1/0/3** | **MSW_Soporte_2** | **Gi1/0/2 y Gi1/0/3** | Cobre Cruzado | **Enlace LACP 1** |
+| **MSW_Soporte_1** | **Gi1/0/4 y Gi1/0/5** | **MSW_Soporte_2** | **Gi1/0/4 y Gi1/0/5** | Cobre Cruzado | **Enlace LACP 2** |
+| **R_Hub_LG** | Gi0/0/2 | **R_Seguridad** | Gi0/0/0 | Cobre Cruzado | Enlace enrutado (Spoke 2) |
+| **R_Seguridad** | Gi0/0/1 | **Router_WiFi** | Internet (WAN) | Cobre Directo | Conexión a red inalámbrica |
+| **MSW_Soporte_2** | Gi1/0/10 | **PC3** | Fa0 | Cobre Directo | Host Soporte |
+| **MSW_Soporte_2** | Gi1/0/11 | **PC4** | Fa0 | Cobre Directo | Host Soporte |
+
 ---
 
 ## 5. Tabla de Direccionamiento IP
@@ -114,12 +175,27 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | **Core: LG ↔ T1** | Enlace BGP (Gi1/1/2) | 192.168.20.9 | 255.255.255.252 | N/A |
 | **MSW_Telecom ↔ R_Raiz_T1** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.10.129 ↔ .130| 255.255.255.252 | N/A |
 | **R_Raiz_T1 ↔ MSW_Dist_T1** | Gi0/0/1 ↔ Gi1/0/1 | 172.16.10.133 ↔ .134| 255.255.255.252 | N/A |
+| **MSW_Core_RN ↔ MSW_Dist_1**| Po1 ↔ Po1 | 172.16.20.137 ↔ .138| 255.255.255.252 | N/A |
+| **MSW_Core_RN ↔ MSW_Dist_2**| Po2 ↔ Po2 | 172.16.20.141 ↔ .142| 255.255.255.252 | N/A |
 | **SVI: Admin (T1)** | VLAN 10 (MSW_Dist) | 172.16.10.1 | 255.255.255.192 | N/A |
-| **SVI: Atencion (T1)**| VLAN 20 (MSW_Dist) | 172.16.10.65 | 255.255.255.192 | N/A |
-| **Servidor DNS** | Fa0 | 172.16.10.2 | 255.255.255.192 | 172.16.10.1 |
-| **Servidor HTTP** | Fa0 | 172.16.10.3 | 255.255.255.192 | 172.16.10.1 |
 | **SVI: Ventas (RN)** | VLAN 30 | 172.16.20.1 | 255.255.255.192 | 172.16.20.1 (VIP) |
-| **SVI: Seguridad (LG)**| VLAN 60 | 172.16.32.65 | 255.255.255.192 | N/A |
+| **SVI: Facturacion (RN)** | VLAN 40 | 172.16.20.65 | 255.255.255.192 | 172.16.20.65 (VIP) |
+| **Servidor DHCP** | Fa0 | 172.16.20.134 | 255.255.255.252 | 172.16.20.133 |
+| **MSW_Link ↔ R_Hub_LG** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.32.129 ↔ .130| 255.255.255.252 | N/A |
+| **R_Hub_LG ↔ MSW_Soporte_1** | Gi0/0/1 ↔ Gi1/0/1 | 172.16.32.133 ↔ .134| 255.255.255.252 | N/A |
+| **R_Hub_LG ↔ R_Seguridad** | Gi0/0/2 ↔ Gi0/0/0 | 172.16.32.145 ↔ .146| 255.255.255.252 | N/A |
+| **MSW_Soporte_1 ↔ MSW_Soporte_2**| Po1 ↔ Po1 | 172.16.32.137 ↔ .138| 255.255.255.252 | N/A |
+| **MSW_Soporte_1 ↔ MSW_Soporte_2**| Po2 ↔ Po2 | 172.16.32.141 ↔ .142| 255.255.255.252 | N/A |
+| **SVI: Soporte (LG)** | VLAN 50 | 172.16.32.1 | 255.255.255.192 | N/A |
+| **Gateway Seguridad (LG)** | Gi0/0/1 (R_Seg) | 172.16.32.65 | 255.255.255.192 | N/A |
+| **Router_WiFi (WAN)** | Internet | 172.16.32.66 | 255.255.255.192 | 172.16.32.65 |
+
+
+
+
+
+
+
 
 ---
 
@@ -147,7 +223,9 @@ Se utiliza una máscara /30 para los enlaces punto a punto entre los switches mu
 - **Enlace 2 (RN-LG):** 192.168.20.4/30
 - **Enlace 3 (LG-T1):** 192.168.20.8/30
 
+---
 
+## 7. Configuraciones de Dispositivos
 
 ### 7.1 Configuración de Enrutamiento BGP en el Núcleo (Core)
 
@@ -272,9 +350,10 @@ interface GigabitEthernet1/0/24
  no shutdown
  exit
 
-! 2. Levantar OSPF
+! 2. Levantar OSPF y Redistribuir BGP hacia adentro (Efecto Espejo)
 router ospf 1
  network 172.16.10.128 0.0.0.3 area 0
+ redistribute bgp 100 subnets
  exit
 
 ! 3. Redistribuir las rutas de OSPF hacia BGP para que el país conozca a Telecom Uno
@@ -495,3 +574,659 @@ El servidor DNS resolverá el dominio solicitado para toda la red hacia la IP de
 4. Clic en **Add** para guardar el registro.
 
 ---
+
+
+### 7.4 Configuraciones de Dispositivos de Redes Nacionales (ISP 2)
+
+#### 7.4.1 Configuración de Integración OSPF-BGP en MSW_Nacionales
+*Nota: Siguiendo el orden de este manual, este equipo ya tiene BGP configurado. Agregamos OSPF para inyectar la red interna.*
+
+```bash
+enable
+configure terminal
+
+! 1. Configurar la interfaz que baja hacia el Core de Redes Nacionales
+interface GigabitEthernet1/0/24
+ no switchport
+ ip address 172.16.20.129 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Levantar OSPF y Redistribuir BGP hacia adentro (Efecto Espejo)
+router ospf 1
+ network 172.16.20.128 0.0.0.3 area 0
+ redistribute bgp 200 subnets
+ exit
+
+! 3. Redistribuir las rutas de OSPF hacia BGP
+router bgp 200
+ redistribute ospf 1
+ exit
+
+end
+write memory
+```
+
+
+
+
+#### 7.4.2 Configuración MSW_Core_RN (Core y DHCP Gateway)
+
+
+```bash
+enable
+configure terminal
+hostname MSW_Core_RN
+
+! 1. Activar enrutamiento
+ip routing
+
+! 2. Interfaz hacia MSW_Nacionales (Arriba)
+interface GigabitEthernet1/0/1
+ no switchport
+ ip address 172.16.20.130 255.255.255.252
+ no shutdown
+ exit
+
+! 3. Interfaz hacia Servidor DHCP
+interface GigabitEthernet1/0/20
+ no switchport
+ ip address 172.16.20.133 255.255.255.252
+ no shutdown
+ exit
+
+! 4. LACP Hacia MSW_Dist_1 (Port-Channel 1 - Capa 3)
+interface range GigabitEthernet1/0/2 - 3
+ no switchport
+ channel-protocol lacp
+ channel-group 1 mode active
+ exit
+
+interface Port-channel 1
+ ip address 172.16.20.137 255.255.255.252
+ no shutdown
+ exit
+
+! 5. LACP Hacia MSW_Dist_2 (Port-Channel 2 - Capa 3)
+interface range GigabitEthernet1/0/4 - 5
+ no switchport
+ channel-protocol lacp
+ channel-group 2 mode active
+ exit
+
+interface Port-channel 2
+ ip address 172.16.20.141 255.255.255.252
+ no shutdown
+ exit
+
+! 6. Configuración OSPF
+router ospf 1
+ network 172.16.20.0 0.0.0.255 area 0
+ exit
+
+end
+write memory
+```
+
+
+
+
+
+#### 7.4.3 Configuración MSW_Dist_1 (Distribución Primario)
+
+
+```bash
+enable
+configure terminal
+hostname MSW_Dist_1
+
+! 1. Activar enrutamiento
+ip routing
+
+! 2. Crear VLANs
+vlan 30
+ name Ventas
+vlan 40
+ name Facturacion
+ exit
+
+! 3. LACP Hacia MSW_Core_RN (Port-Channel 1 - Capa 3)
+interface range GigabitEthernet1/0/2 - 3
+ no switchport
+ channel-protocol lacp
+ channel-group 1 mode passive
+ exit
+
+interface Port-channel 1
+ ip address 172.16.20.138 255.255.255.252
+ no shutdown
+ exit
+
+! 4. Enlaces troncales hacia switches de acceso
+interface range GigabitEthernet1/0/10 - 11
+ switchport mode trunk
+ exit
+
+! 5. Configurar SVIs y HSRP (Prioridad 110 = Activo)
+interface Vlan30
+ ip address 172.16.20.2 255.255.255.192
+ ip helper-address 172.16.20.134
+ standby 30 ip 172.16.20.1
+ standby 30 priority 110
+ standby 30 preempt
+ no shutdown
+ exit
+
+interface Vlan40
+ ip address 172.16.20.66 255.255.255.192
+ ip helper-address 172.16.20.134
+ standby 40 ip 172.16.20.65
+ standby 40 priority 110
+ standby 40 preempt
+ no shutdown
+ exit
+
+! 6. OSPF
+router ospf 1
+ network 172.16.20.0 0.0.0.255 area 0
+ exit
+
+end
+write memory
+```
+
+#### 7.4.4 Configuración MSW_Dist_2 (Distribución Secundario)
+
+
+```bash
+enable
+configure terminal
+hostname MSW_Dist_2
+
+! 1. Activar enrutamiento
+ip routing
+
+! 2. Crear VLANs
+vlan 30
+ name Ventas
+vlan 40
+ name Facturacion
+ exit
+
+! 3. LACP Hacia MSW_Core_RN (Port-Channel 2 - Capa 3)
+interface range GigabitEthernet1/0/4 - 5
+ no switchport
+ channel-protocol lacp
+ channel-group 2 mode passive
+ exit
+
+interface Port-channel 2
+ ip address 172.16.20.142 255.255.255.252
+ no shutdown
+ exit
+
+! 4. Enlaces troncales hacia switches de acceso
+interface range GigabitEthernet1/0/10 - 11
+ switchport mode trunk
+ exit
+
+! 5. Configurar SVIs y HSRP (Prioridad 90 = Standby)
+interface Vlan30
+ ip address 172.16.20.3 255.255.255.192
+ ip helper-address 172.16.20.134
+ standby 30 ip 172.16.20.1
+ standby 30 priority 90
+ standby 30 preempt
+ no shutdown
+ exit
+
+interface Vlan40
+ ip address 172.16.20.67 255.255.255.192
+ ip helper-address 172.16.20.134
+ standby 40 ip 172.16.20.65
+ standby 40 priority 90
+ standby 40 preempt
+ no shutdown
+ exit
+
+! 6. OSPF
+router ospf 1
+ network 172.16.20.0 0.0.0.255 area 0
+ exit
+
+end
+write memory
+```
+
+
+#### 7.4.5 Configuración de Switches de Acceso (SW_Ventas y SW_Facturacion)
+
+A continuación, la configuración respectiva para los switches de capa de acceso de cada departamento:
+
+##### SW_Ventas
+
+```bash
+enable
+configure terminal
+hostname SW_Ventas
+
+vlan 30
+ name Ventas
+ exit
+
+interface range GigabitEthernet0/1 - 2
+ switchport mode trunk
+ exit
+
+interface range FastEthernet0/1 - 3
+ switchport mode access
+ switchport access vlan 30
+ exit
+
+end
+write memory
+
+```
+
+
+
+##### SW_Facturacion
+
+```bash
+
+enable
+configure terminal
+hostname SW_Facturacion
+
+vlan 40
+ name Facturacion
+ exit
+
+interface range GigabitEthernet0/1 - 2
+ switchport mode trunk
+ exit
+
+interface range FastEthernet0/1 - 2
+ switchport mode access
+ switchport access vlan 40
+ exit
+
+end
+write memory
+
+```
+
+#### 7.4.6 Configuración del Servidor DHCP (GUI)
+1. Ve al Servidor DHCP. En la pestaña **Desktop -> IP Configuration**, ponle IP estática `172.16.20.134`, máscara `255.255.255.252` y Gateway `172.16.20.133`.
+2. Ve a **Services -> DHCP**, asegúrate de que esté en **ON** y crea los siguientes pools (basados en tus subredes de la Sección 6):
+   * **Pool Ventas:** Gateway `172.16.20.1`, DNS Server `172.16.10.2`, Start IP `172.16.20.4`, Mask `255.255.255.192`.
+   * **Pool Facturación:** Gateway `172.16.20.65`, DNS Server `172.16.10.2`, Start IP `172.16.20.68`, Mask `255.255.255.192`.
+   * **Pool Admin (T1):** Gateway `172.16.10.1`, DNS Server `172.16.10.2`, Start IP `172.16.10.4`, Mask `255.255.255.192`.
+   * **Pool Atencion (T1):** Gateway `172.16.10.65`, DNS Server `172.16.10.2`, Start IP `172.16.10.66`, Mask `255.255.255.192`.
+
+*(Recuerda dar clic en **Add** para cada pool nuevo que crees).*
+
+Una vez que configures esto, ve a las PCs, cámbialas de Static a DHCP y deberían recibir su IP. ¡Si eso funciona, habremos superado la parte más compleja del proyecto!
+
+
+### 7.5 Configuraciones de Dispositivos de Link Global (ISP 3)
+
+#### 7.5.1 Configuración de Integración EIGRP-BGP en MSW_Link
+*Nota: Este equipo conecta el ISP 3 con el núcleo nacional. Además ya tiene una configuración previa siguiente el flujo de este manual*
+
+```bash
+
+enable
+configure terminal
+
+! 1. Configurar la interfaz que baja hacia el Hub
+interface GigabitEthernet1/0/24
+ no switchport
+ ip address 172.16.32.129 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Levantar EIGRP y Redistribuir BGP hacia adentro con métricas semilla
+router eigrp 1
+ network 172.16.32.128 0.0.0.3
+ redistribute bgp 300 metric 1000000 1 255 1 1500
+ exit
+
+! 3. Redistribuir EIGRP hacia BGP
+router bgp 300
+ redistribute eigrp 1
+ exit
+
+end
+write memory
+
+```
+
+
+#### 7.5.2 Configuración R_Hub_LG (Centro de la Estrella)
+
+
+```bash
+
+enable
+configure terminal
+hostname R_Hub_LG
+
+! 1. Interfaz hacia MSW_Link (Arriba)
+interface GigabitEthernet0/0/0
+ ip address 172.16.32.130 255.255.255.252
+ no shutdown
+ exit
+
+! 2. Interfaz hacia Spoke 1 (MSW_Soporte_1)
+interface GigabitEthernet0/0/1
+ ip address 172.16.32.133 255.255.255.252
+ no shutdown
+ exit
+
+! 3. Interfaz hacia Spoke 2 (R_Seguridad)
+interface GigabitEthernet0/0/2
+ ip address 172.16.32.145 255.255.255.252
+ no shutdown
+ exit
+
+! 4. Configuración EIGRP
+router eigrp 1
+ network 172.16.32.128 0.0.0.3
+ network 172.16.32.132 0.0.0.3
+ network 172.16.32.144 0.0.0.3
+ exit
+
+end
+write memory
+
+```
+
+
+
+#### 7.5.3 Configuración MSW_Soporte_1 (Spoke 1 - Inicio)
+
+
+```bash
+
+enable
+configure terminal
+hostname MSW_Soporte_1
+ip routing
+
+interface GigabitEthernet1/0/1
+ no switchport
+ ip address 172.16.32.134 255.255.255.252
+ no shutdown
+ exit
+
+! LACP 1 (Capa 3)
+interface range GigabitEthernet1/0/2 - 3
+ no switchport
+ channel-protocol lacp
+ channel-group 1 mode active
+ exit
+
+interface Port-channel 1
+ ip address 172.16.32.137 255.255.255.252
+ no shutdown
+ exit
+
+! LACP 2 (Capa 3)
+interface range GigabitEthernet1/0/4 - 5
+ no switchport
+ channel-protocol lacp
+ channel-group 2 mode active
+ exit
+
+interface Port-channel 2
+ ip address 172.16.32.141 255.255.255.252
+ no shutdown
+ exit
+
+router eigrp 1
+ network 172.16.32.132 0.0.0.3
+ network 172.16.32.136 0.0.0.3
+ network 172.16.32.140 0.0.0.3
+ exit
+
+end
+write memory
+
+```
+
+
+
+#### 7.5.4 Configuración MSW_Soporte_2 (Spoke 1 - Final y Gateway)
+
+```bash
+
+enable
+configure terminal
+hostname MSW_Soporte_2
+ip routing
+
+! LACP 1 (Capa 3)
+interface range GigabitEthernet1/0/2 - 3
+ no switchport
+ channel-protocol lacp
+ channel-group 1 mode passive
+ exit
+
+interface Port-channel 1
+ ip address 172.16.32.138 255.255.255.252
+ no shutdown
+ exit
+
+! LACP 2 (Capa 3)
+interface range GigabitEthernet1/0/4 - 5
+ no switchport
+ channel-protocol lacp
+ channel-group 2 mode passive
+ exit
+
+interface Port-channel 2
+ ip address 172.16.32.142 255.255.255.252
+ no shutdown
+ exit
+
+! Gateway para PCs de Soporte y DHCP Relay
+vlan 50
+ name Soporte
+ exit
+
+interface Vlan50
+ ip address 172.16.32.1 255.255.255.192
+ ip helper-address 172.16.20.134
+ no shutdown
+ exit
+
+! Puertos hacia las PCs de Soporte
+interface range GigabitEthernet1/0/10 - 11
+ switchport mode access
+ switchport access vlan 50
+ exit
+
+router eigrp 1
+ network 172.16.32.136 0.0.0.3
+ network 172.16.32.140 0.0.0.3
+ network 172.16.32.0 0.0.0.63
+ exit
+
+end
+write memory
+
+```
+
+
+
+
+#### 7.5.5 Configuración R_Seguridad (Spoke 2)
+
+```bash
+
+enable
+configure terminal
+hostname R_Seguridad
+
+! Hacia R_Hub_LG
+interface GigabitEthernet0/0/0
+ ip address 172.16.32.146 255.255.255.252
+ no shutdown
+ exit
+
+! Hacia Router_WiFi
+interface GigabitEthernet0/0/1
+ ip address 172.16.32.65 255.255.255.192
+ no shutdown
+ exit
+
+router eigrp 1
+ network 172.16.32.144 0.0.0.3
+ network 172.16.32.64 0.0.0.63
+ exit
+
+end
+write memory
+```
+
+
+
+#### 7.5.6 Configuración Router Inalámbrico y Actualización DHCP
+
+**1. Servidor DHCP Central (En Redes Nacionales):**
+Como las PCs de Soporte obtienen IP del servidor central, debes ir al Servidor DHCP (172.16.20.134) y agregar este último Pool:
+- **Pool Name:** `PoolSoporte`
+- **Default Gateway:** `172.16.32.1`
+- **DNS Server:** `172.16.10.2`
+- **Start IP:** `172.16.32.2`
+- **Subnet Mask:** `255.255.255.192`
+
+**2. Router Inalámbrico (Router_WiFi):**
+En la pestaña **GUI** del dispositivo WRT300N, realizaremos la configuración de red y la personalización de seguridad:
+
+* **Internet Setup (WAN):** Selecciona *Static IP*.
+    * **IP Address:** `172.16.32.66`
+    * **Subnet Mask:** `255.255.255.192`
+    * **Default Gateway:** `172.16.32.65`
+    * **Static DNS:** `172.16.10.2`
+* **Network Setup (LAN):** Déjalo por defecto (IP: `192.168.0.1`). Esto otorgará IPs locales a las laptops de forma automática, cumpliendo la regla del firewall inalámbrico de aislar a estos usuarios.
+* **Guardar:** Ve al fondo de la página y haz clic en *Save Settings*.
+
+**3. Personalización de la Red Inalámbrica:**
+Para asegurar el departamento de Seguridad, personalizaremos el SSID y la contraseña.
+* Ve a la pestaña superior **Wireless** -> **Basic Wireless Settings**:
+    * **Network Name (SSID):** `Seguridad_202302220`.
+    * Clic en *Save Settings*.
+* Ve a la sub-pestaña **Wireless Security**:
+    * **Security Mode:** `WPA2 Personal`
+    * **Passphrase:** `redes2026`.
+    * Clic en *Save Settings*.
+
+*(Nota: Para conectar las laptops, ve a la pestaña Desktop -> PC Wireless de cada una, selecciona la red "Seguridad_202302220" y coloca la contraseña).*
+
+
+
+## 8. Listas de Control de Acceso (ACLs)
+
+### 8.1 ACL en Telecom Uno (Se aplica en MSW_Dist_T1)
+**Regla:** Atención al Cliente SOLO habla con Ventas.
+
+` ` `bash
+enable
+configure terminal
+
+! ACL para Atención al Cliente (VLAN 20)
+ip access-list extended ACL_ATENCION
+ ! 1. Permitir DHCP y DNS/HTTP (Servicios vitales)
+ permit udp any any eq bootps
+ permit ip any host 172.16.10.2
+ permit ip any host 172.16.10.3
+ ! 2. Permitir tráfico hacia Ventas (172.16.20.0/26)
+ permit ip 172.16.10.64 0.0.0.63 172.16.20.0 0.0.0.63
+ ! 3. Denegar tráfico hacia las demás subredes privadas del proyecto (172.16.0.0/16)
+ deny ip 172.16.10.64 0.0.0.63 172.16.0.0 0.0.255.255
+ ! 4. Permitir el resto (necesario por buenas prácticas)
+ permit ip any any
+ exit
+
+! Aplicar en el Gateway (Vlan 20)
+interface Vlan 20
+ ip access-group ACL_ATENCION in
+ exit
+
+end
+write memory
+` ` `
+
+---
+
+### 8.2 ACLs en Redes Nacionales (Se aplica en MSW_Dist_1 y MSW_Dist_2)
+**Regla 1:** Ventas habla con Facturación y Atención al Cliente.
+**Regla 2:** Facturación SOLO habla con Ventas.
+
+> *Aplica esto en ambos switches de distribución por el HSRP.*
+
+` ` `bash
+enable
+configure terminal
+
+! ACL para Ventas (VLAN 30)
+ip access-list extended ACL_VENTAS
+ permit udp any any eq bootps
+ permit ip any host 172.16.10.2
+ permit ip any host 172.16.10.3
+ permit ip 172.16.20.0 0.0.0.63 172.16.10.64 0.0.0.63
+ permit ip 172.16.20.0 0.0.0.63 172.16.20.64 0.0.0.63
+ deny ip 172.16.20.0 0.0.0.63 172.16.0.0 0.0.255.255
+ permit ip any any
+ exit
+
+! ACL para Facturacion (VLAN 40)
+ip access-list extended ACL_FACTURACION
+ permit udp any any eq bootps
+ permit ip any host 172.16.10.2
+ permit ip any host 172.16.10.3
+ permit ip 172.16.20.64 0.0.0.63 172.16.20.0 0.0.0.63
+ deny ip 172.16.20.64 0.0.0.63 172.16.0.0 0.0.255.255
+ permit ip any any
+ exit
+
+! Aplicar en Gateways
+interface Vlan 30
+ ip access-group ACL_VENTAS in
+ exit
+interface Vlan 40
+ ip access-group ACL_FACTURACION in
+ exit
+
+end
+write memory
+` ` `
+
+---
+
+### 8.3 ACL en Link Global (Se aplica en R_Seguridad)
+**Regla:** Nadie puede entrar a Seguridad, pero Seguridad puede salir a todos.
+
+` ` `bash
+enable
+configure terminal
+
+! Bloquear tráfico que INTENTE ENTRAR a la subred de Seguridad
+ip access-list extended ACL_NO_ENTRADA_SEG
+ ! Permitir que vuelva a entrar el tráfico de conexiones ya establecidas
+ permit tcp any 172.16.32.64 0.0.0.63 established
+ ! Bloquear cualquier otro intento de entrar a Seguridad
+ deny ip 172.16.0.0 0.0.255.255 172.16.32.64 0.0.0.63
+ permit ip any any
+ exit
+
+! Aplicar en la interfaz que conecta hacia el HUB de forma SALIENTE (hacia las laptops)
+interface GigabitEthernet0/0/0
+ ip access-group ACL_NO_ENTRADA_SEG out
+ exit
+
+end
+write memory
+` ` `
