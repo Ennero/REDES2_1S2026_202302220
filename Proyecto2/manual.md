@@ -1139,21 +1139,28 @@ Establecer identificadores y credenciales dedicadas para el SSID de Seguridad:
 enable
 configure terminal
 
-! ACL para Atención al Cliente (VLAN 20)
+! Borrar lista anterior si existe
+no ip access-list extended ACL_ATENCION
+
+! Nueva ACL para Atención al Cliente (VLAN 20)
 ip access-list extended ACL_ATENCION
  ! 1. Permitir DHCP y DNS/HTTP (Servicios vitales)
  permit udp any any eq bootps
  permit ip any host 172.16.10.2
  permit ip any host 172.16.10.3
- ! 2. Permitir tráfico hacia Ventas (172.16.20.0/26)
+ ! 2. Permitir responder a Admin (172.16.10.0/26)
+ permit icmp 172.16.10.64 0.0.0.63 172.16.10.0 0.0.0.63 echo-reply
+ permit tcp 172.16.10.64 0.0.0.63 172.16.10.0 0.0.0.63 established
+ ! 3. Permitir responder a Soporte y Seguridad (Agrupados en 172.16.32.0/25)
+ permit icmp 172.16.10.64 0.0.0.63 172.16.32.0 0.0.0.127 echo-reply
+ permit tcp 172.16.10.64 0.0.0.63 172.16.32.0 0.0.0.127 established
+ ! 4. Permitir comunicación completa hacia Ventas
  permit ip 172.16.10.64 0.0.0.63 172.16.20.0 0.0.0.63
- ! 3. Denegar tráfico hacia las demás subredes privadas del proyecto (172.16.0.0/16)
+ ! 5. Denegar tráfico hacia las demás subredes privadas
  deny ip 172.16.10.64 0.0.0.63 172.16.0.0 0.0.255.255
- ! 4. Permitir el resto (necesario por buenas prácticas)
  permit ip any any
  exit
 
-! Aplicar en el Gateway (Vlan 20)
 interface Vlan20
  ip access-group ACL_ATENCION in
  exit
@@ -1174,13 +1181,24 @@ write memory
 enable
 configure terminal
 
+! Borrar listas anteriores
+no ip access-list extended ACL_VENTAS
+no ip access-list extended ACL_FACTURACION
+
 ! ACL para Ventas (VLAN 30)
 ip access-list extended ACL_VENTAS
  permit udp any any eq bootps
  permit ip any host 172.16.10.2
  permit ip any host 172.16.10.3
- permit ip 172.16.20.0 0.0.0.63 172.16.10.64 0.0.0.63
+ ! Respuestas a Admin, Soporte y Seguridad
+ permit icmp 172.16.20.0 0.0.0.63 172.16.10.0 0.0.0.63 echo-reply
+ permit tcp 172.16.20.0 0.0.0.63 172.16.10.0 0.0.0.63 established
+ permit icmp 172.16.20.0 0.0.0.63 172.16.32.0 0.0.0.127 echo-reply
+ permit tcp 172.16.20.0 0.0.0.63 172.16.32.0 0.0.0.127 established
+ ! Permitir hacia Facturación y Atención
  permit ip 172.16.20.0 0.0.0.63 172.16.20.64 0.0.0.63
+ permit ip 172.16.20.0 0.0.0.63 172.16.10.64 0.0.0.63
+ ! Denegar resto
  deny ip 172.16.20.0 0.0.0.63 172.16.0.0 0.0.255.255
  permit ip any any
  exit
@@ -1190,7 +1208,14 @@ ip access-list extended ACL_FACTURACION
  permit udp any any eq bootps
  permit ip any host 172.16.10.2
  permit ip any host 172.16.10.3
+ ! Respuestas a Admin, Soporte y Seguridad
+ permit icmp 172.16.20.64 0.0.0.63 172.16.10.0 0.0.0.63 echo-reply
+ permit tcp 172.16.20.64 0.0.0.63 172.16.10.0 0.0.0.63 established
+ permit icmp 172.16.20.64 0.0.0.63 172.16.32.0 0.0.0.127 echo-reply
+ permit tcp 172.16.20.64 0.0.0.63 172.16.32.0 0.0.0.127 established
+ ! Permitir hacia Ventas
  permit ip 172.16.20.64 0.0.0.63 172.16.20.0 0.0.0.63
+ ! Denegar resto
  deny ip 172.16.20.64 0.0.0.63 172.16.0.0 0.0.255.255
  permit ip any any
  exit
@@ -1216,19 +1241,21 @@ write memory
 enable
 configure terminal
 
-! Bloquear tráfico que INTENTE ENTRAR a la subred de Seguridad (172.16.32.64/26)
+! Borrar lista anterior
+no ip access-list extended ACL_NO_ENTRADA_SEG
+
+! ACL de protección para Seguridad (172.16.32.64/26)
 ip access-list extended ACL_NO_ENTRADA_SEG
- ! Permitir respuestas DNS (UDP 53) desde el servidor DNS de Telecom hacia Seguridad
  permit udp host 172.16.10.2 eq domain 172.16.32.64 0.0.0.63
- ! Permitir que vuelva a entrar el tráfico TCP de conexiones ya establecidas por Seguridad
+ ! Permitir el regreso de conexiones TCP
  permit tcp any 172.16.32.64 0.0.0.63 established
- ! Bloquear cualquier otro intento de entrar a Seguridad desde otras subredes privadas
+ ! Permitir el regreso de PINGs iniciados por las laptops de Seguridad
+ permit icmp any 172.16.32.64 0.0.0.63 echo-reply
+ ! Bloquear cualquier intento malicioso de iniciar conexión hacia Seguridad
  deny ip 172.16.0.0 0.0.255.255 172.16.32.64 0.0.0.63
- ! Permitir el resto del tráfico (necesario para el tráfico local/broadcast)
  permit ip any any
  exit
 
-! Aplicar en la interfaz que conecta hacia la red Inalámbrica de Seguridad (saliente hacia ellos)
 interface GigabitEthernet0/0/1
  ip access-group ACL_NO_ENTRADA_SEG out
  exit
