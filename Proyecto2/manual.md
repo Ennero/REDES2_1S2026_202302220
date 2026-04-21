@@ -53,8 +53,13 @@
     - [8.1 ACL en Telecom Uno (Se aplica en MSW\_Dist\_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
     - [8.2 ACLs en Redes Nacionales (Se aplica en MSW\_Dist\_1 y MSW\_Dist\_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
     - [8.3 ACL en Link Global (Se aplica en R\_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
-- [9. Lista de Precios de Hardware (Cotización Estimada)](#9-lista-de-precios-de-hardware-cotización-estimada)
-- [10. Comandos de Verificación](#10-comandos-de-verificación)
+  - [9. Lista de Precios de Hardware (Cotización Estimada)](#9-lista-de-precios-de-hardware-cotización-estimada)
+  - [10. Comandos de Verificación](#10-comandos-de-verificación)
+    - [10.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)](#101-verificación-de-enrutamiento-bgp-ospf-eigrp)
+    - [10.2 Verificación de Alta Disponibilidad y Agregación](#102-verificación-de-alta-disponibilidad-y-agregación)
+    - [10.3 Verificación de Servicios y Seguridad](#103-verificación-de-servicios-y-seguridad)
+    - [10.4 Pruebas de Extremo a Extremo](#104-pruebas-de-extremo-a-extremo)
+- [10. Comandos de Verificación](#10-comandos-de-verificación-1)
 
 ---
 
@@ -1289,7 +1294,7 @@ write memory
 
 
 
-# 9. Lista de Precios de Hardware (Cotización Estimada)
+## 9. Lista de Precios de Hardware (Cotización Estimada)
 
 | Dispositivo | Cantidad | Precio Unitario (USD) | Subtotal (USD) | Subtotal (GTQ) |
 |---|---|---|---|---|
@@ -1298,6 +1303,30 @@ write memory
 | Switch Cisco 2960-24TT (Acceso) | 2 | $350.00 | $700.00 | Q5,425.00 |
 | Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
 | Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
+
+---
+
+## 10. Comandos de Verificación
+
+A continuación, se presenta una lista de comandos útiles a ejecutar en la Interfaz de Línea de Comandos (CLI) de los dispositivos para verificar el correcto funcionamiento de las configuraciones implementadas:
+
+### 10.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)
+* `show ip route` - Muestra la tabla de enrutamiento completa. Validar la presencia de rutas marcadas con **B** (BGP), **O** (OSPF) o **D** (EIGRP).
+* `show ip bgp summary` - Ejecutar en el Core para verificar que se haya establecido vecindad y adyacencia BGP con los ISPs vecinos.
+* `show ip ospf neighbor` - Validar las adyacencias de OSPF en los routers interiores de Telecom Uno y Redes Nacionales.
+* `show ip eigrp neighbors` - Validar las adyacencias de EIGRP en la topología Hub and Spoke de Link Global.
+
+### 10.2 Verificación de Alta Disponibilidad y Agregación
+* `show standby brief` - Ejecutar en MSW_Dist_1 y MSW_Dist_2 (Redes Nacionales) para verificar el estado **Active** o **Standby** del protocolo HSRP en las SVIs.
+* `show etherchannel summary` - Verificar que los Port-Channels se encuentren con el flag **SU** (Layer 2) o **RU** (Layer 3) confirmando el funcionamiento de LACP.
+
+### 10.3 Verificación de Servicios y Seguridad
+* `show ip dhcp binding` - Ejecutar en el Servidor DHCP (interfaz GUI / Command Prompt) o Routers C3 configurados para validar el arrendamiento de direcciones IP a los hosts.
+* `show access-lists` - Desplegar las ACLs configuradas y verificar el contador de *matches* cuando se realiza tráfico permitido o denegado.
+
+### 10.4 Pruebas de Extremo a Extremo
+* En la Command Prompt de cualquier PC final, usar el comando `ping [IP_Destino]` considerando las reglas de la matriz de comunicación permitida.
+* Desde el *Web Browser* en terminales (Pestaña Desktop), acceder al URL proporcionado `http://www.proyecto2_202302220.com` para comprobar resolución DNS y servicio HTTP.
 | Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
 | **TOTAL ESTIMADO** | | | **$24,730.00** | **Q191,657.50** |
 
