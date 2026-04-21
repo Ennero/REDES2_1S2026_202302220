@@ -53,13 +53,16 @@
     - [8.1 ACL en Telecom Uno (Se aplica en MSW\_Dist\_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
     - [8.2 ACLs en Redes Nacionales (Se aplica en MSW\_Dist\_1 y MSW\_Dist\_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
     - [8.3 ACL en Link Global (Se aplica en R\_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
+  - [9. Justificación de Diseños Topológicos](#9-justificación-de-diseños-topológicos)
+    - [9.1 Topología de Árbol (Telecom Uno)](#91-topología-de-árbol-telecom-uno)
+    - [9.2 Modelo Jerárquico de 3 Capas (Redes Nacionales)](#92-modelo-jerárquico-de-3-capas-redes-nacionales)
+    - [9.3 Topología Hub and Spoke (Link Global)](#93-topología-hub-and-spoke-link-global)
   - [9. Lista de Precios de Hardware (Cotización Estimada)](#9-lista-de-precios-de-hardware-cotización-estimada)
-  - [10. Comandos de Verificación](#10-comandos-de-verificación)
-    - [10.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)](#101-verificación-de-enrutamiento-bgp-ospf-eigrp)
-    - [10.2 Verificación de Alta Disponibilidad y Agregación](#102-verificación-de-alta-disponibilidad-y-agregación)
-    - [10.3 Verificación de Servicios y Seguridad](#103-verificación-de-servicios-y-seguridad)
-    - [10.4 Pruebas de Extremo a Extremo](#104-pruebas-de-extremo-a-extremo)
-- [10. Comandos de Verificación](#10-comandos-de-verificación-1)
+  - [11. Comandos de Verificación](#11-comandos-de-verificación)
+    - [11.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)](#111-verificación-de-enrutamiento-bgp-ospf-eigrp)
+    - [11.2 Verificación de Alta Disponibilidad y Agregación](#112-verificación-de-alta-disponibilidad-y-agregación)
+    - [11.3 Verificación de Servicios y Seguridad](#113-verificación-de-servicios-y-seguridad)
+    - [11.4 Pruebas de Extremo a Extremo](#114-pruebas-de-extremo-a-extremo)
 
 ---
 
@@ -91,7 +94,7 @@ Diseñar e implementar una infraestructura nacional de telecomunicaciones que in
 ## 3. Topología de Red
 La infraestructura se divide en cuatro sistemas autónomos principales interconectados en un triángulo central (Core BGP) mediante switches multicapa 3650-24PS utilizando fibra óptica.
 
-> [Insertar Diagrama de Topología de Red Simulado]
+![Diagrama de Topología de Red](imgs/topologia.png)
 
 ---
 
@@ -1291,8 +1294,26 @@ end
 write memory
 ```
 
+---
+
+## 9. Justificación de Diseños Topológicos
+
+Para cumplir con los requerimientos de la matriz de comunicación y garantizar la escalabilidad de la red, se seleccionaron tres arquitecturas topológicas distintas para cada ISP, fundamentadas en los estándares de diseño de Cisco:
+
+### 9.1 Topología de Árbol (Telecom Uno)
+La topología de árbol se implementó en el ISP 1 debido a su naturaleza jerárquica expansiva. 
+- **Justificación Técnica:** Permite concentrar los servicios de red (DNS y HTTP) en una rama específica, facilitando el control de tráfico y la aplicación de políticas de seguridad. Al derivar las conexiones desde un nodo raíz (`R_Raiz_T1`) hacia la distribución, el tráfico de broadcast se contiene eficientemente, aislando el tráfico de Administración y Atención al Cliente en ramas físicas y lógicas separadas.
+
+### 9.2 Modelo Jerárquico de 3 Capas (Redes Nacionales)
+Se utilizó el diseño jerárquico clásico (Núcleo, Distribución y Acceso) en el ISP 2, ya que es el estándar de la industria para redes empresariales de alta disponibilidad.
+- **Justificación Técnica:** Este modelo es el único que permite implementar **HSRP (Hot Standby Router Protocol)** de manera eficiente. Al colocar dos switches multicapa (`MSW_Dist_1` y `MSW_Dist_2`) en la capa de distribución, se crea un Gateway virtual tolerante a fallos para los departamentos de Ventas y Facturación. Además, la capa de núcleo dedicada aísla el procesamiento del Servidor DHCP del tráfico de las terminales.
+
+### 9.3 Topología Hub and Spoke (Link Global)
+La arquitectura de estrella (*Hub and Spoke*) se desplegó en el ISP 3 para centralizar el enrutamiento mediante el protocolo EIGRP.
+- **Justificación Técnica:** En este modelo, el tráfico entre las sucursales perimetrales o *Spokes* (Soporte y Seguridad) no viaja directamente entre ellas a nivel físico. Todo paquete debe pasar forzosamente por el nodo central o *Hub* (`R_Hub_LG`). Esta decisión de diseño es crítica porque facilita la auditoría del tráfico y refuerza la política de seguridad estricta requerida para el departamento de Seguridad, actuando como un cuello de botella controlado antes de salir hacia el núcleo nacional BGP.
 
 
+---
 
 ## 9. Lista de Precios de Hardware (Cotización Estimada)
 
@@ -1304,48 +1325,32 @@ write memory
 | Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
 | Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
 
----
 
-## 10. Comandos de Verificación
+--- 
+
+## 11. Comandos de Verificación
 
 A continuación, se presenta una lista de comandos útiles a ejecutar en la Interfaz de Línea de Comandos (CLI) de los dispositivos para verificar el correcto funcionamiento de las configuraciones implementadas:
 
-### 10.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)
+### 11.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)
 * `show ip route` - Muestra la tabla de enrutamiento completa. Validar la presencia de rutas marcadas con **B** (BGP), **O** (OSPF) o **D** (EIGRP).
 * `show ip bgp summary` - Ejecutar en el Core para verificar que se haya establecido vecindad y adyacencia BGP con los ISPs vecinos.
 * `show ip ospf neighbor` - Validar las adyacencias de OSPF en los routers interiores de Telecom Uno y Redes Nacionales.
 * `show ip eigrp neighbors` - Validar las adyacencias de EIGRP en la topología Hub and Spoke de Link Global.
 
-### 10.2 Verificación de Alta Disponibilidad y Agregación
+### 11.2 Verificación de Alta Disponibilidad y Agregación
 * `show standby brief` - Ejecutar en MSW_Dist_1 y MSW_Dist_2 (Redes Nacionales) para verificar el estado **Active** o **Standby** del protocolo HSRP en las SVIs.
 * `show etherchannel summary` - Verificar que los Port-Channels se encuentren con el flag **SU** (Layer 2) o **RU** (Layer 3) confirmando el funcionamiento de LACP.
 
-### 10.3 Verificación de Servicios y Seguridad
+### 11.3 Verificación de Servicios y Seguridad
 * `show ip dhcp binding` - Ejecutar en el Servidor DHCP (interfaz GUI / Command Prompt) o Routers C3 configurados para validar el arrendamiento de direcciones IP a los hosts.
 * `show access-lists` - Desplegar las ACLs configuradas y verificar el contador de *matches* cuando se realiza tráfico permitido o denegado.
 
-### 10.4 Pruebas de Extremo a Extremo
+### 11.4 Pruebas de Extremo a Extremo
 * En la Command Prompt de cualquier PC final, usar el comando `ping [IP_Destino]` considerando las reglas de la matriz de comunicación permitida.
 * Desde el *Web Browser* en terminales (Pestaña Desktop), acceder al URL proporcionado `http://www.proyecto2_202302220.com` para comprobar resolución DNS y servicio HTTP.
 | Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
 | **TOTAL ESTIMADO** | | | **$24,730.00** | **Q191,657.50** |
 
 
-
-
-# 10. Comandos de Verificación
-
-
-Para demostrar el BGP (En MSW_Telecom):
-show ip bgp summary -> Muestra que los vecinos están levantados.
-show ip route bgp -> Demuestra que tu ISP está aprendiendo las rutas de todo el país.
-
-Para demostrar la topología y redundancia LACP:
-show etherchannel summary -> Úsalo en MSW_Core_RN o MSW_Soporte_1. Demuestra que los canales están en uso (bandera "U") y qué puertos físicos pertenecen a cada canal.
-
-Para demostrar Alta Disponibilidad (HSRP):
-show standby brief -> Úsalo en MSW_Dist_1. Deberá decir que su estado es "Active" y mostrará la IP virtual (VIP).
-
-Para demostrar OSPF o EIGRP:
-show ip protocols -> Un comando rápido que le dice al auxiliar qué protocolos están corriendo en el router actual y qué redes están inyectando.
 
