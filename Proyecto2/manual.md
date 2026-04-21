@@ -16,10 +16,8 @@
   - [4.3 Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
   - [6. Subnetting](#6-subnetting)
-    - [6.1 ISP 1: Telecom Uno (`172.16.10.0/24`)](#61-isp-1-telecom-uno-1721610024)
-    - [6.2 ISP 2: Redes Nacionales (`172.16.20.0/24`)](#62-isp-2-redes-nacionales-1721620024)
-    - [6.3 ISP 3: Link Global (`172.16.32.0/24`)](#63-isp-3-link-global-1721632024)
-    - [6.4 Core BGP (`192.168.20.0/16`)](#64-core-bgp-19216820016)
+    - [6.1 VLANs de Departamentos (VLSM /26)](#61-vlans-de-departamentos-vlsm-26)
+    - [6.2 Enlaces de Enrutamiento (Punto a Punto /30)](#62-enlaces-de-enrutamiento-punto-a-punto-30)
   - [7. Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
     - [7.1 Configuración de Enrutamiento BGP en el Núcleo (Core)](#71-configuración-de-enrutamiento-bgp-en-el-núcleo-core)
       - [7.1.1 Configuración MSW\_Telecom (AS 100)](#711-configuración-msw_telecom-as-100)
@@ -55,6 +53,8 @@
     - [8.1 ACL en Telecom Uno (Se aplica en MSW\_Dist\_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
     - [8.2 ACLs en Redes Nacionales (Se aplica en MSW\_Dist\_1 y MSW\_Dist\_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
     - [8.3 ACL en Link Global (Se aplica en R\_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
+- [9. Lista de Precios de Hardware (Cotización Estimada)](#9-lista-de-precios-de-hardware-cotización-estimada)
+- [10. Comandos de Verificación](#10-comandos-de-verificación)
 
 ---
 
@@ -201,29 +201,51 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 ---
 
+
+
+
 ## 6. Subnetting
-El esquema de direccionamiento se calculó utilizando VLSM para optimizar el uso de los prefijos asignados según el número de carné 202302220.
 
-### 6.1 ISP 1: Telecom Uno (`172.16.10.0/24`)
-Se divide en subredes para los departamentos y enlaces internos:
-- **Administración:** 172.16.10.0/26 (62 hosts disponibles)
-- **Atención al Cliente:** 172.16.10.64/26 (62 hosts disponibles)
-- **Enlaces OSPF:** 172.16.10.128/30 (Subneteo de remanente)
+El esquema de direccionamiento se calculó utilizando VLSM (Variable Length Subnet Mask) para optimizar el uso de los prefijos asignados en el proyecto. 
 
-### 6.2 ISP 2: Redes Nacionales (`172.16.20.0/24`)
-- **Ventas:** 172.16.20.0/26 (62 hosts disponibles)
-- **Facturación:** 172.16.20.64/26 (62 hosts disponibles)
-- **Redundancia (VIP HSRP):** Primera IP útil de cada segmento.
+### 6.1 VLANs de Departamentos (VLSM /26)
 
-### 6.3 ISP 3: Link Global (`172.16.32.0/24`)
-- **Soporte:** 172.16.32.0/26 (62 hosts disponibles)
-- **Seguridad:** 172.16.32.64/26 (62 hosts disponibles)
+Las redes base asignadas a cada ISP se dividieron para soportar un mínimo de 60 hosts por departamento, requiriendo una máscara `/26` (62 hosts utilizables).
 
-### 6.4 Core BGP (`192.168.20.0/16`)
-Se utiliza una máscara /30 para los enlaces punto a punto entre los switches multicapa del núcleo:
-- **Enlace 1 (T1-RN):** 192.168.20.0/30
-- **Enlace 2 (RN-LG):** 192.168.20.4/30
-- **Enlace 3 (LG-T1):** 192.168.20.8/30
+| ISP | Red Base | VLAN / Departamento | ID Red | Máscara | Wildcard | Primer Host | Último Host | Broadcast |
+|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | 172.16.10.0/24 | 10 - Administración | 172.16.10.0 | 255.255.255.192 | 0.0.0.63 | 172.16.10.1 | 172.16.10.62 | 172.16.10.63 |
+| 1 | 172.16.10.0/24 | 20 - Atención al C. | 172.16.10.64 | 255.255.255.192 | 0.0.0.63 | 172.16.10.65 | 172.16.10.126 | 172.16.10.127 |
+| 2 | 172.16.20.0/24 | 30 - Ventas | 172.16.20.0 | 255.255.255.192 | 0.0.0.63 | 172.16.20.1 | 172.16.20.62 | 172.16.20.63 |
+| 2 | 172.16.20.0/24 | 40 - Facturación | 172.16.20.64 | 255.255.255.192 | 0.0.0.63 | 172.16.20.65 | 172.16.20.126 | 172.16.20.127 |
+| 3 | 172.16.32.0/24 | 50 - Soporte | 172.16.32.0 | 255.255.255.192 | 0.0.0.63 | 172.16.32.1 | 172.16.32.62 | 172.16.32.63 |
+| 3 | 172.16.32.0/24 | 60 - Seguridad | 172.16.32.64 | 255.255.255.192 | 0.0.0.63 | 172.16.32.65 | 172.16.32.126 | 172.16.32.127 |
+
+### 6.2 Enlaces de Enrutamiento (Punto a Punto /30)
+
+Se aprovecharon los remanentes de las redes `/24` de cada ISP, junto con la red central `192.168.20.0/16`, para subnetear enlaces con máscara `/30` (2 IPs útiles), erradicando el desperdicio de direcciones IP en las adyacencias de los protocolos de enrutamiento (OSPF, EIGRP, BGP).
+
+| Dispositivo A | Dispositivo B | Protocolo | ID RED | MÁSCARA | PRIMER HOST | ÚLTIMO HOST | BROADCAST |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| MSW_Telecom | MSW_Nacionales | BGP | 192.168.20.0 | 255.255.255.252 | 192.168.20.1 | 192.168.20.2 | 192.168.20.3 |
+| MSW_Nacionales | MSW_Link | BGP | 192.168.20.4 | 255.255.255.252 | 192.168.20.5 | 192.168.20.6 | 192.168.20.7 |
+| MSW_Link | MSW_Telecom | BGP | 192.168.20.8 | 255.255.255.252 | 192.168.20.9 | 192.168.20.10 | 192.168.20.11 |
+| MSW_Telecom | R_Raiz_T1 | OSPF | 172.16.10.128 | 255.255.255.252 | 172.16.10.129 | 172.16.10.130 | 172.16.10.131 |
+| R_Raiz_T1 | MSW_Dist_T1 | OSPF | 172.16.10.132 | 255.255.255.252 | 172.16.10.133 | 172.16.10.134 | 172.16.10.135 |
+| MSW_Nacionales | MSW_Core_RN | OSPF | 172.16.20.128 | 255.255.255.252 | 172.16.20.129 | 172.16.20.130 | 172.16.20.131 |
+| MSW_Core_RN | Servidor DHCP | Estático | 172.16.20.132 | 255.255.255.252 | 172.16.20.133 | 172.16.20.134 | 172.16.20.135 |
+| MSW_Core_RN | MSW_Dist_1 (LACP) | OSPF | 172.16.20.136 | 255.255.255.252 | 172.16.20.137 | 172.16.20.138 | 172.16.20.139 |
+| MSW_Core_RN | MSW_Dist_2 (LACP) | OSPF | 172.16.20.140 | 255.255.255.252 | 172.16.20.141 | 172.16.20.142 | 172.16.20.143 |
+| MSW_Link | R_Hub_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 | 172.16.32.131 |
+| R_Hub_LG | MSW_Soporte_1 | EIGRP | 172.16.32.132 | 255.255.255.252 | 172.16.32.133 | 172.16.32.134 | 172.16.32.135 |
+| R_Hub_LG | R_Seguridad | EIGRP | 172.16.32.144 | 255.255.255.252 | 172.16.32.145 | 172.16.32.146 | 172.16.32.147 |
+| MSW_Sop_1 | MSW_Sop_2 (LACP 1)| EIGRP | 172.16.32.136 | 255.255.255.252 | 172.16.32.137 | 172.16.32.138 | 172.16.32.139 |
+| MSW_Sop_1 | MSW_Sop_2 (LACP 2)| EIGRP | 172.16.32.140 | 255.255.255.252 | 172.16.32.141 | 172.16.32.142 | 172.16.32.143 |
+
+
+
+
+
 
 ---
 
@@ -1263,3 +1285,38 @@ interface GigabitEthernet0/0/1
 end
 write memory
 ```
+
+
+
+
+# 9. Lista de Precios de Hardware (Cotización Estimada)
+
+| Dispositivo | Cantidad | Precio Unitario (USD) | Subtotal (USD) | Subtotal (GTQ) |
+|---|---|---|---|---|
+| Switch Multicapa Cisco 3650-24PS | 11 | $1,200.00 | $13,200.00 | Q102,300.00 |
+| Router Cisco ISR 4331 | 3 | $1,500.00 | $4,500.00 | Q34,875.00 |
+| Switch Cisco 2960-24TT (Acceso) | 2 | $350.00 | $700.00 | Q5,425.00 |
+| Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
+| Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
+| Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
+| **TOTAL ESTIMADO** | | | **$24,730.00** | **Q191,657.50** |
+
+
+
+
+# 10. Comandos de Verificación
+
+
+Para demostrar el BGP (En MSW_Telecom):
+show ip bgp summary -> Muestra que los vecinos están levantados.
+show ip route bgp -> Demuestra que tu ISP está aprendiendo las rutas de todo el país.
+
+Para demostrar la topología y redundancia LACP:
+show etherchannel summary -> Úsalo en MSW_Core_RN o MSW_Soporte_1. Demuestra que los canales están en uso (bandera "U") y qué puertos físicos pertenecen a cada canal.
+
+Para demostrar Alta Disponibilidad (HSRP):
+show standby brief -> Úsalo en MSW_Dist_1. Deberá decir que su estado es "Active" y mostrará la IP virtual (VIP).
+
+Para demostrar OSPF o EIGRP:
+show ip protocols -> Un comando rápido que le dice al auxiliar qué protocolos están corriendo en el router actual y qué redes están inyectando.
+
