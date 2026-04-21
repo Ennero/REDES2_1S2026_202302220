@@ -11,9 +11,9 @@
   - [3. Topología de Red](#3-topología-de-red)
     - [3.1 Selección de Hardware (Simulado)](#31-selección-de-hardware-simulado)
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
-  - [4.1. Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
-  - [4.2. Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
-  - [4.3. Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
+  - [4.1 Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
+  - [4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
+  - [4.3 Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
   - [6. Subnetting](#6-subnetting)
     - [6.1 ISP 1: Telecom Uno (`172.16.10.0/24`)](#61-isp-1-telecom-uno-1721610024)
@@ -86,7 +86,7 @@ Diseñar e implementar una infraestructura nacional de telecomunicaciones que in
 ## 3. Topología de Red
 La infraestructura se divide en cuatro sistemas autónomos principales interconectados en un triángulo central (Core BGP) mediante switches multicapa 3650-24PS utilizando fibra óptica.
 
-> _(Aquí deberás insertar el screenshot de tu topología de Packet Tracer)_
+> [Insertar Diagrama de Topología de Red Simulado]
 
 ---
 
@@ -115,7 +115,7 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 
 
-## 4.1. Tabla de conexiones de la Red de Telecom
+## 4.1 Tabla de conexiones de la Red de Telecom
 
 | Origen       | Puerto Origen          | Destino       | Puerto Destino         | Cable          |
 |--------------|------------------------|---------------|------------------------|----------------|
@@ -132,7 +132,7 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 
 
-## 4.2. Tabla de conexiones de Redes Nacionales (Jerárquico)
+## 4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)
 
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
@@ -151,7 +151,7 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | **SW_Facturacion** | Fa0/1 | **PC2** | Fa0 | Cobre Directo | Host Facturación |
 | **SW_Facturacion** | Fa0/2 | **Laptop0** | Fa0 | Cobre Directo | Host Facturación |
 
-## 4.3. Tabla de conexiones de Link Global (Hub and Spoke)
+## 4.3 Tabla de conexiones de Link Global (Hub and Spoke)
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -337,7 +337,7 @@ write memory
 ### 7.2 Configuraciones de Dispositivos de Telecom Uno (ISP 1)
 
 #### 7.2.1 Configuración de Integración OSPF-BGP en MSW_Telecom
-*Nota: Siguiendo el orden de este manual, este equipo ya tiene configurado BGP, ahora le agregaremos OSPF para que conozca su red interna.*
+> *Nota: Adición de enrutamiento OSPF al equipo con configuración BGP previa para anunciar rutas internas.*
 
 ```bash
 enable
@@ -521,7 +521,7 @@ write memory
 
 ### 7.3 Configuración de Servicios en Telecom Uno (DNS y HTTP)
 
-> *Nota: Estas configuraciones se realizan a través de la Interfaz Gráfica (GUI) de los dispositivos genéricos "Server-PT" en Cisco Packet Tracer.*
+> *Nota: Estas configuraciones aplican en el entorno gráfico (GUI) para los dispositivos "Server-PT" implementados en la topología.*
 
 #### 7.3.1 Configuración de IP Estática (Ambos Servidores)
 Debido a que estos servidores proveerán servicios críticos a toda la topología, requieren direccionamiento IP estático dentro de la VLAN 10 (Administración).
@@ -573,13 +573,15 @@ El servidor DNS resolverá el dominio solicitado para toda la red hacia la IP de
    - **Address:** `172.16.10.3` (Dirección del Servidor HTTP)
 4. Clic en **Add** para guardar el registro.
 
+> *Nota: Una vez finalizados estos pasos, cualquier host cliente (PC) en la topología con la IP y el servidor DNS configurados correctamente, podrá acceder a la página web ingresando a su navegador (Web Browser) mediante la URL: [http://www.proyecto2_202302220.com](http://www.proyecto2_202302220.com).*
+
 ---
 
 
 ### 7.4 Configuraciones de Dispositivos de Redes Nacionales (ISP 2)
 
 #### 7.4.1 Configuración de Integración OSPF-BGP en MSW_Nacionales
-*Nota: Siguiendo el orden de este manual, este equipo ya tiene BGP configurado. Agregamos OSPF para inyectar la red interna.*
+> *Nota: Consolidación OSPF para publicar redes locales del esquema Jerárquico en las adyacencias BGP previamente configuradas.*
 
 ```bash
 enable
@@ -864,15 +866,12 @@ write memory
    * **Pool Admin (T1):** Gateway `172.16.10.1`, DNS Server `172.16.10.2`, Start IP `172.16.10.4`, Mask `255.255.255.192`.
    * **Pool Atencion (T1):** Gateway `172.16.10.65`, DNS Server `172.16.10.2`, Start IP `172.16.10.66`, Mask `255.255.255.192`.
 
-*(Recuerda dar clic en **Add** para cada pool nuevo que crees).*
-
-Una vez que configures esto, ve a las PCs, cámbialas de Static a DHCP y deberían recibir su IP. ¡Si eso funciona, habremos superado la parte más compleja del proyecto!
-
+> *Nota: Corroborar la creación de los pools mediante el botón **Add** de la interfaz. Finalizado el proceso, configure las interfaces de red de los equipos clientes (PCs) para habilitar DHCP y corroborar la obtención dinámica de la dirección IP.*
 
 ### 7.5 Configuraciones de Dispositivos de Link Global (ISP 3)
 
 #### 7.5.1 Configuración de Integración EIGRP-BGP en MSW_Link
-*Nota: Este equipo conecta el ISP 3 con el núcleo nacional. Además ya tiene una configuración previa siguiente el flujo de este manual*
+> *Nota: Inyección de rutas de métrica EIGRP hacia el dominio externo BGP en este dispositivo frontera.*
 
 ```bash
 
@@ -1095,7 +1094,7 @@ write memory
 #### 7.5.6 Configuración Router Inalámbrico y Actualización DHCP
 
 **1. Servidor DHCP Central (En Redes Nacionales):**
-Como las PCs de Soporte obtienen IP del servidor central, debes ir al Servidor DHCP (172.16.20.134) y agregar este último Pool:
+Configurar el direccionamiento del departamento "Soporte" insertando un nuevo `Pool` en el Servidor DHCP central (172.16.20.134):
 - **Pool Name:** `PoolSoporte`
 - **Default Gateway:** `172.16.32.1`
 - **DNS Server:** `172.16.10.2`
@@ -1103,36 +1102,36 @@ Como las PCs de Soporte obtienen IP del servidor central, debes ir al Servidor D
 - **Subnet Mask:** `255.255.255.192`
 
 **2. Router Inalámbrico (Router_WiFi):**
-En la pestaña **GUI** del dispositivo WRT300N, realizaremos la configuración de red y la personalización de seguridad:
+Desde la pestaña **GUI** del dispositivo de interconexión WRT300N, aplicar la configuración base:
 
-* **Internet Setup (WAN):** Selecciona *Static IP*.
+* **Internet Setup (WAN):** Tipo de conexión `Static IP`.
     * **IP Address:** `172.16.32.66`
     * **Subnet Mask:** `255.255.255.192`
     * **Default Gateway:** `172.16.32.65`
     * **Static DNS:** `172.16.10.2`
-* **Network Setup (LAN):** Déjalo por defecto (IP: `192.168.0.1`). Esto otorgará IPs locales a las laptops de forma automática, cumpliendo la regla del firewall inalámbrico de aislar a estos usuarios.
-* **Guardar:** Ve al fondo de la página y haz clic en *Save Settings*.
+* **Network Setup (LAN):** Conservar la interfaz local por defecto (IP: `192.168.0.1`). Esto mantiene activo el NAT y de forma automática aísla el direccionamiento interno para seguridad en los clientes inalámbricos.
+* **Guardar Cambios:** Navegar al inferior de las opciones y ejecutar *Save Settings*.
 
 **3. Personalización de la Red Inalámbrica:**
-Para asegurar el departamento de Seguridad, personalizaremos el SSID y la contraseña.
-* Ve a la pestaña superior **Wireless** -> **Basic Wireless Settings**:
+Establecer identificadores y credenciales dedicadas para el SSID de Seguridad:
+* Subsección **Wireless** -> **Basic Wireless Settings**:
     * **Network Name (SSID):** `Seguridad_202302220`.
-    * Clic en *Save Settings*.
-* Ve a la sub-pestaña **Wireless Security**:
+    * Confirmar acción: *Save Settings*.
+* Subsección **Wireless Security**:
     * **Security Mode:** `WPA2 Personal`
     * **Passphrase:** `redes2026`.
-    * Clic en *Save Settings*.
+    * Confirmar acción: *Save Settings*.
 
-*(Nota: Para conectar las laptops, ve a la pestaña Desktop -> PC Wireless de cada una, selecciona la red "Seguridad_202302220" y coloca la contraseña).*
+> *Nota: Validar la conexión en terminales portátiles final (Desktop -> PC Wireless) seleccionando la red `Seguridad_202302220`.*
 
 
 
 ## 8. Listas de Control de Acceso (ACLs)
 
 ### 8.1 ACL en Telecom Uno (Se aplica en MSW_Dist_T1)
-**Regla:** Atención al Cliente SOLO habla con Ventas.
+**Regla:** Atención al Cliente se comunica exclusivamente con Ventas.
 
-` ` `bash
+```bash
 enable
 configure terminal
 
@@ -1151,23 +1150,23 @@ ip access-list extended ACL_ATENCION
  exit
 
 ! Aplicar en el Gateway (Vlan 20)
-interface Vlan 20
+interface Vlan20
  ip access-group ACL_ATENCION in
  exit
 
 end
 write memory
-` ` `
+```
 
 ---
 
 ### 8.2 ACLs en Redes Nacionales (Se aplica en MSW_Dist_1 y MSW_Dist_2)
-**Regla 1:** Ventas habla con Facturación y Atención al Cliente.
-**Regla 2:** Facturación SOLO habla con Ventas.
+**Regla 1:** Ventas se comunica con Facturación y Atención al Cliente.
+**Regla 2:** Facturación se comunica exclusivamente con Ventas.
 
-> *Aplica esto en ambos switches de distribución por el HSRP.*
+> *Nota: Garantizar la paridad de la configuración de acceso sobre ambos equipos en Capa de Distribución.*
 
-` ` `bash
+```bash
 enable
 configure terminal
 
@@ -1193,40 +1192,43 @@ ip access-list extended ACL_FACTURACION
  exit
 
 ! Aplicar en Gateways
-interface Vlan 30
+interface Vlan30
  ip access-group ACL_VENTAS in
  exit
-interface Vlan 40
+interface Vlan40
  ip access-group ACL_FACTURACION in
  exit
 
 end
 write memory
-` ` `
+```
 
 ---
 
 ### 8.3 ACL en Link Global (Se aplica en R_Seguridad)
-**Regla:** Nadie puede entrar a Seguridad, pero Seguridad puede salir a todos.
+**Regla:** Bloqueo de entrada de cualquier red externa al departamento, permitiendo la capacidad nativa de consultar a redes externas por solicitudes originadas internamente.
 
-` ` `bash
+```bash
 enable
 configure terminal
 
-! Bloquear tráfico que INTENTE ENTRAR a la subred de Seguridad
+! Bloquear tráfico que INTENTE ENTRAR a la subred de Seguridad (172.16.32.64/26)
 ip access-list extended ACL_NO_ENTRADA_SEG
- ! Permitir que vuelva a entrar el tráfico de conexiones ya establecidas
+ ! Permitir respuestas DNS (UDP 53) desde el servidor DNS de Telecom hacia Seguridad
+ permit udp host 172.16.10.2 eq domain 172.16.32.64 0.0.0.63
+ ! Permitir que vuelva a entrar el tráfico TCP de conexiones ya establecidas por Seguridad
  permit tcp any 172.16.32.64 0.0.0.63 established
- ! Bloquear cualquier otro intento de entrar a Seguridad
+ ! Bloquear cualquier otro intento de entrar a Seguridad desde otras subredes privadas
  deny ip 172.16.0.0 0.0.255.255 172.16.32.64 0.0.0.63
+ ! Permitir el resto del tráfico (necesario para el tráfico local/broadcast)
  permit ip any any
  exit
 
-! Aplicar en la interfaz que conecta hacia el HUB de forma SALIENTE (hacia las laptops)
-interface GigabitEthernet0/0/0
+! Aplicar en la interfaz que conecta hacia la red Inalámbrica de Seguridad (saliente hacia ellos)
+interface GigabitEthernet0/0/1
  ip access-group ACL_NO_ENTRADA_SEG out
  exit
 
 end
 write memory
-` ` `
+```
