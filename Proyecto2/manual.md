@@ -1148,56 +1148,7 @@ write memory
 ```
 
 
-#### 7.5.2 Configuración de Routers de Backbone (R1_LG, R2_LG, R_Hub_LG)
-
-##### Configuración R1_LG
-
-```bash
-enable
-configure terminal
-hostname R1_LG
-interface GigabitEthernet0/0/0
- ! Cambio de .146 a .130 para conectar con MSW_Link (.129)
- ip address 172.16.32.130 255.255.255.252
- no shutdown
- exit
-interface GigabitEthernet0/0/1
- ip address 172.16.32.149 255.255.255.252
- no shutdown
- exit
-router eigrp 1
- ! Red de entrada corregida
- network 172.16.32.128 0.0.0.3
- network 172.16.32.148 0.0.0.3
- exit
-
-```
-
-
-##### Configuración R2_LG
-
-```bash
-enable
-configure terminal
-hostname R2_LG
-interface GigabitEthernet0/0/0
- ip address 172.16.32.150 255.255.255.252
- no shutdown
- exit
-interface GigabitEthernet0/0/1
- ip address 172.16.32.153 255.255.255.252
- no shutdown
- exit
-router eigrp 1
- network 172.16.32.148 0.0.0.3
- network 172.16.32.152 0.0.0.3
- exit
-
-```
-
-
-
-##### Configuración R_Hub_LG (Centro de la Estrella)
+#### 7.5.2 Configuración R_Hub_LG (Centro de la Estrella)
 
 
 ```bash
@@ -1206,9 +1157,9 @@ enable
 configure terminal
 hostname R_Hub_LG
 
-! 1. Interfaz hacia R2_LG (Arriba)
+! 1. Interfaz hacia MSW_Link (Arriba)
 interface GigabitEthernet0/0/0
- ip address 172.16.32.154 255.255.255.252
+ ip address 172.16.32.130 255.255.255.252
  no shutdown
  exit
 
@@ -1226,7 +1177,7 @@ interface GigabitEthernet0/0/2
 
 ! 4. Configuración EIGRP
 router eigrp 1
- network 172.16.32.152 0.0.0.3
+ network 172.16.32.128 0.0.0.3
  network 172.16.32.132 0.0.0.3
  network 172.16.32.144 0.0.0.3
  exit
