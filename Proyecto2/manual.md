@@ -11,53 +11,53 @@
   - [3. Topología de Red](#3-topología-de-red)
     - [3.1 Selección de Hardware (Simulado)](#31-selección-de-hardware-simulado)
   - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
-  - [4.1 Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
-  - [4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
-  - [4.3 Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
+    - [4.1 Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
+    - [4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
+    - [4.3 Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
   - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
   - [6. Subnetting](#6-subnetting)
     - [6.1 VLANs de Departamentos (VLSM /26)](#61-vlans-de-departamentos-vlsm-26)
     - [6.2 Enlaces de Enrutamiento (Punto a Punto /30)](#62-enlaces-de-enrutamiento-punto-a-punto-30)
   - [7. Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
     - [7.1 Configuración de Enrutamiento BGP en el Núcleo (Core)](#71-configuración-de-enrutamiento-bgp-en-el-núcleo-core)
-      - [7.1.1 Configuración MSW\_Telecom (AS 100)](#711-configuración-msw_telecom-as-100)
-      - [7.1.2 Configuración MSW\_Nacionales (AS 200)](#712-configuración-msw_nacionales-as-200)
-      - [7.1.3 Configuración MSW\_Link (AS 300)](#713-configuración-msw_link-as-300)
+      - [7.1.1 Configuración MSW_Telecom (AS 100)](#711-configuración-msw_telecom-as-100)
+      - [7.1.2 Configuración MSW_Nacionales (AS 200)](#712-configuración-msw_nacionales-as-200)
+      - [7.1.3 Configuración MSW_Link (AS 300)](#713-configuración-msw_link-as-300)
     - [7.2 Configuraciones de Dispositivos de Telecom Uno (ISP 1)](#72-configuraciones-de-dispositivos-de-telecom-uno-isp-1)
-      - [7.2.1 Configuración de Integración OSPF-BGP en MSW\_Telecom](#721-configuración-de-integración-ospf-bgp-en-msw_telecom)
-      - [7.2.2 Configuración R\_Raiz\_T1](#722-configuración-r_raiz_t1)
-      - [7.2.3 Configuración MSW\_Dist\_T1 (Distribución y Gateway)](#723-configuración-msw_dist_t1-distribución-y-gateway)
-      - [7.2.4 Configuración MSW\_Admin (Capa 2 y Servidores)](#724-configuración-msw_admin-capa-2-y-servidores)
-      - [7.2.5 Configuración MSW\_Atencion (Capa 2)](#725-configuración-msw_atencion-capa-2)
+      - [7.2.1 Configuración de Integración OSPF-BGP en MSW_Telecom](#721-configuración-de-integración-ospf-bgp-en-msw_telecom)
+      - [7.2.2 Configuración de Routers de Backbone (R1_T1 a R5_T1)](#722-configuración-de-routers-de-backbone-r1_t1-a-r5_t1)
+      - [7.2.3 Configuración MSW_Dist_T1 (Distribución y Gateway)](#723-configuración-msw_dist_t1-distribución-y-gateway)
+      - [7.2.4 Configuración MSW_Admin (Capa 2 y Servidores)](#724-configuración-msw_admin-capa-2-y-servidores)
+      - [7.2.5 Configuración MSW_Atencion (Capa 2)](#725-configuración-msw_atencion-capa-2)
     - [7.3 Configuración de Servicios en Telecom Uno (DNS y HTTP)](#73-configuración-de-servicios-en-telecom-uno-dns-y-http)
       - [7.3.1 Configuración de IP Estática (Ambos Servidores)](#731-configuración-de-ip-estática-ambos-servidores)
       - [7.3.2 Configuración del Servicio HTTP](#732-configuración-del-servicio-http)
       - [7.3.3 Configuración del Servicio DNS](#733-configuración-del-servicio-dns)
     - [7.4 Configuraciones de Dispositivos de Redes Nacionales (ISP 2)](#74-configuraciones-de-dispositivos-de-redes-nacionales-isp-2)
-      - [7.4.1 Configuración de Integración OSPF-BGP en MSW\_Nacionales](#741-configuración-de-integración-ospf-bgp-en-msw_nacionales)
-      - [7.4.2 Configuración MSW\_Core\_RN (Core y DHCP Gateway)](#742-configuración-msw_core_rn-core-y-dhcp-gateway)
-      - [7.4.3 Configuración MSW\_Dist\_1 (Distribución Primario)](#743-configuración-msw_dist_1-distribución-primario)
-      - [7.4.4 Configuración MSW\_Dist\_2 (Distribución Secundario)](#744-configuración-msw_dist_2-distribución-secundario)
-      - [7.4.5 Configuración de Switches de Acceso (SW\_Ventas y SW\_Facturacion)](#745-configuración-de-switches-de-acceso-sw_ventas-y-sw_facturacion)
-        - [SW\_Ventas](#sw_ventas)
-        - [SW\_Facturacion](#sw_facturacion)
-      - [7.4.6 Configuración del Servidor DHCP (GUI)](#746-configuración-del-servidor-dhcp-gui)
+      - [7.4.1 Configuración de Integración OSPF-BGP en MSW_Nacionales](#741-configuración-de-integración-ospf-bgp-en-msw_nacionales)
+      - [7.4.2 Configuración de Routers de Backbone (R1_RN a R5_RN)](#742-configuración-de-routers-de-backbone-r1_rn-a-r5_rn)
+      - [7.4.3 Configuración MSW_Core_RN (Core y DHCP Gateway)](#743-configuración-msw_core_rn-core-y-dhcp-gateway)
+      - [7.4.4 Configuración MSW_Dist_1 (Distribución Primario)](#744-configuración-msw_dist_1-distribución-primario)
+      - [7.4.5 Configuración MSW_Dist_2 (Distribución Secundario)](#745-configuración-msw_dist_2-distribución-secundario)
+      - [7.4.6 Configuración de Switches de Acceso (SW_Ventas y SW_Facturacion)](#746-configuración-de-switches-de-acceso-sw_ventas-y-sw_facturacion)
+      - [7.4.7 Configuración del Servidor DHCP (GUI)](#747-configuración-del-servidor-dhcp-gui)
     - [7.5 Configuraciones de Dispositivos de Link Global (ISP 3)](#75-configuraciones-de-dispositivos-de-link-global-isp-3)
-      - [7.5.1 Configuración de Integración EIGRP-BGP en MSW\_Link](#751-configuración-de-integración-eigrp-bgp-en-msw_link)
-      - [7.5.2 Configuración R\_Hub\_LG (Centro de la Estrella)](#752-configuración-r_hub_lg-centro-de-la-estrella)
-      - [7.5.3 Configuración MSW\_Soporte\_1 (Spoke 1 - Inicio)](#753-configuración-msw_soporte_1-spoke-1---inicio)
-      - [7.5.4 Configuración MSW\_Soporte\_2 (Spoke 1 - Final y Gateway)](#754-configuración-msw_soporte_2-spoke-1---final-y-gateway)
-      - [7.5.5 Configuración R\_Seguridad (Spoke 2)](#755-configuración-r_seguridad-spoke-2)
+      - [7.5.1 Configuración de Integración EIGRP-BGP en MSW_Link](#751-configuración-de-integración-eigrp-bgp-en-msw_link)
+      - [7.5.2 Configuración de Routers de Backbone (R1_LG, R2_LG, R_Hub_LG)](#752-configuración-de-routers-de-backbone-r1_lg-r2_lg-r_hub_lg)
+      - [7.5.3 Configuración MSW_Soporte_1 (Spoke 1 - Inicio)](#753-configuración-msw_soporte_1-spoke-1---inicio)
+      - [7.5.4 Configuración MSW_Soporte_2 (Spoke 1 - Final y Gateway)](#754-configuración-msw_soporte_2-spoke-1---final-y-gateway)
+      - [7.5.5 Configuración R_Seguridad (Spoke 2)](#755-configuración-r_seguridad-spoke-2)
       - [7.5.6 Configuración Router Inalámbrico y Actualización DHCP](#756-configuración-router-inalámbrico-y-actualización-dhcp)
   - [8. Listas de Control de Acceso (ACLs)](#8-listas-de-control-de-acceso-acls)
-    - [8.1 ACL en Telecom Uno (Se aplica en MSW\_Dist\_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
-    - [8.2 ACLs en Redes Nacionales (Se aplica en MSW\_Dist\_1 y MSW\_Dist\_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
-    - [8.3 ACL en Link Global (Se aplica en R\_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
+    - [8.1 ACL en Telecom Uno (Se aplica en MSW_Dist_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
+    - [8.2 ACLs en Redes Nacionales (Se aplica en MSW_Dist_1 y MSW_Dist_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
+    - [8.3 ACL en Link Global (Se aplica en R_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
   - [9. Justificación de Diseños Topológicos](#9-justificación-de-diseños-topológicos)
     - [9.1 Topología de Árbol (Telecom Uno)](#91-topología-de-árbol-telecom-uno)
     - [9.2 Modelo Jerárquico de 3 Capas (Redes Nacionales)](#92-modelo-jerárquico-de-3-capas-redes-nacionales)
     - [9.3 Topología Hub and Spoke (Link Global)](#93-topología-hub-and-spoke-link-global)
-  - [9. Lista de Precios de Hardware (Cotización Estimada)](#9-lista-de-precios-de-hardware-cotización-estimada)
+    - [9.4 Implementación de Backbone de Tránsito en Serie](#94-implementación-de-backbone-de-tránsito-en-serie)
+  - [10. Lista de Precios de Hardware (Cotización Estimada)](#10-lista-de-precios-de-hardware-cotización-estimada)
   - [11. Comandos de Verificación](#11-comandos-de-verificación)
     - [11.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)](#111-verificación-de-enrutamiento-bgp-ospf-eigrp)
     - [11.2 Verificación de Alta Disponibilidad y Agregación](#112-verificación-de-alta-disponibilidad-y-agregación)
@@ -117,19 +117,23 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | MSW_Telecom        | Gi1/1/1   | MSW_Nacionales      | Gi1/1/1   | Fibra Óptica   | GLC-LH-SMD  |
 | MSW_Nacionales     | Gi1/1/2   | MSW_Link            | Gi1/1/1   | Fibra Óptica   | GLC-LH-SMD  |
 | MSW_Link           | Gi1/1/2   | MSW_Telecom         | Gi1/1/2   | Fibra Óptica   | GLC-LH-SMD  |
-| MSW_Telecom        | Gi1/0/24  | R_Raiz_T1           | Gi0/0/0   | Cobre Directo  | N/A         |
-| MSW_Nacionales     | Gi1/0/24  | MSW_Core_RN         | Gi1/0/1   | Cobre Cruzado  | N/A         |
-| MSW_Link           | Gi1/0/24  | R_Hub_LG            | Gi0/0/0   | Cobre Directo  | N/A         |
+| MSW_Telecom | Gi1/0/24 | R1_T1 | Gi0/0/0 | Cobre Directo | N/A |
+| MSW_Nacionales | Gi1/0/24 | R1_RN | Gi0/0/0 | Cobre Directo | N/A |
+| MSW_Link | Gi1/0/24 | R1_LG | Gi0/0/0 | Cobre Directo | N/A |
 
 
 
-## 4.1 Tabla de conexiones de la Red de Telecom
+### 4.1 Tabla de conexiones de la Red de Telecom
 
 | Origen       | Puerto Origen          | Destino       | Puerto Destino         | Cable          |
 |--------------|------------------------|---------------|------------------------|----------------|
-| MSW_Telecom  | Gi1/0/24               | R_Raiz_T1     | Gi0/0/0                | Cobre Directo  |
-| R_Raiz_T1    | Gi0/0/1                | MSW_Dist_T1   | Gi1/0/1                | Cobre Directo  |
-| MSW_Dist_T1  | Gi1/0/2 y Gi1/0/3      | MSW_Admin     | Gi1/0/2 y Gi1/0/3      | Cobre Cruzado  |
+| MSW_Telecom | Gi1/0/24 | R1_T1 | Gi0/0/0 | Cobre Directo |
+| R1_T1 | Gi0/0/1 | R2_T1 | Gi0/0/0 | Cobre Cruzado |
+| R2_T1 | Gi0/0/1 | R3_T1 | Gi0/0/0 | Cobre Cruzado |
+| R3_T1 | Gi0/0/1 | R4_T1 | Gi0/0/0 | Cobre Cruzado |
+| R4_T1 | Gi0/0/1 | R5_T1 | Gi0/0/0 | Cobre Cruzado |
+| R5_T1 | Gi0/0/1 | MSW_Dist_T1 | Gi1/0/1 | Cobre Directo |
+| MSW_Dist_T1 | Gi1/0/2 y Gi1/0/3 | MSW_Admin | Gi1/0/2 y Gi1/0/3 | Cobre Cruzado |
 | MSW_Dist_T1  | Gi1/0/4 y Gi1/0/5      | MSW_Atencion  | Gi1/0/4 y Gi1/0/5      | Cobre Cruzado  |
 | MSW_Admin    | Gi1/0/10               | Servidor DNS  | Fa0                    | Cobre Directo  |
 | MSW_Admin    | Gi1/0/11               | Servidor HTTP | Fa0                    | Cobre Directo  |
@@ -138,16 +142,17 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | **MSW_Atencion** | Gi1/0/16 | **PC_Atencion_2** | Fa0 | Cobre Directo |
 
 
-
-
-
-
-## 4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)
+### 4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)
 
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **MSW_Nacionales** | Gi1/0/24 | **MSW_Core_RN** | Gi1/0/1 | Cobre Cruzado | Conexión hacia ISP 2 |
+| MSW_Nacionales | Gi1/0/24 | R1_RN | Gi0/0/0 | Cobre Directo | Conexión hacia ISP 2 |
+| R1_RN | Gi0/0/1 | R2_RN | Gi0/0/0 | Cobre Cruzado | Backbone RN |
+| R2_RN | Gi0/0/1 | R3_RN | Gi0/0/0 | Cobre Cruzado | Backbone RN |
+| R3_RN | Gi0/0/1 | R4_RN | Gi0/0/0 | Cobre Cruzado | Backbone RN |
+| R4_RN | Gi0/0/1 | R5_RN | Gi0/0/0 | Cobre Cruzado | Backbone RN |
+| R5_RN | Gi0/0/1 | MSW_Core_RN | Gi1/0/1 | Cobre Directo | Hacia Core RN |
 | **MSW_Core_RN** | **Gi1/0/2 y Gi1/0/3** | **MSW_Dist_1** | **Gi1/0/2 y Gi1/0/3** | Cobre Cruzado | **Enlace LACP 1** |
 | **MSW_Core_RN** | **Gi1/0/4 y Gi1/0/5** | **MSW_Dist_2** | **Gi1/0/4 y Gi1/0/5** | Cobre Cruzado | **Enlace LACP 2** |
 | **MSW_Dist_1** | Gi1/0/10 | **SW_Ventas** | Gi0/1 | Cobre Directo | Enlace redundante 1 |
@@ -161,11 +166,13 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | **SW_Facturacion** | Fa0/1 | **PC2** | Fa0 | Cobre Directo | Host Facturación |
 | **SW_Facturacion** | Fa0/2 | **Laptop0** | Fa0 | Cobre Directo | Host Facturación |
 
-## 4.3 Tabla de conexiones de Link Global (Hub and Spoke)
+### 4.3 Tabla de conexiones de Link Global (Hub and Spoke)
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **MSW_Link** | Gi1/0/24 | **R_Hub_LG** | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
+| MSW_Link | Gi1/0/24 | R1_LG | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
+| R1_LG | Gi0/0/1 | R2_LG | Gi0/0/0 | Cobre Cruzado | Backbone LG |
+| R2_LG | Gi0/0/1 | R_Hub_LG | Gi0/0/0 | Cobre Cruzado | Hacia Centro Estrella |
 | **R_Hub_LG** | Gi0/0/1 | **MSW_Soporte_1** | Gi1/0/1 | Cobre Directo | Enlace enrutado (Spoke 1) |
 | **MSW_Soporte_1** | **Gi1/0/2 y Gi1/0/3** | **MSW_Soporte_2** | **Gi1/0/2 y Gi1/0/3** | Cobre Cruzado | **Enlace LACP 1** |
 | **MSW_Soporte_1** | **Gi1/0/4 y Gi1/0/5** | **MSW_Soporte_2** | **Gi1/0/4 y Gi1/0/5** | Cobre Cruzado | **Enlace LACP 2** |
@@ -233,22 +240,29 @@ Las redes base asignadas a cada ISP se dividieron para soportar un mínimo de 60
 
 Se aprovecharon los remanentes de las redes `/24` de cada ISP, junto con la red central `192.168.20.0/16`, para subnetear enlaces con máscara `/30` (2 IPs útiles), erradicando el desperdicio de direcciones IP en las adyacencias de los protocolos de enrutamiento (OSPF, EIGRP, BGP).
 
-| Dispositivo A | Dispositivo B | Protocolo | ID RED | MÁSCARA | PRIMER HOST | ÚLTIMO HOST | BROADCAST |
-|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| MSW_Telecom | MSW_Nacionales | BGP | 192.168.20.0 | 255.255.255.252 | 192.168.20.1 | 192.168.20.2 | 192.168.20.3 |
-| MSW_Nacionales | MSW_Link | BGP | 192.168.20.4 | 255.255.255.252 | 192.168.20.5 | 192.168.20.6 | 192.168.20.7 |
-| MSW_Link | MSW_Telecom | BGP | 192.168.20.8 | 255.255.255.252 | 192.168.20.9 | 192.168.20.10 | 192.168.20.11 |
-| MSW_Telecom | R_Raiz_T1 | OSPF | 172.16.10.128 | 255.255.255.252 | 172.16.10.129 | 172.16.10.130 | 172.16.10.131 |
-| R_Raiz_T1 | MSW_Dist_T1 | OSPF | 172.16.10.132 | 255.255.255.252 | 172.16.10.133 | 172.16.10.134 | 172.16.10.135 |
-| MSW_Nacionales | MSW_Core_RN | OSPF | 172.16.20.128 | 255.255.255.252 | 172.16.20.129 | 172.16.20.130 | 172.16.20.131 |
-| MSW_Core_RN | Servidor DHCP | Estático | 172.16.20.132 | 255.255.255.252 | 172.16.20.133 | 172.16.20.134 | 172.16.20.135 |
-| MSW_Core_RN | MSW_Dist_1 (LACP) | OSPF | 172.16.20.136 | 255.255.255.252 | 172.16.20.137 | 172.16.20.138 | 172.16.20.139 |
-| MSW_Core_RN | MSW_Dist_2 (LACP) | OSPF | 172.16.20.140 | 255.255.255.252 | 172.16.20.141 | 172.16.20.142 | 172.16.20.143 |
-| MSW_Link | R_Hub_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 | 172.16.32.131 |
-| R_Hub_LG | MSW_Soporte_1 | EIGRP | 172.16.32.132 | 255.255.255.252 | 172.16.32.133 | 172.16.32.134 | 172.16.32.135 |
-| R_Hub_LG | R_Seguridad | EIGRP | 172.16.32.144 | 255.255.255.252 | 172.16.32.145 | 172.16.32.146 | 172.16.32.147 |
-| MSW_Sop_1 | MSW_Sop_2 (LACP 1)| EIGRP | 172.16.32.136 | 255.255.255.252 | 172.16.32.137 | 172.16.32.138 | 172.16.32.139 |
-| MSW_Sop_1 | MSW_Sop_2 (LACP 2)| EIGRP | 172.16.32.140 | 255.255.255.252 | 172.16.32.141 | 172.16.32.142 | 172.16.32.143 |
+| Dispositivo A | Dispositivo B | Protocolo | ID RED | MÁSCARA | PRIMER HOST | ÚLTIMO HOST |
+|---------------|---------------|-----------|--------|---------|-------------|-------------|
+| MSW_Telecom | MSW_Nacionales | BGP | 192.168.20.0 | 255.255.255.252 | 192.168.20.1 | 192.168.20.2 |
+| MSW_Nacionales | MSW_Link | BGP | 192.168.20.4 | 255.255.255.252 | 192.168.20.5 | 192.168.20.6 |
+| MSW_Link | MSW_Telecom | BGP | 192.168.20.8 | 255.255.255.252 | 192.168.20.9 | 192.168.20.10 |
+| **Telecom Uno (Backbone 5 Routers)** | | | | | | |
+| MSW_Telecom | R1_T1 | OSPF | 172.16.10.128 | 255.255.255.252 | 172.16.10.129 | 172.16.10.130 |
+| R1_T1 | R2_T1 | OSPF | 172.16.10.132 | 255.255.255.252 | 172.16.10.133 | 172.16.10.134 |
+| R2_T1 | R3_T1 | OSPF | 172.16.10.136 | 255.255.255.252 | 172.16.10.137 | 172.16.10.138 |
+| R3_T1 | R4_T1 | OSPF | 172.16.10.140 | 255.255.255.252 | 172.16.10.141 | 172.16.10.142 |
+| R4_T1 | R5_T1 | OSPF | 172.16.10.144 | 255.255.255.252 | 172.16.10.145 | 172.16.10.146 |
+| R5_T1 | MSW_Dist_T1 | OSPF | 172.16.10.148 | 255.255.255.252 | 172.16.10.149 | 172.16.10.150 |
+| **Redes Nacionales (Backbone 5 Routers)** | | | | | | |
+| MSW_Nacionales | R1_RN | OSPF | 172.16.20.128 | 255.255.255.252 | 172.16.20.129 | 172.16.20.130 |
+| R1_RN | R2_RN | OSPF | 172.16.20.144 | 255.255.255.252 | 172.16.20.145 | 172.16.20.146 |
+| R2_RN | R3_RN | OSPF | 172.16.20.148 | 255.255.255.252 | 172.16.20.149 | 172.16.20.150 |
+| R3_RN | R4_RN | OSPF | 172.16.20.152 | 255.255.255.252 | 172.16.20.153 | 172.16.20.154 |
+| R4_RN | R5_RN | OSPF | 172.16.20.156 | 255.255.255.252 | 172.16.20.157 | 172.16.20.158 |
+| R5_RN | MSW_Core_RN | OSPF | 172.16.20.160 | 255.255.255.252 | 172.16.20.161 | 172.16.20.162 |
+| **Link Global (Expansión Hub & Spoke)** | | | | | | |
+| MSW_Link | R1_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 |
+| R1_LG | R2_LG | EIGRP | 172.16.32.148 | 255.255.255.252 | 172.16.32.149 | 172.16.32.150 |
+| R2_LG | R_Hub_LG | EIGRP | 172.16.32.152 | 255.255.255.252 | 172.16.32.153 | 172.16.32.154 |
 
 
 
@@ -397,36 +411,121 @@ end
 write memory
 ```
 
-#### 7.2.2 Configuración R_Raiz_T1
+#### 7.2.2 Configuración de Routers de Backbone (R1_T1 a R5_T1)
+
+##### Configuración R1_T1
 
 ```bash
+! Configuración R1_T1
 enable
 configure terminal
-hostname R_Raiz_T1
-
-! 1. Interfaz hacia MSW_Telecom (Arriba)
+hostname R1_T1
 interface GigabitEthernet0/0/0
  ip address 172.16.10.130 255.255.255.252
  no shutdown
  exit
-
-! 2. Interfaz hacia MSW_Dist_T1 (Abajo)
 interface GigabitEthernet0/0/1
  ip address 172.16.10.133 255.255.255.252
  no shutdown
  exit
-
-! 3. Configuración OSPF
 router ospf 1
  network 172.16.10.128 0.0.0.3 area 0
  network 172.16.10.132 0.0.0.3 area 0
  exit
 
-end
-write memory
 ```
 
-#### 7.2.3 Configuración MSW_Dist_T1 (Distribución y Gateway)
+##### Configuración R2_T1
+
+```bash
+! Configuración R2_T1
+enable
+configure terminal
+hostname R2_T1
+interface GigabitEthernet0/0/0
+ ip address 172.16.10.134 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.10.137 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.10.132 0.0.0.3 area 0
+ network 172.16.10.136 0.0.0.3 area 0
+ exit
+```
+
+##### Configuración R3_T1
+
+```bash
+! Configuración R3_T1
+enable
+configure terminal
+hostname R3_T1
+interface GigabitEthernet0/0/0
+ ip address 172.16.10.138 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.10.141 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.10.136 0.0.0.3 area 0
+ network 172.16.10.140 0.0.0.3 area 0
+ exit
+```
+
+##### Configuración R4_T1
+
+```bash
+! Configuración R4_T1
+enable
+configure terminal
+hostname R4_T1
+interface GigabitEthernet0/0/0
+ ip address 172.16.10.142 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.10.145 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.10.140 0.0.0.3 area 0
+ network 172.16.10.144 0.0.0.3 area 0
+ exit
+```
+
+##### Configuración R5_T1
+
+```bash
+! Configuración R5_T1 
+enable
+configure terminal
+hostname R5_T1
+interface GigabitEthernet0/0/0
+ ip address 172.16.10.146 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.10.149 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.10.144 0.0.0.3 area 0
+ network 172.16.10.148 0.0.0.3 area 0
+ exit
+```
+
+
+
+
+
+
+
+#### 7.2.3 Configuración MSW_Dist_T1
 
 ```bash
 enable
@@ -436,10 +535,10 @@ hostname MSW_Dist_T1
 ! 1. Activar enrutamiento
 ip routing
 
-! 2. Interfaz enrutada hacia R_Raiz_T1 (Arriba)
+! 2. Interfaz enrutada hacia R5_T1 (Arriba)
 interface GigabitEthernet1/0/1
  no switchport
- ip address 172.16.10.134 255.255.255.252
+ ip address 172.16.10.150 255.255.255.252
  no shutdown
  exit
 
@@ -644,9 +743,122 @@ write memory
 ```
 
 
+#### 7.4.2 Configuración de Routers de Backbone (R1_RN a R5_RN)
+
+##### Configuración R1_RN
+
+```bash
+enable
+configure terminal
+hostname R1_RN
+interface GigabitEthernet0/0/0
+ ip address 172.16.20.130 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.20.145 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ ! Asegúrate de incluir la red de entrada correcta
+ network 172.16.20.128 0.0.0.3 area 0
+ network 172.16.20.144 0.0.0.3 area 0
+ exit
+```
 
 
-#### 7.4.2 Configuración MSW_Core_RN (Core y DHCP Gateway)
+##### Configuración R2_RN
+
+```bash
+! Configuración R2_RN
+enable
+configure terminal
+hostname R2_RN
+interface GigabitEthernet0/0/0
+ ip address 172.16.20.146 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.20.149 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.20.144 0.0.0.3 area 0
+ network 172.16.20.148 0.0.0.3 area 0
+ exit
+```
+
+
+##### Configuración R3_RN
+
+```bash
+! Configuración R3_RN
+enable
+configure terminal
+hostname R3_RN
+interface GigabitEthernet0/0/0
+ ip address 172.16.20.150 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.20.153 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.20.148 0.0.0.3 area 0
+ network 172.16.20.152 0.0.0.3 area 0
+ exit
+```
+
+
+##### Configuración R4_RN
+
+```bash
+! Configuración R4_RN
+enable
+configure terminal
+hostname R4_RN
+interface GigabitEthernet0/0/0
+ ip address 172.16.20.154 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.20.157 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.20.152 0.0.0.3 area 0
+ network 172.16.20.156 0.0.0.3 area 0
+ exit
+```
+
+
+
+
+##### Configuración R5_RN
+
+```bash
+! Configuración R5_RN
+enable
+configure terminal
+hostname R5_RN
+interface GigabitEthernet0/0/0
+ ip address 172.16.20.158 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.20.161 255.255.255.252
+ no shutdown
+ exit
+router ospf 1
+ network 172.16.20.156 0.0.0.3 area 0
+ network 172.16.20.160 0.0.0.3 area 0
+ exit
+```
+
+
+
+#### 7.4.3 Configuración MSW_Core_RN (Core y DHCP Gateway)
 
 
 ```bash
@@ -657,10 +869,10 @@ hostname MSW_Core_RN
 ! 1. Activar enrutamiento
 ip routing
 
-! 2. Interfaz hacia MSW_Nacionales (Arriba)
+! 2. Interfaz hacia R5_RN (Arriba)
 interface GigabitEthernet1/0/1
  no switchport
- ip address 172.16.20.130 255.255.255.252
+ ip address 172.16.20.162 255.255.255.252
  no shutdown
  exit
 
@@ -708,7 +920,7 @@ write memory
 
 
 
-#### 7.4.3 Configuración MSW_Dist_1 (Distribución Primario)
+#### 7.4.4 Configuración MSW_Dist_1 (Distribución Primario)
 
 
 ```bash
@@ -771,7 +983,7 @@ end
 write memory
 ```
 
-#### 7.4.4 Configuración MSW_Dist_2 (Distribución Secundario)
+#### 7.4.5 Configuración MSW_Dist_2 (Distribución Secundario)
 
 
 ```bash
@@ -835,7 +1047,7 @@ write memory
 ```
 
 
-#### 7.4.5 Configuración de Switches de Acceso (SW_Ventas y SW_Facturacion)
+#### 7.4.6 Configuración de Switches de Acceso (SW_Ventas y SW_Facturacion)
 
 A continuación, la configuración respectiva para los switches de capa de acceso de cada departamento:
 
@@ -892,7 +1104,7 @@ write memory
 
 ```
 
-#### 7.4.6 Configuración del Servidor DHCP (GUI)
+#### 7.4.7 Configuración del Servidor DHCP (GUI)
 1. Ve al Servidor DHCP. En la pestaña **Desktop -> IP Configuration**, ponle IP estática `172.16.20.134`, máscara `255.255.255.252` y Gateway `172.16.20.133`.
 2. Ve a **Services -> DHCP**, asegúrate de que esté en **ON** y crea los siguientes pools (basados en tus subredes de la Sección 6):
    * **Pool Ventas:** Gateway `172.16.20.1`, DNS Server `172.16.10.2`, Start IP `172.16.20.4`, Mask `255.255.255.192`.
@@ -936,7 +1148,56 @@ write memory
 ```
 
 
-#### 7.5.2 Configuración R_Hub_LG (Centro de la Estrella)
+#### 7.5.2 Configuración de Routers de Backbone (R1_LG, R2_LG, R_Hub_LG)
+
+##### Configuración R1_LG
+
+```bash
+enable
+configure terminal
+hostname R1_LG
+interface GigabitEthernet0/0/0
+ ! Cambio de .146 a .130 para conectar con MSW_Link (.129)
+ ip address 172.16.32.130 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.32.149 255.255.255.252
+ no shutdown
+ exit
+router eigrp 1
+ ! Red de entrada corregida
+ network 172.16.32.128 0.0.0.3
+ network 172.16.32.148 0.0.0.3
+ exit
+
+```
+
+
+##### Configuración R2_LG
+
+```bash
+enable
+configure terminal
+hostname R2_LG
+interface GigabitEthernet0/0/0
+ ip address 172.16.32.150 255.255.255.252
+ no shutdown
+ exit
+interface GigabitEthernet0/0/1
+ ip address 172.16.32.153 255.255.255.252
+ no shutdown
+ exit
+router eigrp 1
+ network 172.16.32.148 0.0.0.3
+ network 172.16.32.152 0.0.0.3
+ exit
+
+```
+
+
+
+##### Configuración R_Hub_LG (Centro de la Estrella)
 
 
 ```bash
@@ -945,9 +1206,9 @@ enable
 configure terminal
 hostname R_Hub_LG
 
-! 1. Interfaz hacia MSW_Link (Arriba)
+! 1. Interfaz hacia R2_LG (Arriba)
 interface GigabitEthernet0/0/0
- ip address 172.16.32.130 255.255.255.252
+ ip address 172.16.32.154 255.255.255.252
  no shutdown
  exit
 
@@ -965,7 +1226,7 @@ interface GigabitEthernet0/0/2
 
 ! 4. Configuración EIGRP
 router eigrp 1
- network 172.16.32.128 0.0.0.3
+ network 172.16.32.152 0.0.0.3
  network 172.16.32.132 0.0.0.3
  network 172.16.32.144 0.0.0.3
  exit
@@ -1313,17 +1574,23 @@ La arquitectura de estrella (*Hub and Spoke*) se desplegó en el ISP 3 para cent
 - **Justificación Técnica:** En este modelo, el tráfico entre las sucursales perimetrales o *Spokes* (Soporte y Seguridad) no viaja directamente entre ellas a nivel físico. Todo paquete debe pasar forzosamente por el nodo central o *Hub* (`R_Hub_LG`). Esta decisión de diseño es crítica porque facilita la auditoría del tráfico y refuerza la política de seguridad estricta requerida para el departamento de Seguridad, actuando como un cuello de botella controlado antes de salir hacia el núcleo nacional BGP.
 
 
+### 9.4 Implementación de Backbone de Tránsito en Serie
+Para cumplir estrictamente con los lineamientos del proyecto de implementar 5 routers dedicados por Proveedor de Servicio (ISP), se diseñó un "Backbone de Tránsito" en serie ubicado estratégicamente entre el dominio BGP y el núcleo interno de cada red.
+- **Justificacion Técnica:** Este diseño en cadena permite cumplir la cuota de hardware sin interferir ni sobrecomplicar la lógica de alta disponibilidad (HSRP) o agregación de enlaces (LACP) existente en las capas inferiores. Además, a nivel de red real, simula una zona desmilitarizada extendida (DMZ) donde podrían insertarse fácilmente dispositivos de inspección profunda de paquetes (DPI) o Firewalls en el futuro, manteniendo el enrutamiento totalmente manejado por OSPF o EIGRP a través de redes /30 altamente eficientes.
+
 ---
 
-## 9. Lista de Precios de Hardware (Cotización Estimada)
+## 10. Lista de Precios de Hardware (Cotización Estimada)
 
 | Dispositivo | Cantidad | Precio Unitario (USD) | Subtotal (USD) | Subtotal (GTQ) |
-|---|---|---|---|---|
+|-------------|----------|-----------------------|----------------|----------------|
 | Switch Multicapa Cisco 3650-24PS | 11 | $1,200.00 | $13,200.00 | Q102,300.00 |
-| Router Cisco ISR 4331 | 3 | $1,500.00 | $4,500.00 | Q34,875.00 |
+| Router Cisco ISR 4331 | 14 | $1,500.00 | $21,000.00 | Q162,750.00 |
 | Switch Cisco 2960-24TT (Acceso) | 2 | $350.00 | $700.00 | Q5,425.00 |
 | Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
 | Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
+| Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
+| **TOTAL ESTIMADO** | | | **$41,230.00** | **Q319,532.50** |
 
 
 --- 
