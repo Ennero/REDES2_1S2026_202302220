@@ -114,13 +114,12 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 | Dispositivo Origen | Interfaz  | Dispositivo Destino | Interfaz  | Cable          | Módulo SFP  |
 |--------------------|-----------|---------------------|-----------|----------------|-------------|
-| MSW_Telecom        | Gi1/1/1   | MSW_Nacionales      | Gi1/1/1   | Fibra Óptica   | GLC-LH-SMD  |
-| MSW_Nacionales     | Gi1/1/2   | MSW_Link            | Gi1/1/1   | Fibra Óptica   | GLC-LH-SMD  |
-| MSW_Link           | Gi1/1/2   | MSW_Telecom         | Gi1/1/2   | Fibra Óptica   | GLC-LH-SMD  |
+| MSW_Telecom | Gi1/1/1 | MSW_Nacionales | Gi1/1/1 | Fibra Óptica | GLC-LH-SMD |
+| MSW_Nacionales | Gi1/1/2 | MSW_Link | Gi1/1/1 | Fibra Óptica | GLC-LH-SMD |
+| MSW_Link | Gi1/1/2 | MSW_Telecom | Gi1/1/2 | Fibra Óptica | GLC-LH-SMD |
 | MSW_Telecom | Gi1/0/24 | R1_T1 | Gi0/0/0 | Cobre Directo | N/A |
 | MSW_Nacionales | Gi1/0/24 | R1_RN | Gi0/0/0 | Cobre Directo | N/A |
-| MSW_Link | Gi1/0/24 | R1_LG | Gi0/0/0 | Cobre Directo | N/A |
-
+| MSW_Link | Gi1/0/24 | R_Hub_LG | Gi0/0/0 | Cobre Directo | N/A |
 
 
 ### 4.1 Tabla de conexiones de la Red de Telecom
@@ -170,16 +169,14 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| MSW_Link | Gi1/0/24 | R1_LG | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
-| R1_LG | Gi0/0/1 | R2_LG | Gi0/0/0 | Cobre Cruzado | Backbone LG |
-| R2_LG | Gi0/0/1 | R_Hub_LG | Gi0/0/0 | Cobre Cruzado | Hacia Centro Estrella |
-| **R_Hub_LG** | Gi0/0/1 | **MSW_Soporte_1** | Gi1/0/1 | Cobre Directo | Enlace enrutado (Spoke 1) |
-| **MSW_Soporte_1** | **Gi1/0/2 y Gi1/0/3** | **MSW_Soporte_2** | **Gi1/0/2 y Gi1/0/3** | Cobre Cruzado | **Enlace LACP 1** |
-| **MSW_Soporte_1** | **Gi1/0/4 y Gi1/0/5** | **MSW_Soporte_2** | **Gi1/0/4 y Gi1/0/5** | Cobre Cruzado | **Enlace LACP 2** |
-| **R_Hub_LG** | Gi0/0/2 | **R_Seguridad** | Gi0/0/0 | Cobre Cruzado | Enlace enrutado (Spoke 2) |
-| **R_Seguridad** | Gi0/0/1 | **Router_WiFi** | Internet (WAN) | Cobre Directo | Conexión a red inalámbrica |
-| **MSW_Soporte_2** | Gi1/0/10 | **PC3** | Fa0 | Cobre Directo | Host Soporte |
-| **MSW_Soporte_2** | Gi1/0/11 | **PC4** | Fa0 | Cobre Directo | Host Soporte |
+| MSW_Link | Gi1/0/24 | R_Hub_LG | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
+| R_Hub_LG | Gi0/0/1 | MSW_Soporte_1 | Gi1/0/1 | Cobre Directo | Enlace enrutado (Spoke 1) |
+| MSW_Soporte_1 | Gi1/0/2 y Gi1/0/3 | MSW_Soporte_2 | Gi1/0/2 y Gi1/0/3 | Cobre Cruzado | Enlace LACP 1 |
+| MSW_Soporte_1 | Gi1/0/4 y Gi1/0/5 | MSW_Soporte_2 | Gi1/0/4 y Gi1/0/5 | Cobre Cruzado | Enlace LACP 2 |
+| R_Hub_LG | Gi0/0/2 | R_Seguridad | Gi0/0/0 | Cobre Cruzado | Enlace enrutado (Spoke 2) |
+| R_Seguridad | Gi0/0/1 | Router_WiFi | Internet (WAN) | Cobre Directo | Conexión a red inalámbrica |
+| MSW_Soporte_2 | Gi1/0/10 | PC3 | Fa0 | Cobre Directo | Host Soporte |
+| MSW_Soporte_2 | Gi1/0/11 | PC4 | Fa0 | Cobre Directo | Host Soporte |
 
 ---
 
@@ -259,10 +256,13 @@ Se aprovecharon los remanentes de las redes `/24` de cada ISP, junto con la red 
 | R3_RN | R4_RN | OSPF | 172.16.20.152 | 255.255.255.252 | 172.16.20.153 | 172.16.20.154 |
 | R4_RN | R5_RN | OSPF | 172.16.20.156 | 255.255.255.252 | 172.16.20.157 | 172.16.20.158 |
 | R5_RN | MSW_Core_RN | OSPF | 172.16.20.160 | 255.255.255.252 | 172.16.20.161 | 172.16.20.162 |
-| **Link Global (Expansión Hub & Spoke)** | | | | | | |
-| MSW_Link | R1_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 |
-| R1_LG | R2_LG | EIGRP | 172.16.32.148 | 255.255.255.252 | 172.16.32.149 | 172.16.32.150 |
-| R2_LG | R_Hub_LG | EIGRP | 172.16.32.152 | 255.255.255.252 | 172.16.32.153 | 172.16.32.154 |
+| **Link Global** | **(Topología Hub and Spoke)** | | | | | |
+| MSW_Link | R_Hub_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 |
+| R_Hub_LG | MSW_Soporte_1 | EIGRP | 172.16.32.132 | 255.255.255.252 | 172.16.32.133 | 172.16.32.134 |
+| R_Hub_LG | R_Seguridad | EIGRP | 172.16.32.144 | 255.255.255.252 | 172.16.32.145 | 172.16.32.146 |
+| MSW_Sop_1 | MSW_Sop_2 (LACP 1) | EIGRP | 172.16.32.136 | 255.255.255.252 | 172.16.32.137 | 172.16.32.138 |
+| MSW_Sop_1 | MSW_Sop_2 (LACP 2) | EIGRP | 172.16.32.140 | 255.255.255.252 | 172.16.32.141 | 172.16.32.142 |
+
 
 
 
@@ -1534,14 +1534,14 @@ Para cumplir estrictamente con los lineamientos del proyecto de implementar 5 ro
 ## 10. Lista de Precios de Hardware (Cotización Estimada)
 
 | Dispositivo | Cantidad | Precio Unitario (USD) | Subtotal (USD) | Subtotal (GTQ) |
-|-------------|----------|-----------------------|----------------|----------------|
+|---|---|---|---|---|
 | Switch Multicapa Cisco 3650-24PS | 11 | $1,200.00 | $13,200.00 | Q102,300.00 |
-| Router Cisco ISR 4331 | 14 | $1,500.00 | $21,000.00 | Q162,750.00 |
+| Router Cisco ISR 4331 | 12 | $1,500.00 | $18,000.00 | Q139,500.00 |
 | Switch Cisco 2960-24TT (Acceso) | 2 | $350.00 | $700.00 | Q5,425.00 |
 | Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
 | Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
 | Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
-| **TOTAL ESTIMADO** | | | **$41,230.00** | **Q319,532.50** |
+| **TOTAL ESTIMADO** | | | **$38,230.00** | **Q296,282.50** |
 
 
 --- 
