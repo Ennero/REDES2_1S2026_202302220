@@ -169,7 +169,9 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| MSW_Link | Gi1/0/24 | R_Hub_LG | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
+| MSW_Link | Gi1/0/24 | R1_LG | Gi0/0/0 | Cobre Directo | Conexión hacia el ISP 3 |
+| R1_LG | Gi0/0/1 | R2_LG | Gi0/0/0 | Cobre Cruzado | Backbone LG |
+| R2_LG | Gi0/0/1 | R_Hub_LG | Gi0/0/0 | Cobre Cruzado | Hacia Centro Estrella |
 | R_Hub_LG | Gi0/0/1 | MSW_Soporte_1 | Gi1/0/1 | Cobre Directo | Enlace enrutado (Spoke 1) |
 | MSW_Soporte_1 | Gi1/0/2 y Gi1/0/3 | MSW_Soporte_2 | Gi1/0/2 y Gi1/0/3 | Cobre Cruzado | Enlace LACP 1 |
 | MSW_Soporte_1 | Gi1/0/4 y Gi1/0/5 | MSW_Soporte_2 | Gi1/0/4 y Gi1/0/5 | Cobre Cruzado | Enlace LACP 2 |
@@ -257,7 +259,9 @@ Se aprovecharon los remanentes de las redes `/24` de cada ISP, junto con la red 
 | R4_RN | R5_RN | OSPF | 172.16.20.156 | 255.255.255.252 | 172.16.20.157 | 172.16.20.158 |
 | R5_RN | MSW_Core_RN | OSPF | 172.16.20.160 | 255.255.255.252 | 172.16.20.161 | 172.16.20.162 |
 | **Link Global** | **(Topología Hub and Spoke)** | | | | | |
-| MSW_Link | R_Hub_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 |
+| MSW_Link | R1_LG | EIGRP | 172.16.32.128 | 255.255.255.252 | 172.16.32.129 | 172.16.32.130 |
+| R1_LG | R2_LG | EIGRP | 172.16.32.148 | 255.255.255.252 | 172.16.32.149 | 172.16.32.150 |
+| R2_LG | R_Hub_LG | EIGRP | 172.16.32.152 | 255.255.255.252 | 172.16.32.153 | 172.16.32.154 |
 | R_Hub_LG | MSW_Soporte_1 | EIGRP | 172.16.32.132 | 255.255.255.252 | 172.16.32.133 | 172.16.32.134 |
 | R_Hub_LG | R_Seguridad | EIGRP | 172.16.32.144 | 255.255.255.252 | 172.16.32.145 | 172.16.32.146 |
 | MSW_Sop_1 | MSW_Sop_2 (LACP 1) | EIGRP | 172.16.32.136 | 255.255.255.252 | 172.16.32.137 | 172.16.32.138 |
@@ -1117,7 +1121,7 @@ write memory
 ### 7.5 Configuraciones de Dispositivos de Link Global (ISP 3)
 
 #### 7.5.1 Configuración de Integración EIGRP-BGP en MSW_Link
-> *Nota: Inyección de rutas de métrica EIGRP hacia el dominio externo BGP en este dispositivo frontera.*
+
 
 ```bash
 
@@ -1147,6 +1151,65 @@ write memory
 
 ```
 
+#### 7.5.1.2 Configuración R1_LG 
+
+
+```bash
+enable
+configure terminal
+hostname R1_LG
+
+interface GigabitEthernet0/0/0
+ ! Conecta con MSW_Link
+ ip address 172.16.32.130 255.255.255.252
+ no shutdown
+ exit
+
+interface GigabitEthernet0/0/1
+ ! Conecta con R_Hub_LG (Usaremos la subred nueva .148)
+ ip address 172.16.32.149 255.255.255.252
+ no shutdown
+ exit
+
+router eigrp 1
+ network 172.16.32.128 0.0.0.3
+ network 172.16.32.148 0.0.0.3
+ no auto-summary
+ exit
+write memory
+```
+
+
+#### 7.5.1.3 Configuración R2_LG 
+
+```bash
+enable
+configure terminal
+hostname R2_LG
+
+interface GigabitEthernet0/0/0
+ ! Conecta con R1_LG (.149)
+ ip address 172.16.32.150 255.255.255.252
+ no shutdown
+ exit
+
+interface GigabitEthernet0/0/1
+ ! Conecta con R_Hub_LG (Subred .152)
+ ip address 172.16.32.153 255.255.255.252
+ no shutdown
+ exit
+
+router eigrp 1
+ network 172.16.32.148 0.0.0.3
+ network 172.16.32.152 0.0.0.3
+ no auto-summary
+ exit
+write memory
+```
+
+
+
+
 
 #### 7.5.2 Configuración R_Hub_LG (Centro de la Estrella)
 
@@ -1159,9 +1222,11 @@ hostname R_Hub_LG
 
 ! 1. Interfaz hacia MSW_Link (Arriba)
 interface GigabitEthernet0/0/0
- ip address 172.16.32.130 255.255.255.252
- no shutdown
+ ! IP para conectar con R2_LG
+ ip address 172.16.32.154 255.255.255.252
  exit
+
+
 
 ! 2. Interfaz hacia Spoke 1 (MSW_Soporte_1)
 interface GigabitEthernet0/0/1
@@ -1177,9 +1242,10 @@ interface GigabitEthernet0/0/2
 
 ! 4. Configuración EIGRP
 router eigrp 1
- network 172.16.32.128 0.0.0.3
  network 172.16.32.132 0.0.0.3
  network 172.16.32.144 0.0.0.3
+ network 172.16.32.152 0.0.0.3
+ no auto-summary
  exit
 
 end
@@ -1536,12 +1602,12 @@ Para cumplir estrictamente con los lineamientos del proyecto de implementar 5 ro
 | Dispositivo | Cantidad | Precio Unitario (USD) | Subtotal (USD) | Subtotal (GTQ) |
 |---|---|---|---|---|
 | Switch Multicapa Cisco 3650-24PS | 11 | $1,200.00 | $13,200.00 | Q102,300.00 |
-| Router Cisco ISR 4331 | 12 | $1,500.00 | $18,000.00 | Q139,500.00 |
+| Router Cisco ISR 4331 | 14 | $1,500.00 | $21,000.00 | Q162,750.00 |
 | Switch Cisco 2960-24TT (Acceso) | 2 | $350.00 | $700.00 | Q5,425.00 |
 | Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
 | Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
 | Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
-| **TOTAL ESTIMADO** | | | **$38,230.00** | **Q296,282.50** |
+| **TOTAL ESTIMADO** | | | **$40,230.00** | **Q311,825.00** |
 
 
 --- 
