@@ -28,8 +28,6 @@
 - [10. Lista de Precios de Hardware (Cotización Estimada)](#10-lista-de-precios-de-hardware-cotización-estimada)
 - [11. Comandos de Verificación](#11-comandos-de-verificación)
 
----
-xtremo-a-extremo)
 
 ---
 
@@ -154,15 +152,15 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | **Core: T1 ↔ RN** | Enlace BGP (Gi1/1/1) | 192.168.20.1 | 255.255.255.252 | N/A |
 | **Core: RN ↔ LG** | Enlace BGP (Gi1/1/2) | 192.168.20.5 | 255.255.255.252 | N/A |
 | **Core: LG ↔ T1** | Enlace BGP (Gi1/1/2) | 192.168.20.9 | 255.255.255.252 | N/A |
-| **MSW_Telecom ↔ R_Raiz_T1** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.10.129 ↔ .130| 255.255.255.252 | N/A |
-| **R_Raiz_T1 ↔ MSW_Dist_T1** | Gi0/0/1 ↔ Gi1/0/1 | 172.16.10.133 ↔ .134| 255.255.255.252 | N/A |
+| **MSW_Telecom ↔ R1_T1** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.10.129 ↔ .130| 255.255.255.252 | N/A |
+| **R5_T1 ↔ MSW_Dist_T1** | Gi0/0/1 ↔ Gi1/0/1 | 172.16.10.149 ↔ .150| 255.255.255.252 | N/A |
 | **MSW_Core_RN ↔ MSW_Dist_1**| Po1 ↔ Po1 | 172.16.20.137 ↔ .138| 255.255.255.252 | N/A |
 | **MSW_Core_RN ↔ MSW_Dist_2**| Po2 ↔ Po2 | 172.16.20.141 ↔ .142| 255.255.255.252 | N/A |
 | **SVI: Admin (T1)** | VLAN 10 (MSW_Dist) | 172.16.10.1 | 255.255.255.192 | N/A |
 | **SVI: Ventas (RN)** | VLAN 30 | 172.16.20.1 | 255.255.255.192 | 172.16.20.1 (VIP) |
 | **SVI: Facturacion (RN)** | VLAN 40 | 172.16.20.65 | 255.255.255.192 | 172.16.20.65 (VIP) |
 | **Servidor DHCP** | Fa0 | 172.16.20.134 | 255.255.255.252 | 172.16.20.133 |
-| **MSW_Link ↔ R_Hub_LG** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.32.129 ↔ .130| 255.255.255.252 | N/A |
+| **MSW_Link ↔ R1_LG** | Gi1/0/24 ↔ Gi0/0/0 | 172.16.32.129 ↔ .130| 255.255.255.252 | N/A |
 | **R_Hub_LG ↔ MSW_Soporte_1** | Gi0/0/1 ↔ Gi1/0/1 | 172.16.32.133 ↔ .134| 255.255.255.252 | N/A |
 | **R_Hub_LG ↔ R_Seguridad** | Gi0/0/2 ↔ Gi0/0/0 | 172.16.32.145 ↔ .146| 255.255.255.252 | N/A |
 | **MSW_Soporte_1 ↔ MSW_Soporte_2**| Po1 ↔ Po1 | 172.16.32.137 ↔ .138| 255.255.255.252 | N/A |
