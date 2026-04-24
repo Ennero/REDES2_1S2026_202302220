@@ -1,68 +1,35 @@
 # Manual Técnico - Proyecto 2
 
 ## Tabla de Contenidos
-- [Manual Técnico - Proyecto 2](#manual-técnico---proyecto-2)
-  - [Tabla de Contenidos](#tabla-de-contenidos)
-  - [1. Objetivos](#1-objetivos)
-    - [1.1 Objetivo General](#11-objetivo-general)
-    - [1.2 Objetivos Específicos](#12-objetivos-específicos)
-  - [2. Alcance del Proyecto](#2-alcance-del-proyecto)
-    - [2.1 Inclusiones](#21-inclusiones)
-  - [3. Topología de Red](#3-topología-de-red)
-    - [3.1 Selección de Hardware (Simulado)](#31-selección-de-hardware-simulado)
-  - [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
-    - [4.1 Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
-    - [4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
-    - [4.3 Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
-  - [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
-  - [6. Subnetting](#6-subnetting)
-    - [6.1 VLANs de Departamentos (VLSM /26)](#61-vlans-de-departamentos-vlsm-26)
-    - [6.2 Enlaces de Enrutamiento (Punto a Punto /30)](#62-enlaces-de-enrutamiento-punto-a-punto-30)
-  - [7. Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
-    - [7.1 Configuración de Enrutamiento BGP en el Núcleo (Core)](#71-configuración-de-enrutamiento-bgp-en-el-núcleo-core)
-      - [7.1.1 Configuración MSW_Telecom (AS 100)](#711-configuración-msw_telecom-as-100)
-      - [7.1.2 Configuración MSW_Nacionales (AS 200)](#712-configuración-msw_nacionales-as-200)
-      - [7.1.3 Configuración MSW_Link (AS 300)](#713-configuración-msw_link-as-300)
-    - [7.2 Configuraciones de Dispositivos de Telecom Uno (ISP 1)](#72-configuraciones-de-dispositivos-de-telecom-uno-isp-1)
-      - [7.2.1 Configuración de Integración OSPF-BGP en MSW_Telecom](#721-configuración-de-integración-ospf-bgp-en-msw_telecom)
-      - [7.2.2 Configuración de Routers de Backbone (R1_T1 a R5_T1)](#722-configuración-de-routers-de-backbone-r1_t1-a-r5_t1)
-      - [7.2.3 Configuración MSW_Dist_T1 (Distribución y Gateway)](#723-configuración-msw_dist_t1-distribución-y-gateway)
-      - [7.2.4 Configuración MSW_Admin (Capa 2 y Servidores)](#724-configuración-msw_admin-capa-2-y-servidores)
-      - [7.2.5 Configuración MSW_Atencion (Capa 2)](#725-configuración-msw_atencion-capa-2)
-    - [7.3 Configuración de Servicios en Telecom Uno (DNS y HTTP)](#73-configuración-de-servicios-en-telecom-uno-dns-y-http)
-      - [7.3.1 Configuración de IP Estática (Ambos Servidores)](#731-configuración-de-ip-estática-ambos-servidores)
-      - [7.3.2 Configuración del Servicio HTTP](#732-configuración-del-servicio-http)
-      - [7.3.3 Configuración del Servicio DNS](#733-configuración-del-servicio-dns)
-    - [7.4 Configuraciones de Dispositivos de Redes Nacionales (ISP 2)](#74-configuraciones-de-dispositivos-de-redes-nacionales-isp-2)
-      - [7.4.1 Configuración de Integración OSPF-BGP en MSW_Nacionales](#741-configuración-de-integración-ospf-bgp-en-msw_nacionales)
-      - [7.4.2 Configuración de Routers de Backbone (R1_RN a R5_RN)](#742-configuración-de-routers-de-backbone-r1_rn-a-r5_rn)
-      - [7.4.3 Configuración MSW_Core_RN (Core y DHCP Gateway)](#743-configuración-msw_core_rn-core-y-dhcp-gateway)
-      - [7.4.4 Configuración MSW_Dist_1 (Distribución Primario)](#744-configuración-msw_dist_1-distribución-primario)
-      - [7.4.5 Configuración MSW_Dist_2 (Distribución Secundario)](#745-configuración-msw_dist_2-distribución-secundario)
-      - [7.4.6 Configuración de Switches de Acceso (SW_Ventas y SW_Facturacion)](#746-configuración-de-switches-de-acceso-sw_ventas-y-sw_facturacion)
-      - [7.4.7 Configuración del Servidor DHCP (GUI)](#747-configuración-del-servidor-dhcp-gui)
-    - [7.5 Configuraciones de Dispositivos de Link Global (ISP 3)](#75-configuraciones-de-dispositivos-de-link-global-isp-3)
-      - [7.5.1 Configuración de Integración EIGRP-BGP en MSW_Link](#751-configuración-de-integración-eigrp-bgp-en-msw_link)
-      - [7.5.2 Configuración de Routers de Backbone (R1_LG, R2_LG, R_Hub_LG)](#752-configuración-de-routers-de-backbone-r1_lg-r2_lg-r_hub_lg)
-      - [7.5.3 Configuración MSW_Soporte_1 (Spoke 1 - Inicio)](#753-configuración-msw_soporte_1-spoke-1---inicio)
-      - [7.5.4 Configuración MSW_Soporte_2 (Spoke 1 - Final y Gateway)](#754-configuración-msw_soporte_2-spoke-1---final-y-gateway)
-      - [7.5.5 Configuración R_Seguridad (Spoke 2)](#755-configuración-r_seguridad-spoke-2)
-      - [7.5.6 Configuración Router Inalámbrico y Actualización DHCP](#756-configuración-router-inalámbrico-y-actualización-dhcp)
-  - [8. Listas de Control de Acceso (ACLs)](#8-listas-de-control-de-acceso-acls)
-    - [8.1 ACL en Telecom Uno (Se aplica en MSW_Dist_T1)](#81-acl-en-telecom-uno-se-aplica-en-msw_dist_t1)
-    - [8.2 ACLs en Redes Nacionales (Se aplica en MSW_Dist_1 y MSW_Dist_2)](#82-acls-en-redes-nacionales-se-aplica-en-msw_dist_1-y-msw_dist_2)
-    - [8.3 ACL en Link Global (Se aplica en R_Seguridad)](#83-acl-en-link-global-se-aplica-en-r_seguridad)
-  - [9. Justificación de Diseños Topológicos](#9-justificación-de-diseños-topológicos)
-    - [9.1 Topología de Árbol (Telecom Uno)](#91-topología-de-árbol-telecom-uno)
-    - [9.2 Modelo Jerárquico de 3 Capas (Redes Nacionales)](#92-modelo-jerárquico-de-3-capas-redes-nacionales)
-    - [9.3 Topología Hub and Spoke (Link Global)](#93-topología-hub-and-spoke-link-global)
-    - [9.4 Implementación de Backbone de Tránsito en Serie](#94-implementación-de-backbone-de-tránsito-en-serie)
-  - [10. Lista de Precios de Hardware (Cotización Estimada)](#10-lista-de-precios-de-hardware-cotización-estimada)
-  - [11. Comandos de Verificación](#11-comandos-de-verificación)
-    - [11.1 Verificación de Enrutamiento (BGP, OSPF, EIGRP)](#111-verificación-de-enrutamiento-bgp-ospf-eigrp)
-    - [11.2 Verificación de Alta Disponibilidad y Agregación](#112-verificación-de-alta-disponibilidad-y-agregación)
-    - [11.3 Verificación de Servicios y Seguridad](#113-verificación-de-servicios-y-seguridad)
-    - [11.4 Pruebas de Extremo a Extremo](#114-pruebas-de-extremo-a-extremo)
+
+- [1. Objetivos](#1-objetivos)
+  - [1.1 Objetivo General](#11-objetivo-general)
+  - [1.2 Objetivos Específicos](#12-objetivos-específicos)
+- [2. Alcance del Proyecto](#2-alcance-del-proyecto)
+  - [2.1 Inclusiones](#21-inclusiones)
+- [3. Topología de Red](#3-topología-de-red)
+  - [3.1 Selección de Hardware (Simulado)](#31-selección-de-hardware-simulado)
+- [4. Tabla de Conexiones de la Red](#4-tabla-de-conexiones-de-la-red)
+  - [4.1 Tabla de conexiones de la Red de Telecom](#41-tabla-de-conexiones-de-la-red-de-telecom)
+  - [4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)](#42-tabla-de-conexiones-de-redes-nacionales-jerárquico)
+  - [4.3 Tabla de conexiones de Link Global (Hub and Spoke)](#43-tabla-de-conexiones-de-link-global-hub-and-spoke)
+- [5. Tabla de Direccionamiento IP](#5-tabla-de-direccionamiento-ip)
+- [6. Subnetting](#6-subnetting)
+  - [6.1 VLANs de Departamentos (VLSM /26)](#61-vlans-de-departamentos-vlsm-26)
+  - [6.2 Enlaces de Enrutamiento (Punto a Punto /30)](#62-enlaces-de-enrutamiento-punto-a-punto-30)
+- [7. Configuraciones de Dispositivos](#7-configuraciones-de-dispositivos)
+  - [7.1 Configuración de Enrutamiento BGP en el Núcleo (Core)](#71-configuración-de-enrutamiento-bgp-en-el-núcleo-core)
+  - [7.2 Configuraciones de Dispositivos de Telecom Uno (ISP 1)](#72-configuraciones-de-dispositivos-de-telecom-uno-isp-1)
+  - [7.3 Configuración de Servicios en Telecom Uno (DNS y HTTP)](#73-configuración-de-servicios-en-telecom-uno-dns-y-http)
+  - [7.4 Configuraciones de Dispositivos de Redes Nacionales (ISP 2)](#74-configuraciones-de-dispositivos-de-redes-nacionales-isp-2)
+  - [7.5 Configuraciones de Dispositivos de Link Global (ISP 3)](#75-configuraciones-de-dispositivos-de-link-global-isp-3)
+- [8. Listas de Control de Acceso (ACLs)](#8-listas-de-control-de-acceso-acls)
+- [9. Justificación de Diseños Topológicos](#9-justificación-de-diseños-topológicos)
+- [10. Lista de Precios de Hardware (Cotización Estimada)](#10-lista-de-precios-de-hardware-cotización-estimada)
+- [11. Comandos de Verificación](#11-comandos-de-verificación)
+
+---
+xtremo-a-extremo)
 
 ---
 
@@ -112,8 +79,8 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 ## 4. Tabla de Conexiones de la Red
 
-| Dispositivo Origen | Interfaz  | Dispositivo Destino | Interfaz  | Cable          | Módulo SFP  |
-|--------------------|-----------|---------------------|-----------|----------------|-------------|
+| **Dispositivo Origen** | **Interfaz** | **Dispositivo Destino** | **Interfaz** | **Cable** | **Módulo SFP** |
+|:---|:---|:---|:---|:---|:---|
 | MSW_Telecom | Gi1/1/1 | MSW_Nacionales | Gi1/1/1 | Fibra Óptica | GLC-LH-SMD |
 | MSW_Nacionales | Gi1/1/2 | MSW_Link | Gi1/1/1 | Fibra Óptica | GLC-LH-SMD |
 | MSW_Link | Gi1/1/2 | MSW_Telecom | Gi1/1/2 | Fibra Óptica | GLC-LH-SMD |
@@ -124,8 +91,8 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 
 ### 4.1 Tabla de conexiones de la Red de Telecom
 
-| Origen       | Puerto Origen          | Destino       | Puerto Destino         | Cable          |
-|--------------|------------------------|---------------|------------------------|----------------|
+| **Origen** | **Puerto Origen** | **Destino** | **Puerto Destino** | **Cable** |
+|:---:|:---:|:---:|:---:|:---:|
 | MSW_Telecom | Gi1/0/24 | R1_T1 | Gi0/0/0 | Cobre Directo |
 | R1_T1 | Gi0/0/1 | R2_T1 | Gi0/0/0 | Cobre Cruzado |
 | R2_T1 | Gi0/0/1 | R3_T1 | Gi0/0/0 | Cobre Cruzado |
@@ -136,13 +103,11 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | MSW_Dist_T1  | Gi1/0/4 y Gi1/0/5      | MSW_Atencion  | Gi1/0/4 y Gi1/0/5      | Cobre Cruzado  |
 | MSW_Admin    | Gi1/0/10               | Servidor DNS  | Fa0                    | Cobre Directo  |
 | MSW_Admin    | Gi1/0/11               | Servidor HTTP | Fa0                    | Cobre Directo  |
-| **MSW_Admin** | Gi1/0/15 | **PC_Admin_1** | Fa0 | Cobre Directo |
-| **MSW_Atencion** | Gi1/0/15 | **PC_Atencion_1** | Fa0 | Cobre Directo |
-| **MSW_Atencion** | Gi1/0/16 | **PC_Atencion_2** | Fa0 | Cobre Directo |
-
+| MSW_Admin | Gi1/0/15 | PC_Admin_1 | Fa0 | Cobre Directo |
+| MSW_Atencion | Gi1/0/15 | PC_Atencion_1 | Fa0 | Cobre Directo |
+| MSW_Atencion | Gi1/0/16 | PC_Atencion_2 | Fa0 | Cobre Directo |
 
 ### 4.2 Tabla de conexiones de Redes Nacionales (Jerárquico)
-
 
 | Origen | Puerto Origen | Destino | Puerto Destino | Cable | Observación |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -152,18 +117,18 @@ Para satisfacer los requerimientos de enrutamiento dinámico (OSPF/EIGRP/BGP), a
 | R3_RN | Gi0/0/1 | R4_RN | Gi0/0/0 | Cobre Cruzado | Backbone RN |
 | R4_RN | Gi0/0/1 | R5_RN | Gi0/0/0 | Cobre Cruzado | Backbone RN |
 | R5_RN | Gi0/0/1 | MSW_Core_RN | Gi1/0/1 | Cobre Directo | Hacia Core RN |
-| **MSW_Core_RN** | **Gi1/0/2 y Gi1/0/3** | **MSW_Dist_1** | **Gi1/0/2 y Gi1/0/3** | Cobre Cruzado | **Enlace LACP 1** |
-| **MSW_Core_RN** | **Gi1/0/4 y Gi1/0/5** | **MSW_Dist_2** | **Gi1/0/4 y Gi1/0/5** | Cobre Cruzado | **Enlace LACP 2** |
-| **MSW_Dist_1** | Gi1/0/10 | **SW_Ventas** | Gi0/1 | Cobre Directo | Enlace redundante 1 |
-| **MSW_Dist_2** | Gi1/0/10 | **SW_Ventas** | Gi0/2 | Cobre Directo | Enlace redundante 2 |
-| **MSW_Dist_1** | Gi1/0/11 | **SW_Facturacion** | Gi0/1 | Cobre Directo | Enlace redundante 1 |
-| **MSW_Dist_2** | Gi1/0/11 | **SW_Facturacion** | Gi0/2 | Cobre Directo | Enlace redundante 2 |
-| **MSW_Core_RN** | Gi1/0/20 | **Servidor DHCP** | Fa0 | Cobre Directo | Host de servicio DHCP |
-| **SW_Ventas** | Fa0/1 | **PC0** | Fa0 | Cobre Directo | Host Ventas |
-| **SW_Ventas** | Fa0/2 | **PC1** | Fa0 | Cobre Directo | Host Ventas |
-| **SW_Ventas** | Fa0/3 | **Laptop1** | Fa0 | Cobre Directo | Host Ventas |
-| **SW_Facturacion** | Fa0/1 | **PC2** | Fa0 | Cobre Directo | Host Facturación |
-| **SW_Facturacion** | Fa0/2 | **Laptop0** | Fa0 | Cobre Directo | Host Facturación |
+| MSW_Core_RN | Gi1/0/2 y Gi1/0/3 | MSW_Dist_1 | Gi1/0/2 y Gi1/0/3 | Cobre Cruzado | Enlace LACP 1 |
+| MSW_Core_RN | Gi1/0/4 y Gi1/0/5 | MSW_Dist_2 | Gi1/0/4 y Gi1/0/5 | Cobre Cruzado | Enlace LACP 2 |
+| MSW_Dist_1 | Gi1/0/10 | SW_Ventas | Gi0/1 | Cobre Directo | Enlace redundante 1 |
+| MSW_Dist_2 | Gi1/0/10 | SW_Ventas | Gi0/2 | Cobre Directo | Enlace redundante 2 |
+| MSW_Dist_1 | Gi1/0/11 | SW_Facturacion | Gi0/1 | Cobre Directo | Enlace redundante 1 |
+| MSW_Dist_2 | Gi1/0/11 | SW_Facturacion | Gi0/2 | Cobre Directo | Enlace redundante 2 |
+| MSW_Core_RN | Gi1/0/20 | Servidor DHCP | Fa0 | Cobre Directo | Host de servicio DHCP |
+| SW_Ventas | Fa0/1 | PC0 | Fa0 | Cobre Directo | Host Ventas |
+| SW_Ventas | Fa0/2 | PC1 | Fa0 | Cobre Directo | Host Ventas |
+| SW_Ventas | Fa0/3 | Laptop1 | Fa0 | Cobre Directo | Host Ventas |
+| SW_Facturacion | Fa0/1 | PC2 | Fa0 | Cobre Directo | Host Facturación |
+| SW_Facturacion | Fa0/2 | Laptop0 | Fa0 | Cobre Directo | Host Facturación |
 
 ### 4.3 Tabla de conexiones de Link Global (Hub and Spoke)
 
@@ -1151,7 +1116,9 @@ write memory
 
 ```
 
-#### 7.5.1.2 Configuración R1_LG 
+#### 7.5.2 Configuración de Routers de Backbone (R1_LG, R2_LG, R_Hub_LG)
+
+##### Configuración R1_LG
 
 
 ```bash
@@ -1180,7 +1147,7 @@ write memory
 ```
 
 
-#### 7.5.1.3 Configuración R2_LG 
+##### Configuración R2_LG
 
 ```bash
 enable
@@ -1211,7 +1178,7 @@ write memory
 
 
 
-#### 7.5.2 Configuración R_Hub_LG (Centro de la Estrella)
+##### Configuración R_Hub_LG (Centro de la Estrella)
 
 
 ```bash
@@ -1607,7 +1574,9 @@ Para cumplir estrictamente con los lineamientos del proyecto de implementar 5 ro
 | Transceptor SFP GLC-LH-SMD (Fibra) | 6 | $45.00 | $270.00 | Q2,092.50 |
 | Router Inalámbrico Linksys WRT300N | 1 | $60.00 | $60.00 | Q465.00 |
 | Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
-| **TOTAL ESTIMADO** | | | **$40,230.00** | **Q311,825.00** |
+| Mano de Obra (Diseño e Implementación) | 30 Hrs | $166.67 | $5,000.00 | Q38,750.00 |
+| **TOTAL ESTIMADO** | | | **$46,230.00** | **Q358,282.50** |
+
 
 
 --- 
@@ -1633,8 +1602,6 @@ A continuación, se presenta una lista de comandos útiles a ejecutar en la Inte
 ### 11.4 Pruebas de Extremo a Extremo
 * En la Command Prompt de cualquier PC final, usar el comando `ping [IP_Destino]` considerando las reglas de la matriz de comunicación permitida.
 * Desde el *Web Browser* en terminales (Pestaña Desktop), acceder al URL proporcionado `http://www.proyecto2_202302220.com` para comprobar resolución DNS y servicio HTTP.
-| Servidores Genéricos (Servicios) | 3 | $2,000.00 | $6,000.00 | Q46,500.00 |
-| **TOTAL ESTIMADO** | | | **$24,730.00** | **Q191,657.50** |
 
 
 
