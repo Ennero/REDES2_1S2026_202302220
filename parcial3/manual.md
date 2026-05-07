@@ -1,54 +1,46 @@
-# Índice
+# Manual Técnico: Diseño e Implementación de Red Institucional para el Campus Central USAC
 
-- [Índice](#índice)
-- [1.1. Plantilla de Configuración Base (Cisco IOS)](#11-plantilla-de-configuración-base-cisco-ios)
-  - [1.2. Particularidad en Firewall ASA 5506-X](#12-particularidad-en-firewall-asa-5506-x)
+## Índice
+
+- [1. Configuración Base para Infraestructura de Red](#1-configuración-base-para-infraestructura-de-red)
+  - [1.1. Plantilla de Configuración General (Cisco IOS)](#11-plantilla-de-configuración-general-cisco-ios)
+  - [1.2. Particularidad Operativa en Firewall ASA 5506-X](#12-particularidad-operativa-en-firewall-asa-5506-x)
 - [2. Direccionamiento IP y Subneteo (VLSM)](#2-direccionamiento-ip-y-subneteo-vlsm)
-  - [2.1. Tabla de Subneteo (VLSM) Red Interna](#21-tabla-de-subneteo-vlsm-red-interna)
+  - [2.1. Tabla de Subneteo (VLSM) para Redes Internas](#21-tabla-de-subneteo-vlsm-para-redes-internas)
   - [2.2. Enlaces Punto a Punto (P2P) y Salida a Internet](#22-enlaces-punto-a-punto-p2p-y-salida-a-internet)
-  - [2.3. Tabla General de Asignación de Interfaces (Capa 3 y Servicios)](#23-tabla-general-de-asignación-de-interfaces-capa-3-y-servicios)
+  - [2.3. Asignación Global de Interfaces (Capa 3 y Servicios)](#23-asignación-global-de-interfaces-capa-3-y-servicios)
 - [3. Topología de Red y Conexiones Físicas](#3-topología-de-red-y-conexiones-físicas)
-  - [3.1. Inventario de Dispositivos Sugeridos (Packet Tracer)](#31-inventario-de-dispositivos-sugeridos-packet-tracer)
-  - [3.2. Tabla de Conexiones (Matriz de Cableado)](#32-tabla-de-conexiones-matriz-de-cableado)
-    - [Núcleo y Salida a Internet](#núcleo-y-salida-a-internet)
-    - [Distribución (Core a Edificios)](#distribución-core-a-edificios)
-    - [Edificio Ingeniería](#edificio-ingeniería)
-    - [Edificio Administrativo](#edificio-administrativo)
-    - [Edificio Biblioteca](#edificio-biblioteca)
-    - [Red Inalámbrica (Invitados)](#red-inalámbrica-invitados)
-  - [3.3. Notas Importantes para el Ensamblaje en Packet Tracer](#33-notas-importantes-para-el-ensamblaje-en-packet-tracer)
-- [4. Configuración de Capa 2 (VLANs, Troncales y Port Security)](#4-configuración-de-capa-2-vlans-troncales-y-port-security)
-  - [4.1. Creación de VLANs (En Core Switch y Switches de Acceso)](#41-creación-de-vlans-en-core-switch-y-switches-de-acceso)
-  - [4.2. Configuración de Enlaces Troncales (Trunks)](#42-configuración-de-enlaces-troncales-trunks)
-  - [4.3. Asignación de Puertos y Port Security Obligatorio](#43-asignación-de-puertos-y-port-security-obligatorio)
-    - [Configuración en SW\_Ingenieria](#configuración-en-sw_ingenieria)
-    - [Protección de Puertos No Utilizados (Buenas Prácticas)](#protección-de-puertos-no-utilizados-buenas-prácticas)
-    - [Configuración en SW\_Admin](#configuración-en-sw_admin)
-    - [Configuración en SW\_Biblioteca](#configuración-en-sw_biblioteca)
-    - [Configuración de puerto de servidor en Core Switch](#configuración-de-puerto-de-servidor-en-core-switch)
-- [5. Configuración de Capa 3 (Enrutamiento Inter-VLAN y OSPF)](#5-configuración-de-capa-3-enrutamiento-inter-vlan-y-ospf)
-  - [5.1. Activación de Enrutamiento e Interfaces SVI (Core Switch)](#51-activación-de-enrutamiento-e-interfaces-svi-core-switch)
-  - [5.2. Enlace Punto a Punto (Core Switch hacia Firewall)](#52-enlace-punto-a-punto-core-switch-hacia-firewall)
-  - [5.3. Configuración del Protocolo OSPF](#53-configuración-del-protocolo-ospf)
-- [6. Seguridad Perimetral y Acceso a Internet](#6-seguridad-perimetral-y-acceso-a-internet)
-  - [6.1. Configuración del Router ISP (Internet Simulado)](#61-configuración-del-router-isp-internet-simulado)
-  - [6.2. Configuración de Interfaces en Firewall ASA](#62-configuración-de-interfaces-en-firewall-asa)
-  - [6.3. Enrutamiento y Propagación OSPF en el Firewall](#63-enrutamiento-y-propagación-ospf-en-el-firewall)
-  - [6.4. Traducción de Direcciones (NAT/PAT) e Inspección ICMP](#64-traducción-de-direcciones-natpat-e-inspección-icmp)
-- [7. Servicios Internos Requeridos](#7-servicios-internos-requeridos)
+  - [3.1. Inventario de Dispositivos (Packet Tracer)](#31-inventario-de-dispositivos-packet-tracer)
+  - [3.2. Matriz de Cableado Lógico y Físico](#32-matriz-de-cableado-lógico-y-físico)
+  - [3.3. Consideraciones Técnicas de Despliegue](#33-consideraciones-técnicas-de-despliegue)
+- [4. Configuración de Capa 2 (VLANs, Troncales y Seguridad de Puertos)](#4-configuración-de-capa-2-vlans-troncales-y-seguridad-de-puertos)
+  - [4.1. Creación e Identificación de VLANs](#41-creación-e-identificación-de-vlans)
+  - [4.2. Implementación de Enlaces Troncales (Trunks)](#42-implementación-de-enlaces-troncales-trunks)
+  - [4.3. Asignación de Puertos y Port Security](#43-asignación-de-puertos-y-port-security)
+- [5. Configuración de Capa 3 (Enrutamiento Inter-VLAN y Protocolo OSPF)](#5-configuración-de-capa-3-enrutamiento-inter-vlan-y-protocolo-ospf)
+  - [5.1. Activación de Enrutamiento e Interfaces SVI](#51-activación-de-enrutamiento-e-interfaces-svi)
+  - [5.2. Aprovisionamiento del Enlace P2P (Core a Firewall)](#52-aprovisionamiento-del-enlace-p2p-core-a-firewall)
+  - [5.3. Implementación del Protocolo OSPF](#53-implementación-del-protocolo-ospf)
+- [6. Seguridad Perimetral y Gestión de Salida a Internet](#6-seguridad-perimetral-y-gestión-de-salida-a-internet)
+  - [6.1. Simulación de Interfaz Pública (Router ISP)](#61-simulación-de-interfaz-pública-router-isp)
+  - [6.2. Asignación de Niveles de Seguridad (Firewall ASA)](#62-asignación-de-niveles-de-seguridad-firewall-asa)
+  - [6.3. Enrutamiento y Propagación OSPF mediante Firewall](#63-enrutamiento-y-propagación-ospf-mediante-firewall)
+  - [6.4. Configuración de Traducción de Direcciones (NAT/PAT) e IP Inspection](#64-configuración-de-traducción-de-direcciones-natpat-e-ip-inspection)
+- [7. Infraestructura de Servicios Internos](#7-infraestructura-de-servicios-internos)
   - [7.1. Servidor Web Institucional](#71-servidor-web-institucional)
-  - [7.2. Servidor FTP](#72-servidor-ftp)
-  - [7.3. Servidor DHCP y DHCP Relay (IP Helper)](#73-servidor-dhcp-y-dhcp-relay-ip-helper)
-    - [1. Configuración de Pools en Servidor DHCP (IP: `172.16.31.170`)](#1-configuración-de-pools-en-servidor-dhcp-ip-1721631170)
-    - [2. Comandos de Enrutamiento DHCP (Core Switch)](#2-comandos-de-enrutamiento-dhcp-core-switch)
+  - [7.2. Sistema de Transferencia de Archivos (FTP)](#72-sistema-de-transferencia-de-archivos-ftp)
+  - [7.3. Asignación Dinámica de Direcciones (DHCP y DHCP Relay)](#73-asignación-dinámica-de-direcciones-dhcp-y-dhcp-relay)
+- [8. Conclusión Técnica Funcional](#8-conclusión-técnica-funcional)
 
 ---
 
-# 1.1. Plantilla de Configuración Base (Cisco IOS)
+## 1. Configuración Base para Infraestructura de Red
 
-A continuación, se detalla el bloque de comandos genérico utilizado. El parámetro `[NOMBRE_DEL_DISPOSITIVO]` fue reemplazado individualmente por el nombre asignado en la topología (ej. `Core_Switch`, `SW_Ingenieria`, `Router_ISP`).
+Se estableció una configuración inicial homologada para garantizar la seguridad de administración y la coherencia en la identificación de los dispositivos de la red. Las directrices aplicadas abarcan el cifrado de credenciales, el control de acceso a líneas físicas y virtuales, y la implementación de un estandarte de advertencia (MOTD) conforme a normas de auditoría.
 
-**Comandos aplicados en Switches y Routers:**
+### 1.1. Plantilla de Configuración General (Cisco IOS)
+
+El siguiente bloque de comandos representa el estándar aplicado en todos los switches y routers. El parámetro \`[NOMBRE_DEL_DISPOSITIVO]\` fue reemplazado de manera individual iterando la nomenclatura definida en el diseño topológico.
 
 ```bash
 enable
@@ -91,11 +83,9 @@ banner motd #
 exit
 ```
 
----
+### 1.2. Particularidad Operativa en Firewall ASA 5506-X
 
-## 1.2. Particularidad en Firewall ASA 5506-X
-
-Debido a la naturaleza del sistema operativo del Cisco ASA, la configuración básica difiere ligeramente del IOS tradicional. En el dispositivo perimetral (`FW_ASA`), se aplicaron las credenciales y el nombre de host mediante la siguiente sintaxis:
+Considerando la estructura del sistema operativo de los dispositivos Cisco ASA, la configuración inicial presentó diferencias en la semántica respecto al IOS estándar, aplicándose la configuración bajo el siguiente lineamiento:
 
 ```bash
 enable
@@ -106,21 +96,17 @@ banner motd # ACCESO RESTRINGIDO - FIREWALL PERIMETRAL USAC #
 exit
 ```
 
-> **Justificación Técnica:** La implementación del `enable secret` en lugar del `enable password` tradicional garantiza que la credencial de modo privilegiado se almacene como un **hash criptográfico** en la NVRAM, mitigando ataques de lectura del archivo de configuración. Asimismo, el `banner motd` cumple con la normativa legal de disuasión y advertencia previa a la autenticación requerida en auditorías de red.
-
-
-
-# 2. Direccionamiento IP y Subneteo (VLSM)
-
-Para la implementación de la red institucional del campus central de la Universidad de San Carlos de Guatemala, se ha utilizado la técnica de **Máscara de Subred de Longitud Variable (VLSM)** partiendo de la dirección de red principal `172.16.30.0/16`.
-
-El proceso de subneteo se realizó ordenando los requerimientos de hosts de mayor a menor, garantizando un uso eficiente del espacio de direcciones y dejando margen para la creación de enlaces punto a punto (P2P) entre los equipos de infraestructura de Capa 3 (Core Switch, Routers y Firewall).
+> **Justificación Técnica:** La utilización del comando \`enable secret\` en los sistemas Cisco IOS y su equivalente en ASA encripta de forma nativa la contraseña bajo algoritmos criptográficos robustos directamente en la NVRAM, previniendo el compromiso de las credenciales a partir del análisis del archivo de configuración. De igual modo, la implementación del \`banner motd\` satisface los requerimientos legales para el inicio de procedimientos disciplinarios en caso de un incidente de ciberseguridad, delineando la frontera de acceso autorizado.
 
 ---
 
-## 2.1. Tabla de Subneteo (VLSM) Red Interna
+## 2. Direccionamiento IP y Subneteo (VLSM)
 
-A continuación, se detalla la segmentación de la red principal para cubrir los requerimientos de las subredes de los edificios de Ingeniería, Administrativo, Biblioteca y redes adicionales. Se ha establecido la primera dirección IP utilizable de cada rango como la puerta de enlace (Gateway) predeterminada para dicha subred.
+La topología de red se estructura sobre la dirección de red principal \`172.16.30.0/16\`. Se implementó el modelo de Subredes de Longitud Variable (VLSM) para establecer confines estrictos de direcciones, minimizando el desperdicio de direcciones IP. El esquema prioriza los sectores de mayor demanda e incluye segmentos \`/30\` para las adyacencias estructurales.
+
+### 2.1. Tabla de Subneteo (VLSM) para Redes Internas
+
+Se determinaron las dimensiones de cada subred según el volumen de terminales especificado para los edificios de Ingeniería, Administración y Biblioteca. La primera dirección de cada segmento se reservó para operar como puerta de enlace (Default Gateway).
 
 | Edificio / Área | Subred | Hosts Req. | Hosts Disp. | Dirección de Red | Máscara | Rango Utilizable | Gateway (1ra IP) | Dirección de Broadcast |
 |---|---|---|---|---|---|---|---|---|
@@ -133,11 +119,9 @@ A continuación, se detalla la segmentación de la red principal para cubrir los
 | Biblioteca | Subred G | 20 | 30 | 172.16.31.160/27 | 255.255.255.224 | .161 - .190 | 172.16.31.161 | 172.16.31.191 |
 | Adicional | Subred I | 10 | 14 | 172.16.31.192/28 | 255.255.255.240 | .193 - .206 | 172.16.31.193 | 172.16.31.207 |
 
----
+### 2.2. Enlaces Punto a Punto (P2P) y Salida a Internet
 
-## 2.2. Enlaces Punto a Punto (P2P) y Salida a Internet
-
-Para la comunicación entre dispositivos de enrutamiento (ej. Core Switch hacia Routers de Distribución o Firewall), se ha continuado el VLSM utilizando máscaras `/30` a partir de la dirección `172.16.31.208`. El enlace con el Proveedor de Servicios de Internet (ISP) utiliza direccionamiento público estático provisto por el enunciado.
+Los vínculos entre dispositivos de Capa 3 (Core Switch y Firewall) operan bajo prefijos \`/30\`, restringiendo el dominio de colisión al mínimo posible. Adicionalmente, se configuró el enlace externo empleando el direccionamiento público previsto para la simulación del Proveedor de Servicio de Internet.
 
 | Conexión | Red Asignada | Máscara | Rango Utilizable | IP Interfaz A | IP Interfaz B |
 |---|---|---|---|---|---|
@@ -146,11 +130,9 @@ Para la comunicación entre dispositivos de enrutamiento (ej. Core Switch hacia 
 | Enlace P2P 3 (Ej: Core a R2) | 172.16.31.216/30 | 255.255.255.252 | .217 - .218 | 172.16.31.217 | 172.16.31.218 |
 | Conexión ISP - USAC | 210.101.100.16/30 | 255.255.255.252 | .17 - .18 | 210.101.100.17 (USAC/FW) | 210.101.100.18 (ISP) |
 
----
+### 2.3. Asignación Global de Interfaces (Capa 3 y Servicios)
 
-## 2.3. Tabla General de Asignación de Interfaces (Capa 3 y Servicios)
-
-> **Nota:** Las interfaces exactas (GigabitEthernet, FastEthernet o VLAN) dependerán de las conexiones físicas finales establecidas en Packet Tracer. Esta tabla funciona como la guía de configuración base.
+La matriz siguiente compila el aprovisionamiento de interfaces y la orientación lógica del enrutamiento.
 
 | Dispositivo | Interfaz / VLAN | Dirección IP | Máscara de Subred | Gateway por Defecto |
 |---|---|---|---|---|
@@ -171,41 +153,33 @@ Para la comunicación entre dispositivos de enrutamiento (ej. Core Switch hacia 
 | Servidor_FTP | Fa0 (En Subred F) | 172.16.30.10 | 255.255.255.128 | 172.16.30.1 |
 | Servidor_DHCP | Fa0 (En Subred G) | 172.16.31.170 | 255.255.255.224 | 172.16.31.161 |
 
-
-
-
-
-# 3. Topología de Red y Conexiones Físicas
-
-Para el despliegue en Cisco Packet Tracer, se ha seleccionado hardware estándar empresarial que soporta las características requeridas de Capa 3 (OSPF, VLANs), seguridad perimetral (Firewall) y políticas de acceso (Port Security).
-
 ---
 
-## 3.1. Inventario de Dispositivos Sugeridos (Packet Tracer)
+## 3. Topología de Red y Conexiones Físicas
 
-- **Core Switch:** 1x Multilayer Switch (Modelo `3650-24PS` o `3560-24PS`) para concentración de VLANs y enrutamiento OSPF.
-- **Switches de Acceso:** 3x Switches Capa 2 (Modelo `2960-24TT`) para los edificios de Ingeniería, Administrativo y Biblioteca.
-- **Firewall Perimetral:** 1x Cisco ASA (Modelo `ASA 5506-X` o `5505`).
-- **Router ISP:** 1x Router (Modelo `4331` o `1941`) para simular la salida a Internet y aplicar NAT/PAT en conjunto con el Firewall.
-- **Dispositivos Inalámbricos:** 1x Access Point (Modelo `AP-PT` o WLC/Wireless Router) para la red de invitados.
-- **Servidores y Endpoints:** Servidores genéricos de Packet Tracer (`Server-PT`) y PCs (`PC-PT`, `Laptop-PT`).
+La arquitectura jerárquica de la red incorpora un núcleo de alta disponibilidad basado en un Switch Multicapa (Switch Layer 3) como eje vector. El modelo previene fallas de embotellamiento al descentralizar políticas de Capa 2 hacia los switches de las sucursales pertinentes.
 
----
+### 3.1. Inventario de Dispositivos (Packet Tracer)
 
-## 3.2. Tabla de Conexiones (Matriz de Cableado)
+- **Core Switch:** 1 unidad Multilayer Switch (\`3650-24PS\` o \`3560-24PS\`) para consolidación de VLANs y procesos OSPF.
+- **Capa de Acceso:** 3 unidades Switches Capa 2 (\`2960-24TT\`) asignados a los segmentos de Ingeniería, Administración y Biblioteca.
+- **Firewall Perimetral:** 1 unidad Cisco ASA (\`ASA 5506-X\`).
+- **Simulador WAN:** 1 unidad Router (\`4331\` o \`1941\`) operando en calidad de pasarela ISP.
+- **Cobertura Inalámbrica:** 1 unidad Access Point (\`AP-PT\`) con difusión de red (SSID) para usuarios invitados.
+- **Terminales y Nodos Finales:** Conjunto de nodos \`Server-PT\`, \`PC-PT\` y \`Laptop-PT\`.
 
-La siguiente tabla describe puerto a puerto cómo deben conectarse los dispositivos. Se especifican los enlaces troncales (Trunks) y los puertos de acceso.
+### 3.2. Matriz de Cableado Lógico y Físico
 
-> **Nota sobre cables:** En Packet Tracer, la conexión entre Switches se realiza convencionalmente con **Cable de Cobre Cruzado (Copper Cross-Over)**, mientras que las conexiones de Switch a PC/Servidor o Router utilizan **Cable de Cobre Directo (Copper Straight-Through)**.
+El desglose ulterior documenta las vías de inserción y las asociaciones de conmutación.
 
-### Núcleo y Salida a Internet
+#### Núcleo y Salida a Internet
 
 | Dispositivo Origen | Tipo / Modelo | Interfaz Origen | Dispositivo Destino | Interfaz Destino | Tipo de Cable | Función Lógica |
 |---|---|---|---|---|---|---|
 | Router_ISP | Router 4331 | G0/0/0 | FW_ASA | G1/1 (Outside) | Cobre Directo | Enlace P2P (Red Pública) |
 | FW_ASA | ASA 5506-X | G1/2 (Inside) | Core_Switch | G1/0/1 | Cobre Directo | Enlace P2P (Red Interna) |
 
-### Distribución (Core a Edificios)
+#### Distribución (Core a Edificios)
 
 | Dispositivo Origen | Tipo / Modelo | Interfaz Origen | Dispositivo Destino | Interfaz Destino | Tipo de Cable | Función Lógica |
 |---|---|---|---|---|---|---|
@@ -213,14 +187,14 @@ La siguiente tabla describe puerto a puerto cómo deben conectarse los dispositi
 | Core_Switch | Switch L3 3650 | G1/0/3 | SW_Admin | G0/1 | Cobre Cruzado | Enlace Troncal (Trunk 802.1Q) |
 | Core_Switch | Switch L3 3650 | G1/0/4 | SW_Biblioteca | G0/1 | Cobre Cruzado | Enlace Troncal (Trunk 802.1Q) |
 
-### Edificio Ingeniería
+#### Edificio Ingeniería
 
 | Dispositivo Origen | Tipo / Modelo | Interfaz Origen | Dispositivo Destino | Interfaz Destino | Tipo de Cable | Función Lógica |
 |---|---|---|---|---|---|---|
 | SW_Ingenieria | Switch 2960 | F0/1 | PC_Ing_A1 | Fa0 | Cobre Directo | Acceso (VLAN A) + Port Security |
 | SW_Ingenieria | Switch 2960 | F0/10 | PC_Ing_B1 | Fa0 | Cobre Directo | Acceso (VLAN B) + Port Security |
 
-### Edificio Administrativo
+#### Edificio Administrativo
 
 | Dispositivo Origen | Tipo / Modelo | Interfaz Origen | Dispositivo Destino | Interfaz Destino | Tipo de Cable | Función Lógica |
 |---|---|---|---|---|---|---|
@@ -228,7 +202,7 @@ La siguiente tabla describe puerto a puerto cómo deben conectarse los dispositi
 | SW_Admin | Switch 2960 | F0/10 | PC_Adicional_I1 | Fa0 | Cobre Directo | Acceso (VLAN I - Subred 10 hosts) + Port Security |
 | Core_Switch | Switch L3 3650 | G1/0/24 | SVR_Web | Fa0 | Cobre Directo | Acceso (VLAN 70 - Servicios) |
 
-### Edificio Biblioteca
+#### Edificio Biblioteca
 
 | Dispositivo Origen | Tipo / Modelo | Interfaz Origen | Dispositivo Destino | Interfaz Destino | Tipo de Cable | Función Lógica |
 |---|---|---|---|---|---|---|
@@ -238,42 +212,27 @@ La siguiente tabla describe puerto a puerto cómo deben conectarse los dispositi
 | SW_Biblioteca | Switch 2960 | F0/21 | SVR_DHCP | Fa0 | Cobre Directo | Acceso (VLAN F/G) |
 | SW_Biblioteca | Switch 2960 | F0/24 | AP_Wireless | Port 0 | Cobre Directo | Acceso (VLAN L - Invitados) |
 
-### Red Inalámbrica (Invitados)
+#### Red Inalámbrica (Invitados)
 
 | Dispositivo Origen | Tipo / Modelo | Interfaz Origen | Dispositivo Destino | Interfaz Destino | Tipo de Cable | Función Lógica |
 |---|---|---|---|---|---|---|
 | AP_Wireless | Access Point | WiFi | Laptop_Inv1 | Wlan0 | Inalámbrico | Conexión SSID Invitados |
 
----
+### 3.3. Consideraciones Técnicas de Despliegue
 
-## 3.3. Notas Importantes para el Ensamblaje en Packet Tracer
-
-- **Interfaces Libres y Seguridad:** El enunciado exige que los puertos no utilizados queden documentados y protegidos. Una vez armada la topología, se deben seleccionar los rangos de puertos que no estén en uso (por ejemplo, del `F0/2` al `F0/9` en los switches) y aplicarles el comando `shutdown`.
-
-- **Red Administrativa:** La `PC_Admin1` no es un usuario final. Esta PC será la única autorizada (mediante Listas de Control de Acceso) para acceder por SSH a la consola del Core Switch, Firewall y Routers.
-
-- **Simulación de Internet:** Para el `Router_ISP`, además de la interfaz física conectada al Firewall, se debe crear una interfaz virtual (ej. `interface loopback 0`) con una IP pública genérica (como `8.8.8.8`) para demostrar que el enrutamiento y el NAT están funcionando correctamente.
-
-- **Configuración Dispositivo Inalámbrico:** Para que la `Laptop_Inv1` se conecte al `AP_Wireless`, en Packet Tracer se debe apagar físicamente la laptop, retirar el módulo Ethernet por defecto (FastEthernet) y colocar el módulo inalámbrico (`WPC300N`). Posteriormente, encender el equipo y configurar el mismo SSID en ambos dispositivos (`USAC_WIFI`).
-
-
-
-
-
-
-
-
-# 4. Configuración de Capa 2 (VLANs, Troncales y Port Security)
-
-En esta fase se establece la segmentación lógica de la red. El diseño exige que el Core Switch concentre las VLANs y que los switches de acceso apliquen políticas de seguridad en los puertos de usuario final.
+La conectividad física exige la inhabilitación de puertos no contemplados en la matriz (proceso auditado más adelante). Dentro de la infraestructura, se definió que la red administrativa limite su rango de acción a tareas de control operativo (consola, acceso remoto), restringiéndose el tráfico de usuarios en este segmento estricto. Asimismo, la simulación perimetral del router \`Router_ISP\` requirió la creación de un puerto loopback en la IP global \`8.8.8.8\` para comprobar operaciones de red pública.
 
 ---
 
-## 4.1. Creación de VLANs (En Core Switch y Switches de Acceso)
+## 4. Configuración de Capa 2 (VLANs, Troncales y Seguridad de Puertos)
 
-Las VLANs deben crearse en la base de datos de todos los switches involucrados (Core, Ingeniería, Administrativo y Biblioteca).
+Se dispuso de un engranaje completo a nivel de Capa 2 para aislar los agrupamientos de usuarios y mitigar las amenazas internas contra la topología institucional.
 
-**Comandos (Aplicar en TODOS los switches):**
+### 4.1. Creación e Identificación de VLANs
+
+Se procedió con la configuración de las bases de datos de VLANs a lo largo de las capas de Núcleo y de Acceso, dictando las siguientes sentencias globales.
+
+**Comandos (Desplegados globalmente en switches):**
 
 ```bash
 enable
@@ -299,17 +258,13 @@ vlan 99
 exit
 ```
 
-> **Justificación Técnica:** Se ha creado una VLAN dedicada para cada subred solicitada en el diseño VLSM con el fin de reducir los dominios de broadcast y segmentar el tráfico lógicamente. Se incluye una **VLAN 99 Nativa** para mejorar la seguridad de los enlaces troncales.
+> **Justificación Técnica:** La segregación a nivel de dominio de broadcast a través de VLANs previene las tormentas de difusión, eficientizando el ancho de banda y ofreciendo barreras formales entre departamentos organizacionales. La integración de la **VLAN 99** excluye el paso de tráfico en la VLAN de gestión predeterminada (1), fortaleciendo la defensa frente a ataques de salto de VLAN (*VLAN Hopping*).
 
----
+### 4.2. Implementación de Enlaces Troncales (Trunks)
 
-## 4.2. Configuración de Enlaces Troncales (Trunks)
-
-Los enlaces entre el Core Switch y los Switches de acceso deben transportar el tráfico de todas las VLANs.
+Para permitir el flujo multiplexado de tráfico, los puertos de interconexión (ISL) que enlazan el Core Switch con los sistemas de acceso local fueron configurados bajo la norma IEEE 802.1Q.
 
 **Comandos en el Core Switch (3650):**
-
-> **Nota:** En los switches multicapa 3650 de Packet Tracer, es obligatorio especificar la encapsulación `dot1q` antes de convertir el puerto en troncal.
 
 ```bash
 configure terminal
@@ -330,13 +285,13 @@ interface GigabitEthernet 0/1
  exit
 ```
 
----
+### 4.3. Asignación de Puertos y Port Security
 
-## 4.3. Asignación de Puertos y Port Security Obligatorio
+Se exigió la configuración formal de la función de seguridad portuaria. Tras analizar las dinámicas de la red académica, se instauró la acción restrictiva (\`restrict\`) para anular el influjo de datos espurios derivados de colisiones de suplantación de direcciones MAC.
 
-El proyecto exige configurar **Port Security** en los puertos de acceso, limitando la cantidad de MACs y definiendo una acción de violación. Se ha elegido la acción `restrict` porque bloquea el tráfico no autorizado y genera un registro (log) sin apagar el puerto físicamente, lo cual es ideal en un entorno universitario.
+[🛑 INSERTAR CAPTURA DE PANTALLA AQUÍ: Consola mostrando la salida de "show port-security interface" o un Syslog evidenciando un bloqueo exitoso y el estado RESTRICT activado]
 
-### Configuración en SW_Ingenieria
+#### Configuración en SW_Ingenieria
 
 **Para la Subred A (F0/1 — VLAN 10):**
 
@@ -369,9 +324,7 @@ interface FastEthernet 0/10
  exit
 ```
 
-### Protección de Puertos No Utilizados (Buenas Prácticas)
-
-Para cumplir con la documentación de puertos no utilizados, se deben apagar lógicamente. En el switch de Ingeniería, asumiendo que solo se usan `F0/1` y `F0/10`:
+#### Protección de Puertos Inactivos
 
 ```bash
 interface range FastEthernet 0/2 - 9, FastEthernet 0/11 - 24, GigabitEthernet 0/2
@@ -380,9 +333,9 @@ interface range FastEthernet 0/2 - 9, FastEthernet 0/11 - 24, GigabitEthernet 0/
  exit
 ```
 
-### Configuración en SW_Admin
+> **Justificación Técnica:** Inhabilitar administrativamente las interfaces físicas no asignadas previene la interconexión ilícita intencionada en los cuadros de parcheo. Configurar Port Security en modo restrict detecta transgresiones, paraliza el tráfico malicioso local, pero mantiene el puerto en línea para su auditoría y monitorización activa.
 
-En este switch, al haber movido el Servidor Web al Core, solo queda la PC administrativa. Se deben apagar todos los demás puertos para cumplir con las políticas de seguridad.
+#### Configuración en SW_Admin
 
 ```bash
 configure terminal
@@ -417,11 +370,7 @@ interface range FastEthernet 0/2 - 9, FastEthernet 0/11 - 24, GigabitEthernet 0/
  exit
 ```
 
-### Configuración en SW_Biblioteca
-
-Este switch concentra las dos subredes de estudiantes (F y G), los servidores institucionales y el Access Point.
-
-> **Nota de Diseño:** No se aplica Port Security con un máximo de 1 MAC en el puerto del Access Point (`F0/24`), ya que por ahí pasará el tráfico de todos los dispositivos invitados que se conecten al WiFi. Limitarlo a 1 bloquearía la red inalámbrica. Tampoco es indispensable en puertos de servidores fijos.
+#### Configuración en SW_Biblioteca
 
 ```bash
 configure terminal
@@ -475,7 +424,7 @@ interface range FastEthernet 0/2 - 9, FastEthernet 0/11 - 19, FastEthernet 0/22 
  exit
 ```
 
-### Configuración de puerto de servidor en Core Switch
+#### Configuración de puerto de servidor en Core Switch
 
 ```bash
 configure terminal
@@ -486,19 +435,17 @@ interface GigabitEthernet 1/0/24
  exit
 ```
 
-
-
-# 5. Configuración de Capa 3 (Enrutamiento Inter-VLAN y OSPF)
-
-Para permitir la comunicación entre las diferentes subredes del campus central, el **Core Switch (modelo 3650)** asume el rol de concentrador de Capa 3. Se configuran **Interfaces Virtuales de Switch (SVI)** que actúan como la puerta de enlace (Gateway) predeterminada para cada VLAN.
-
-Adicionalmente, se implementa el protocolo de enrutamiento dinámico **OSPF** de forma obligatoria para el intercambio de rutas internas.
-
 ---
 
-## 5.1. Activación de Enrutamiento e Interfaces SVI (Core Switch)
+## 5. Configuración de Capa 3 (Enrutamiento Inter-VLAN y Protocolo OSPF)
 
-Para que el switch multicapa pueda enrutar paquetes IP, primero se debe habilitar el servicio de enrutamiento globalmente. Luego, se le asigna la primera IP utilizable de cada subred (según la tabla VLSM) a su respectiva interfaz VLAN.
+Para sustentar la comunicación transparente a través de los múltiples segmentos creados, el Switch Multicapa fue facultado como ente de enrutamiento principal mediante la activación de SVI (Interfaces Virtuales de Switch) y la propagación de redes sobre OSPF.
+
+### 5.1. Activación de Enrutamiento e Interfaces SVI
+
+Se inicializó el enrutamiento general sobre IPv4. Acto seguido se perfilaron las direcciones y máscaras para las interfaces lógicas asignadas a las VLANs.
+
+[🛑 INSERTAR CAPTURA DE PANTALLA AQUÍ: Demostración de Pings exitosos (inter-vlan) desde una terminal del edificio Ingeniería hacia una terminal de Biblioteca]
 
 **Comandos en el Core Switch:**
 
@@ -558,11 +505,9 @@ interface vlan 80
  exit
 ```
 
----
+### 5.2. Aprovisionamiento del Enlace P2P (Core a Firewall)
 
-## 5.2. Enlace Punto a Punto (Core Switch hacia Firewall)
-
-El puerto `GigabitEthernet 1/0/1` del Core Switch se conecta al Firewall Perimetral (ASA). Para que este puerto funcione como un enlace de Capa 3 puro (sin usar VLANs), se convierte en un puerto ruteado mediante el comando `no switchport`.
+La interconexión hacia el ecosistema externo se estableció sobre el puerto \`G1/0/1\`, inhabilitando sus características de Capa 2 para su adaptación directa con IP estática.
 
 ```bash
 interface GigabitEthernet 1/0/1
@@ -573,11 +518,11 @@ interface GigabitEthernet 1/0/1
  exit
 ```
 
----
+### 5.3. Implementación del Protocolo OSPF
 
-## 5.3. Configuración del Protocolo OSPF
+Se procedió con la habilitación del protocolo OSPF bajo el ID de proceso \`1\`. Las redes directamente vinculadas al núcleo se instauraron dentro del dominio del Área \`0\`.
 
-Se configura OSPF con el ID de proceso `1`. Se declaran todas las redes directamente conectadas al Core Switch utilizando sus respectivas **Wildcard Masks** (el inverso de la máscara de subred) y asignándolas al área `0`.
+[🛑 INSERTAR CAPTURA DE PANTALLA AQUÍ: Ventana de CLI en el Core Switch mostrando la "Tabla de Enrutamiento OSPF" (show ip route ospf) evidenciando la adyacencia y la ruta por defecto inyectada]
 
 ```bash
 router ospf 1
@@ -597,22 +542,17 @@ router ospf 1
  exit
 ```
 
-> **Justificación Técnica:** El diseño requiere OSPF como protocolo principal. Al configurar las redes internas en el proceso OSPF del Core Switch, se garantiza que cualquier ruta aprendida — como la ruta por defecto hacia Internet que inyectará el Firewall — sea conocida por toda la infraestructura interna.
-
-
-
-
-
-
-# 6. Seguridad Perimetral y Acceso a Internet
-
-El diseño exige la separación de la red interna y la red del Proveedor de Servicios de Internet (ISP) mediante un **firewall perimetral (Cisco ASA 5506-X)**. Se implementan políticas de NAT/PAT para permitir que los usuarios internos accedan a un Internet simulado de manera segura.
+> **Justificación Técnica:** OSPF provee de métricas de convergencia rápida e idoneidad de costos. Se determinó su aplicación en la interfaz del núcleo principal garantizando que cualquier actualización en el exterior sea asimilada de manera recursiva e inmediata por la totalidad de la estructura matricial jerárquica.
 
 ---
 
-## 6.1. Configuración del Router ISP (Internet Simulado)
+## 6. Seguridad Perimetral y Gestión de Salida a Internet
 
-El router del ISP proporciona la conexión pública y simula la existencia de Internet mediante una interfaz Loopback (ej. `8.8.8.8`). No necesita conocer las subredes internas (`172.16.x.x`), ya que todo el tráfico llegará enmascarado por el Firewall.
+La infraestructura contempló la aplicación obligatoria de políticas de salida y aislamiento a nivel perimetral mediante un equipo de seguridad de Cisco ASA.
+
+### 6.1. Simulación de Interfaz Pública (Router ISP)
+
+El enrutador anfitrión del proveedor de servicios de internet fue diseñado sin conciencia sobre las redes de área local, atendiendo peticiones desde la salida global de la topología.
 
 **Comandos en Router_ISP:**
 
@@ -633,11 +573,9 @@ interface loopback 0
  exit
 ```
 
----
+### 6.2. Asignación de Niveles de Seguridad (Firewall ASA)
 
-## 6.2. Configuración de Interfaces en Firewall ASA
-
-A diferencia de los routers IOS, el Firewall ASA basa su seguridad en niveles (`security-level`). La interfaz interna se configura con el nivel máximo de confianza (`100`) y la externa con el mínimo (`0`).
+En consonancia con su algoritmo de trabajo, las interfaces del dispositivo ASA se perfilaron mediante su índice de confidencia predeterminado (\`security-level\`), determinando reglas estáticas de bloqueo y validación de flujo cruzado.
 
 **Comandos en FW_ASA:**
 
@@ -663,13 +601,9 @@ interface GigabitEthernet 1/2
  exit
 ```
 
----
+### 6.3. Enrutamiento y Propagación OSPF mediante Firewall
 
-## 6.3. Enrutamiento y Propagación OSPF en el Firewall
-
-El Firewall debe conocer cómo enviar tráfico a Internet mediante una ruta por defecto estática, e inyectar esta ruta al Core Switch a través de OSPF.
-
-> **Nota Técnica:** En el Firewall ASA, la declaración de redes en OSPF utiliza la **máscara de subred tradicional** en lugar de la Wildcard Mask utilizada en los switches o routers IOS.
+El Firewall ASA forjó el encaminamiento final de salida originando la ruta predeterminada a partir de sus directrices establecidas de configuración compartida.
 
 **Comandos en FW_ASA:**
 
@@ -684,11 +618,11 @@ router ospf 1
  exit
 ```
 
----
+### 6.4. Configuración de Traducción de Direcciones (NAT/PAT) e IP Inspection
 
-## 6.4. Traducción de Direcciones (NAT/PAT) e Inspección ICMP
+Se aprovisionó e invocó de manera operativa un conjunto de reglas basadas en un grupo de direccionamiento o Pool para su exposición y traducción en una salida común, lo cual permitió interacciones encriptadas contra el ecosistema WAN.
 
-Para que las direcciones privadas del campus salgan a Internet, se agrupa la red principal `172.16.0.0/16` en un objeto de red y se le aplica un **NAT dinámico (PAT)** contra la interfaz externa. Finalmente, se habilita la inspección de paquetes ICMP para permitir que las pruebas de `ping` desde el interior regresen a través del firewall.
+[🛑 INSERTAR CAPTURA DE PANTALLA AQUÍ: Ejecución exitosa de Ping desde la red interna (ej. Ping 8.8.8.8) y/o despliegue de las conexiones traducidas "show xlate" en el Firewall ASA]
 
 **Comandos en FW_ASA:**
 
@@ -706,29 +640,22 @@ policy-map global_policy
   exit
 ```
 
-> **Justificación Técnica:** El uso de `dynamic interface` (PAT) permite que todas las subredes del campus central compartan una única dirección IP pública (`210.101.100.17`), ahorrando espacio de direccionamiento IP público tal como lo requiere el enunciado.
-
-
-
-
-
-
-
-# 7. Servicios Internos Requeridos
-
-El proyecto contempla la implementación de servicios base para la operación de la red institucional: servidor **Web**, **FTP** y **DHCP**. Dado que estos servicios son simulados mediante dispositivos genéricos de Packet Tracer, la mayor parte de su configuración se realiza a través de la interfaz gráfica (GUI).
+> **Justificación Técnica:** La implementación del Port Address Translation (PAT o "dynamic interface") garantiza que todo el flujo originado desde direcciones de clase privada compartan una conectividad unificada bajo el IP público asociado a la interfaz \`outside\` del ASA, satisfaciendo limitantes de recursos y manteniendo invisibilidad topológica sobre el ISP. La inspección del tráfico ICMP permite un estudio bidireccional durante auditorías rutinarias, reconociendo el estado del ICMP echo/reply sin descartarlos nativamente por políticas de confidencia cero.
 
 ---
 
-## 7.1. Servidor Web Institucional
+## 7. Infraestructura de Servicios Internos
 
-Ubicado en el Core Switch (Subred K), este servidor aloja la página web de la USAC solicitada en los requerimientos. Al ubicarse conectado directamente al núcleo, se garantiza un acceso centralizado.
+Para soportar las operativas intrínsecas de las facultades se aprovisionaron servicios técnicos primordiales sobre direcciones estaticas operadas al interior de las VLAN designadas en los anexos administrativos.
 
-- **Dirección IP estática:** `172.16.31.130`
-- **Máscara de subred:** `255.255.255.224`
-- **Default Gateway:** `172.16.31.129`
-- **Configuración (Packet Tracer):** En la pestaña **Services → HTTP**, se verificó que HTTP y HTTPS estén en `ON`. Se editó el archivo `index.html` con el siguiente código para mostrar los datos del estudiante:
+### 7.1. Servidor Web Institucional
 
+El dispositivo servidor alojado de manera centralizada bajo el soporte del puerto Gigabit del Switch de Capa 3 se le designó un entorno cerrado mediante la Subred K.
+- **Dirección IP estática:** \`172.16.31.130\`
+- **Máscara de subred:** \`255.255.255.224\`
+- **Default Gateway:** \`172.16.31.129\`
+
+El archivo virtual primario \`index.html\` reflejó directivas institucionales bajo directrices HTTP pre-habilitados:
 ```html
 <!DOCTYPE html>
 <html>
@@ -757,29 +684,18 @@ Ubicado en el Core Switch (Subred K), este servidor aloja la página web de la U
 </html>
 ```
 
----
+### 7.2. Sistema de Transferencia de Archivos (FTP)
 
-## 7.2. Servidor FTP
+Confinado operativamente en el nodo secundario ubicado físicamente en las demarcaciones de la Biblioteca, este alojamiento asegura la retención documental de control.
+- **Dirección IP estática:** \`172.16.30.10\`
+- **Máscara de subred:** \`255.255.255.128\`
+- **Default Gateway:** \`172.16.30.1\`
 
-Ubicado en el edificio de la Biblioteca (Subred F), este servidor actúa como un repositorio de archivos centralizado para respaldos de configuración de red e intercambio de material.
+### 7.3. Asignación Dinámica de Direcciones (DHCP y DHCP Relay)
 
-- **Dirección IP estática:** `172.16.30.10`
-- **Máscara de subred:** `255.255.255.128`
-- **Default Gateway:** `172.16.30.1`
-- **Configuración (Packet Tracer):** En la pestaña **Services → FTP**, se validó que el servicio esté en `ON`. Se creó el usuario administrador (`admin_usac` con contraseña `cisco123`) otorgándole permisos totales: **Read, Write, Delete, Rename, List**.
+Alojado junto a la Biblioteca (\`172.16.31.170\`), provee automáticamente los recursos direccionables a los solicitantes sobre distintos planos de VLAN.
 
----
-
-## 7.3. Servidor DHCP y DHCP Relay (IP Helper)
-
-El servidor DHCP centralizado se ubica en la Biblioteca (Subred G) y se encarga de proveer direccionamiento dinámico a las subredes de usuarios finales.
-
-Debido a que los paquetes de solicitud (Broadcast) de DHCP no atraviesan las fronteras de red (Capa 3), se configuró el **DHCP Relay** mediante el comando `ip helper-address` en las interfaces SVI del Core Switch. Esto permite que el switch reciba las solicitudes de otras VLANs y las reenvíe directamente al servidor.
-
-### 1. Configuración de Pools en Servidor DHCP (IP: `172.16.31.170`)
-
-Se crearon pools dedicados para cada subred de usuarios finales, excluyendo las redes de administración y servidores que utilizan direccionamiento estático:
-
+#### 1. Configuración de Pools Institucionales
 | Nombre del Pool | Default Gateway | Start IP | Subnet Mask | Usuarios |
 |---|---|---|---|---|
 | Pool_Ingenieria_A | 172.16.31.1 | 172.16.31.5 | 255.255.255.192 | 50 |
@@ -789,9 +705,11 @@ Se crearon pools dedicados para cada subred de usuarios finales, excluyendo las 
 | Pool_Invitados_WIFI | 172.16.30.129 | 172.16.30.135 | 255.255.255.128 | 100 |
 | Pool_Adicional_I | 172.16.31.193 | 172.16.31.195 | 255.255.255.240 | 10 |
 
-### 2. Comandos de Enrutamiento DHCP (Core Switch)
+[🛑 INSERTAR CAPTURA DE PANTALLA AQUÍ: Ventana de la configuración de red de una PC (ej. PC_Ingenieria o Laptop Invitado) demostrando la obtención exitosa del direccionamiento IP completo a través del servicio DHCP (DHCP request successful)]
 
-Para habilitar el agente de retransmisión, se aplicó la dirección IP del servidor DHCP a las interfaces VLAN requeridas:
+#### 2. Implementación de Agentes de Retransmisión (Core Switch)
+
+Para consolidar las difusiones nativas a dominios unicast operacionales, fue mandatario el registro de IP Helper en las interfaces correspondientes alojadas en el núcleo de la infraestructura.
 
 ```bash
 configure terminal
@@ -821,4 +739,12 @@ interface vlan 80
  exit
 ```
 
-> **Justificación Técnica:** Centralizar el servicio DHCP optimiza los recursos de la red al no requerir un servidor dedicado por edificio. La **Subred G (VLAN 50)** no requiere `ip helper-address` ya que el servidor se encuentra físicamente conectado a ese mismo segmento de red, resolviendo las solicitudes de manera local.
+> **Justificación Técnica:** La delegación de un único servidor DHCP gestionado a su vez por agentes de retransmisión (IP Helper Address) consolida los esfuerzos logísticos y optimiza la tolerancia a fallos. Se previene la sobrecarga de equipos físicos distribuidos evitando latencias sobre las difusiones ARP locales de broadcast, limitándolas a paquetes unicast directos sobre la Capa 3 de transporte, exceptuando la VLAN a la cual el propio servidor se halla nativamente conectado.
+
+---
+
+## 8. Conclusión Técnica Funcional
+
+La síntesis de las tecnologías desplegadas confirma el resguardo, eficiencia y adaptabilidad de la topología integral propuesta para el Campus Central de la universidad. La instauración de un Core Switch estructurado sobre dinámicas en Capa 3 permitió consolidar el enrutamiento Inter-VLAN mediante interfaces virtuales (SVI), aligerando sustancialmente las cargas de cómputo remanentes. Se evidenció un desempeño óptimo mediante la propagación autónoma conferida por OSPF, ofreciendo redundancias resolutivas ante potenciales convergencias en subredes adjuntas.
+
+Paralelamente, las determinaciones sobre políticas limitantes con el estándar Port Security (bajo esquemas mac-address sticky y acciones preventivas en bloqueos restrictivos) garantizaron que el tejido inferior resida plenamente abstraído de irregularidades intencionales por puertos. Finalmente, la contención transaccional de cruce público se afianzó de modo efectivo a través del cortafuego ASA 5506-X y su administración mediante los niveles de seguridad y protocolos NAT/PAT; proporcionando disimulación completa del direccionamiento nativo VLSM subyacente y posibilitando al ecosistema interno navegar plenamente, avalando un desarrollo robusto y alineado directamente a los estatutos funcionales pretendidos en el diseño.
