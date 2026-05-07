@@ -545,14 +545,14 @@ Se procedió con la habilitación del protocolo OSPF bajo el ID de proceso \`1\`
 router ospf 1
  router-id 1.1.1.1
  ! Declaración de las subredes internas
- network 172.16.31.0 0.0.0.63 area 0      ! VLAN 10
- network 172.16.31.64 0.0.0.31 area 0     ! VLAN 20
- network 172.16.31.96 0.0.0.31 area 0     ! VLAN 30
- network 172.16.30.0 0.0.0.127 area 0     ! VLAN 40
- network 172.16.31.160 0.0.0.31 area 0    ! VLAN 50
- network 172.16.30.128 0.0.0.127 area 0   ! VLAN 60
- network 172.16.31.128 0.0.0.31 area 0    ! VLAN 70
- network 172.16.31.192 0.0.0.15 area 0    ! VLAN 80
+ network 172.16.31.0 0.0.0.63 area 0   
+ network 172.16.31.64 0.0.0.31 area 0  
+ network 172.16.31.96 0.0.0.31 area 0  
+ network 172.16.30.0 0.0.0.127 area 0  
+ network 172.16.31.160 0.0.0.31 area 0 
+ network 172.16.30.128 0.0.0.127 area 0
+ network 172.16.31.128 0.0.0.31 area 0 
+ network 172.16.31.192 0.0.0.15 area 0 
 
  ! Declaración del enlace P2P hacia el Firewall
  network 172.16.31.208 0.0.0.3 area 0
