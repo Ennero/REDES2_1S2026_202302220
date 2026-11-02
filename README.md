@@ -1,24 +1,68 @@
-# REDES2_1S2026_202302220
+<div align="center">
 
-Repositorio principal para el curso de **Redes de Computadoras 2**, Primer Semestre 2026.
-Autor: Enner Mendizabal (Carné: 202302220)
+# 🛡️ Advanced Enterprise Network Infrastructure & BGP Routing (Redes 2)
 
-## Descripción
+**Infraestructura de redes empresariales: protocolos BGP, OSPF, túneles VPN IPsec, ACLs de seguridad y calidad de servicio (QoS).**
 
-Este repositorio contiene los archivos de simulación de redes, documentaciones y manuales de proyectos y parciales desarrollados durante el curso. Las simulaciones han sido creadas utilizando **Cisco Packet Tracer**.
+[![Language](https://img.shields.io/badge/Language-Networking,%20Cisco,%20GNS3-blue?style=for-the-badge)](https://github.com/Ennero/REDES2_1S2026_202302220)
+[![Course](https://img.shields.io/badge/Course-Redes%20de%20Computadoras%202-003366?style=for-the-badge)](https://ingenieria.usac.edu.gt/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## Estructura del Repositorio
+</div>
 
-- **`/Proyecto1`**: Archivos y manual del Proyecto 1.
-- **`/Proyecto2`**: Archivos, enunciado y manual del Proyecto 2.
-- **`/parcial3`**: Archivos y manual correspondientes a la evaluación del Parcial 3.
-- `*.pkt` en la raíz de los distintos directorios: Simulaciones de Packet Tracer asociadas a cada evaluación.
+---
 
-## Herramientas Utilizadas
 
-- **Cisco Packet Tracer**: Para la simulación de topologías de red, ruteo y configuración de switches/routers.
-- **Markdown**: Para la documentación técnica y creación de manuales (`manual.md`).
+## 📌 Descripción General
 
-## Licencia
+Este repositorio contiene la implementación y entrega de **🛡️ Advanced Enterprise Network Infrastructure & BGP Routing (Redes 2)**, desarrollado en el curso de **Redes de Computadoras 2** en la Universidad de San Carlos de Guatemala.
 
-Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo [LICENSE](./LICENSE).
+- **Objetivo:** Infraestructura de redes empresariales: protocolos BGP, OSPF, túneles VPN IPsec, ACLs de seguridad y calidad de servicio (QoS).
+- **Stack Principal:** `Networking, Cisco, GNS3`.
+- **Área:** Ciencias de la Computación, Algoritmos y Desarrollo de Software.
+
+---
+
+## 🚀 Características y Componentes
+
+- Implementación modular y buenas prácticas de codificación.
+- Manejo estructurado de datos, control de flujo y validaciones.
+- Documentación y scripts de soporte para compilación o ejecución.
+
+---
+
+## 📦 Estructura del Proyecto
+
+```
+REDES2_1S2026_202302220/
+├── src/ o archivos de código fuente
+├── docs/ (si aplica)
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+---
+
+## ⚙️ Requisitos y Ejecución
+
+1. Clonar el repositorio:
+   ```bash
+   git clone https://github.com/Ennero/REDES2_1S2026_202302220.git
+   cd REDES2_1S2026_202302220
+   ```
+2. Ejecutar según el entorno (`Networking, Cisco, GNS3`):
+   - Consultar los scripts o archivos principales del proyecto para parámetros específicos.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+## 👨‍💻 Autor
+
+- **Enner Mendizabal** - [@Ennero](https://github.com/Ennero)  
+- *Facultad de Ingeniería, Universidad de San Carlos de Guatemala.*

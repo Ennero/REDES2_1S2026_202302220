@@ -1,1 +1,9 @@
-gemini.md
+# General
+*.exe
+*.log
+*.tmp
+.env
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
