@@ -1,68 +1,45 @@
-<div align="center">
+# Redes MAN, routing e interconexión de ISPs
 
-# 🛡️ Advanced Enterprise Network Infrastructure & BGP Routing (Redes 2)
+Entregas de Redes de Computadoras 2: topologías MAN, interconexión de proveedores con BGP/OSPF y evaluaciones en Cisco Packet Tracer.
 
-**Infraestructura de redes empresariales: protocolos BGP, OSPF, túneles VPN IPsec, ACLs de seguridad y calidad de servicio (QoS).**
+## Requisitos
 
-[![Language](https://img.shields.io/badge/Language-Networking,%20Cisco,%20GNS3-blue?style=for-the-badge)](https://github.com/Ennero/REDES2_1S2026_202302220)
-[![Course](https://img.shields.io/badge/Course-Redes%20de%20Computadoras%202-003366?style=for-the-badge)](https://ingenieria.usac.edu.gt/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+Cisco Packet Tracer compatible con las simulaciones .pkt. Consultar el manual de cada entrega antes de modificar configuraciones.
 
-</div>
+## Ejecución
 
----
+Los comandos parten de la raíz del repositorio, salvo donde se indica otra terminal.
 
-
-## 📌 Descripción General
-
-Este repositorio contiene la implementación y entrega de **🛡️ Advanced Enterprise Network Infrastructure & BGP Routing (Redes 2)**, desarrollado en el curso de **Redes de Computadoras 2** en la Universidad de San Carlos de Guatemala.
-
-- **Objetivo:** Infraestructura de redes empresariales: protocolos BGP, OSPF, túneles VPN IPsec, ACLs de seguridad y calidad de servicio (QoS).
-- **Stack Principal:** `Networking, Cisco, GNS3`.
-- **Área:** Ciencias de la Computación, Algoritmos y Desarrollo de Software.
-
----
-
-## 🚀 Características y Componentes
-
-- Implementación modular y buenas prácticas de codificación.
-- Manejo estructurado de datos, control de flujo y validaciones.
-- Documentación y scripts de soporte para compilación o ejecución.
-
----
-
-## 📦 Estructura del Proyecto
-
-```
-REDES2_1S2026_202302220/
-├── src/ o archivos de código fuente
-├── docs/ (si aplica)
-├── .gitignore
-├── LICENSE
-└── README.md
+```bash
+# Abrir en Packet Tracer:
+# Proyecto1/proyecto1.pkt
+# Proyecto2/Proyecto2_202302220.pkt
+# parcial3/202302220_parcial3.pkt
 ```
 
----
+## Recorrido de demostración
 
-## ⚙️ Requisitos y Ejecución
+Revisar direccionamiento, interfaces y rutas. En Proyecto2, comprobar las sesiones BGP y la integración con OSPF descritas en el manual; verificar conectividad entre las redes permitidas por el enunciado.
 
-1. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/Ennero/REDES2_1S2026_202302220.git
-   cd REDES2_1S2026_202302220
-   ```
-2. Ejecutar según el entorno (`Networking, Cisco, GNS3`):
-   - Consultar los scripts o archivos principales del proyecto para parámetros específicos.
+## Organización
 
----
+Carpetas de la entrega: [`Proyecto1/`](Proyecto1/), [`Proyecto2/`](Proyecto2/), [`parcial3/`](parcial3/).
 
-## 📄 Licencia
+## Documentación
 
-Este proyecto está bajo la Licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+- [manual](Proyecto1/manual.md)
+- [manual](Proyecto2/manual.md)
+- [enunciado](Proyecto2/enunciado.md)
+- [manual](parcial3/manual.md)
 
----
+## Alcance y límites
 
-## 👨‍💻 Autor
+Las distintas copias de parcial3 en la raíz se conservan como entregas originales. Usar la ruta indicada en el índice y guardar pruebas en una copia propia.
 
-- **Enner Mendizabal** - [@Ennero](https://github.com/Ennero)  
-- *Facultad de Ingeniería, Universidad de San Carlos de Guatemala.*
+La documentación anterior a la actualización se conserva en [README-anterior.md](README-anterior.md) como referencia histórica; para iniciar el proyecto, seguir esta guía.
+
+## Contexto y licencia
+
+Trabajo académico o de aprendizaje conservado en el portafolio de [Enner Mendizabal](https://github.com/Ennero). Los créditos de los trabajos en grupo se conservan en sus entregas y manuales.
+
+Consultar [LICENSE](LICENSE) para la licencia de la raíz. Las dependencias y los componentes con avisos o licencias propios conservan sus condiciones.
